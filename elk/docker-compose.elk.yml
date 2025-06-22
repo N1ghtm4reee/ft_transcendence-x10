@@ -1,0 +1,63 @@
+
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana
+    volumes:
+      - ./kibana/config:/usr/share/kibana/config
+    ports:
+      - '5601:5601'
+    networks:
+      - elk-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - elk-network
+      - monitoring_network
+    ports:
+      - "9200:9200"
+
+  logstash:
+    image: logstash:8.13.4
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - elk-network
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.13.4
+    container_name: filebeat
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ../services/logs:/var/log:ro
+      # - /var/run/docker.sock:/var/run/docker.sock
+      # - /var/lib/docker:/var/lib/docker:ro
+    networks:
+      - elk-network
+    depends_on:
+      - logstash
+
+volumes:
+  es_data:
+    driver: local
+
+networks:
+  elk-network:
+    driver: bridge
+  monitoring_network:
+    external: true
+    name: monitoring_network
