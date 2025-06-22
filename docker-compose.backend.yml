@@ -2,6 +2,7 @@ services:
   # API Gateway
   api-gateway:
     build: ./services/api-gateway
+    image: n1ghtm4r3e/trandandan_api-gateway:latest
     ports:
       - "3000:3000"
     env_file: .env
@@ -17,6 +18,7 @@ services:
   auth-service:
     container_name: auth-service
     build: ./services/auth
+    image: n1ghtm4r3e/trandandan_auth-service:latest
     ports:
       - "3001:3001"
     environment:
@@ -32,6 +34,7 @@ services:
   user-service:
     container_name: user-service
     build: ./services/user-management
+    image: n1ghtm4r3e/trandandan_user-service:latest
     ports:
       - "3002:3002"
     environment:
@@ -48,6 +51,7 @@ services:
   # Chat Service
   chat-service:
     build: ./services/chat
+    image: n1ghtm4r3e/trandandan_chat-service:latest
     ports:
       - "3004:3004"
     environment:

@@ -1,5 +1,4 @@
 name: transcendence CI/CD
-
 on:
   push:
     branches: [ main ]
@@ -9,50 +8,34 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     env:
       IMAGE_TAG: ${{ github.sha }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       REGISTRY: docker.io
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      # - name: Install docker-compose plugin
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y ca-certificates curl gnupg
-      #     sudo install -m 0755 -d /etc/apt/keyrings
-      #     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-      #     sudo chmod a+r /etc/apt/keyrings/docker.gpg
-      #     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-      #     sudo apt-get update
-      #     sudo apt-get install -y docker-compose-plugin
-
-      # - name: Log in to Docker Hub
-      #   uses: docker/login-action@v3
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
       - name: Build all images with Makefile
         run: make
-
-      # - name: Push images to Docker Hub
-      #   run: |
-      #     # List of your Docker images (change accordingly)
-      #     images=(
-      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-frontend:$IMAGE_TAG"
-      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-backend:$IMAGE_TAG"
-      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-db:$IMAGE_TAG"
-      #     )
-      #     for image in "${images[@]}"; do
-      #       echo "Pushing $image"
-      #       docker push "$image"
-      #     done
+      
+      # Alternative approach if you know your specific services
+      - name: Push specific images (alternative)
+        run: |
+          docker push n1ghtm4r3e/trandandan_api-gateway:latest
+          docker push n1ghtm4r3e/trandandan_auth-service:latest
+          docker push n1ghtm4r3e/trandandan_user-service:latest
+          docker push n1ghtm4r3e/trandandan_chat-service:latest
+        if: true
 
 # need to add tests and push images to dockerhub and add a deployement phase with gitOps tools (argoCD) and k8s
