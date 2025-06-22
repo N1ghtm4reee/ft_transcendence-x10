@@ -1,0 +1,42 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_PATH")
+}
+
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String
+  
+  isVerified    Boolean  @default(false)      @map("is_verified")
+  oauthProvider String   @default("local")    @map("oauthProvider")
+  
+  passwordHash  String?                        @map("password_hash")
+  salt          String?
+
+  twoFactorAuth            TwoFactorAuth?
+
+  createdAt     DateTime  @default(now())     @map("created_at")
+  updatedAt     DateTime  @updatedAt          @map("updated_at")
+  
+  @@map("users")
+}
+
+model TwoFactorAuth {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique @map("user_id")
+  secretKey   String  @map("secret_key")
+  isEnabled   Boolean @default(false) @map("is_enabled")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_2fa")
+}

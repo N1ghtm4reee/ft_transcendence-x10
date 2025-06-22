@@ -1,0 +1,11 @@
+
+{
+    security {
+        https
+        logstash {
+            filter data
+        }
+        .env
+    }
+    retention policies 50%
+}

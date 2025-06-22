@@ -1,0 +1,10 @@
+FROM node:alpine3.21
+
+COPY package*.json ./
+
+RUN npm i
+ 
+COPY . .
+
+# CMD ["npm" , "run", "start"]
+CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy  && npm run start"]

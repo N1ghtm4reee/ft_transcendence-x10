@@ -1,0 +1,77 @@
+services:
+  # API Gateway
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      - auth-service
+      - user-service
+    #   - pong-service
+      - chat-service
+    networks:
+      - transcendence-network
+
+  # # Auth Service
+  auth-service:
+    container_name: auth-service
+    build: ./services/auth
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_PATH=file:/databases/auth.db
+    env_file: .env
+    volumes:
+      - ./databases/auth.db:/databases/auth.db
+      - ./services/logs/user-service:/app/logs
+    networks:
+      - transcendence-network
+
+  # User Service
+  user-service:
+    container_name: user-service
+    build: ./services/user-management
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_PATH=file:./databases/users.db
+    volumes:
+      - ./databases/users.db:/databases/users.db
+      - ./services/logs/user-service:/app/logs
+    networks:
+      - transcendence-network
+    env_file: .env
+    depends_on:
+      - auth-service
+
+  # Chat Service
+  chat-service:
+    build: ./services/chat-service
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_PATH=file:./databases/chats.db
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3005
+    volumes:
+      - ./databases:/app/databases
+      - ./services/logs/user-service:/app/logs
+    networks:
+      - transcendence-network
+
+  # Notification Service
+  # notification-service:
+  #   build: ./services/notification-service
+  #   ports:
+  #     - "3005:3005"
+  #   environment:
+  #   networks:
+  #     - transcendence-network
+
+
+
+# volumes:
+
+networks:
+  transcendence-network:
+    driver: bridge
