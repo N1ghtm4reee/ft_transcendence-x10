@@ -31,14 +31,10 @@ jobs:
       
       - name: Push images
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/trandandan_api-gateway:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/trandandan_api-gateway:latest
-          docker tag ${{ secrets.DOCKER_USERNAME }}/trandandan_auth-service:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/trandandan_auth-service:latest
-          docker tag ${{ secrets.DOCKER_USERNAME }}/trandandan_user-service:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/trandandan_user-service:latest
-          docker tag ${{ secrets.DOCKER_USERNAME }}/trandandan_chat-service:${{ env.IMAGE_TAG }} ${{ secrets.DOCKER_USERNAME }}/trandandan_chat-service:latest
-          
           docker push ${{ secrets.DOCKER_USERNAME }}/trandandan_api-gateway:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/trandandan_auth-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/trandandan_user-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/trandandan_chat-service:latest
+          docker push ${{secrets.DOCKER_USERNAME}}/trandandan_auth-service:latest
+          docker push ${{secrets.DOCKER_USERNAME}}/trandandan_user-service:latest
+          docker push ${{secrets.DOCKER_USERNAME}}/trandandan_chat-service:latest
+        if: true
 
 # need to add tests and push images to dockerhub and add a deployement phase with gitOps tools (argoCD) and k8s
