@@ -6,36 +6,36 @@ build:
 	@docker network create monitoring_network || true
 
 backend:
-	docker-compose -f docker-compose.backend.yml up -d
+	docker compose -f docker-compose.backend.yml up -d
 
 ELKUP:
 	@echo "Starting ELK stack..."
-	docker-compose -f ./elk/docker-compose.elk.yml up -d
+	docker compose -f ./elk/docker-compose.elk.yml up -d
 
 PROMUP:
 	@echo "Starting prometheus/Grafana..."
-	docker-compose -f ./prometheus/docker-compose.prometheus.yml up -d
+	docker compose -f ./prometheus/docker-compose.prometheus.yml up -d
 
 
 ELKDOWN:
 	@echo "Stopping ELK stack..."
-	docker-compose -f ./elk/docker-compose.elk.yml down -v
+	docker compose -f ./elk/docker-compose.elk.yml down -v
 
 PROMDOWN:
 	@echo "Stopping prometheus stack..."
-	docker-compose -f ./prometheus/docker-compose.prometheus.yml down -v 
+	docker compose -f ./prometheus/docker-compose.prometheus.yml down -v 
 
 down: ELKDOWN PROMDOWN
-	docker-compose -f docker-compose.backend.yml down -v
+	docker compose -f docker-compose.backend.yml down -v
 	docker network rm monitoring_network
 
 logs:
 	docker-compose logs -f
 
 clean:
-	docker-compose -f docker-compose.backend.yml down -v --remove-orphans
-	docker-compose -f ./elk/docker-compose.elk.yml down -v --remove-orphans
-	docker-compose -f ./prometheus/docker-compose.prometheus.yml down -v --remove-orphans
+	docker compose -f docker-compose.backend.yml down -v --remove-orphans
+	docker compose -f ./elk/docker-compose.elk.yml down -v --remove-orphans
+	docker compose -f ./prometheus/docker-compose.prometheus.yml down -v --remove-orphans
 	docker system prune -f
 
 re: down all
