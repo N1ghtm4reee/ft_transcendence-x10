@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: trandandan
-      REGISTRY: docker.io
       IMAGE_TAG: ${{ github.sha }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      REGISTRY: docker.io
 
     steps:
       - name: Checkout code
@@ -22,18 +22,26 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t $REGISTRY/${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG .
+      - name: Build all images with Makefile
+        run: make
 
-      - name: Push Docker image
-        run: |
-          docker push $REGISTRY/${{ secrets.DOCKER_USERNAME }}/$IMAGE_NAME:$IMAGE_TAG
+      # - name: Push images to Docker Hub
+      #   run: |
+      #     # List of your Docker images (change accordingly)
+      #     images=(
+      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-frontend:$IMAGE_TAG"
+      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-backend:$IMAGE_TAG"
+      #       "$REGISTRY/$DOCKER_USERNAME/trandandan-db:$IMAGE_TAG"
+      #     )
+      #     for image in "${images[@]}"; do
+      #       echo "Pushing $image"
+      #       docker push "$image"
+      #     done
 
 # need to add tests and push images to dockerhub and add a deployement phase with gitOps tools (argoCD) and k8s
