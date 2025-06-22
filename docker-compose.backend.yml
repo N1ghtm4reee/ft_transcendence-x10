@@ -47,7 +47,7 @@ services:
 
   # Chat Service
   chat-service:
-    build: ./services/chat-service
+    build: ./services/chat
     ports:
       - "3004:3004"
     environment:
