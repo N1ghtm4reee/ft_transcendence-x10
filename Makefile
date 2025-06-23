@@ -25,6 +25,8 @@ PROMDOWN:
 	@echo "Stopping prometheus stack..."
 	docker compose -f ./prometheus/docker-compose.prometheus.yml down -v 
 
+# deployement {1- vagrant 2- kubctl apply -f to manifests files}
+
 down: ELKDOWN PROMDOWN
 	docker compose -f docker-compose.backend.yml down -v
 	docker network rm monitoring_network
