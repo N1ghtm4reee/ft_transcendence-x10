@@ -21,5 +21,3 @@ curl -sfL https://get.k3s.io | sh -
 # if you want to add node (agent) to the cluster
 
 #curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=mynodetoken sh -
-
-

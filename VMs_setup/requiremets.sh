@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# install kubectl in your host machine
+sudo apt install -y apt-transport-https ca-certificates curl
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo snap install kubectl --classic
+kubectl version --client
+
 
 # install vagrant
 
