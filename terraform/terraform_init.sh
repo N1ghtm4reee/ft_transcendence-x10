@@ -4,4 +4,4 @@ terraform init
 
 terraform apply -auto-approve
 
-terraform output -raw droplet_ip > ip.txt
+terraform output droplet_ip > ip.txt
