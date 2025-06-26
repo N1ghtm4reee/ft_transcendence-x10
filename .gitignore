@@ -3,3 +3,8 @@
 ./promotheus/grafana/data/*
 ./promotheus/promotheus/data/*
 **/node_modules/
+
+**/terraform.tfvars
+terraform.tfstate
+**/.terraform
+**/ip.txt
