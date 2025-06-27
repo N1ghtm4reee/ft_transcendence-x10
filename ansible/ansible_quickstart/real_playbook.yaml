@@ -17,7 +17,7 @@
         src: /home/token.txt
         dest: ./token.txt
         flat: yes
-    
+
 - name: installing k3s in agents nodes and joining master node server with token
   hosts: workers
   become: true
@@ -34,6 +34,24 @@
         src: ./worker.sh
         dest: /home/worker.sh
         mode: '0777'
-    
+
     - name: install k3s and joing nodes to server
       ansible.builtin.shell: /home/worker.sh
+
+- name: installing dashboard ui for cluster visualization
+  hosts: master
+  become: true
+  tasks:
+    - name: run the script
+      ansible.builtin.script: ./dashboard.sh
+    - name: Fetch dashboard_token.txt to local machine
+      ansible.builtin.fetch:
+        src: /home/dashboard_token.txt
+        dest: ./dashboard_token.txt
+        flat: yes
+
+    - name: Fetch dashboard_ip_port.txt to local machine
+      ansible.builtin.fetch:
+        src: /home/dashboard_ip_port.txt
+        dest: ./dashboard_ip_port.txt
+        flat: yes
