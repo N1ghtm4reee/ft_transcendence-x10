@@ -4,4 +4,6 @@ terraform init
 
 terraform apply -auto-approve
 
-terraform output droplet_ip > ip.txt
+terraform output -json droplet_ip | jq -r '.[]' > ip.txt
+
+./inventory_setup.sh
