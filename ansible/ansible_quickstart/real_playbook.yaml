@@ -1,0 +1,39 @@
+- name : installing k3s in master node
+  hosts: master
+  become: true # set to true if you need sudo priv
+  tasks:
+    # - name: copy installation script to cloud machine
+    #   ansible.builtin.copy:
+    #     src: ./master.sh
+    #     dest: /tmp/master.sh
+    #     mode: '0755'
+    
+    - name: run the script to setup master node
+      ansible.builtin.script: ./master.sh
+      # ansible.builtin.shell: /tmp/master.sh
+
+    - name: copy token to local file system
+      ansible.builtin.fetch:
+        src: /home/token.txt
+        dest: ./token.txt
+        flat: yes
+    
+- name: installing k3s in agents nodes and joining master node server with token
+  hosts: workers
+  become: true
+  vars:
+    master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4']['address'] }}"
+  tasks:
+    - name: copy token file on the cloud machine fs 
+      ansible.builtin.copy:
+        src: ./token.txt
+        dest: /home/token.txt
+        mode: '0644'
+    - name: copy worker.sh to the cloud machine
+      ansible.builtin.copy:
+        src: ./worker.sh
+        dest: /home/worker.sh
+        mode: '0777'
+    
+    - name: install k3s and joing nodes to server
+      ansible.builtin.shell: /home/worker.sh

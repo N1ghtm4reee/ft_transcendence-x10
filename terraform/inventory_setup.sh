@@ -8,13 +8,27 @@ masterip="${ips[0]}"
 workerips=("${ips[@]:1}")
 
 # Start writing to inventory.ini
-echo "[master]" > ../ansible/ansible_quickstart/inventory.ini
-echo "${masterip} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ../ansible/ansible_quickstart/inventory.ini
+cat > ../ansible/ansible_quickstart/inventory.ini << EOF
+[master]
+${masterip} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-echo "" >> ../ansible/ansible_quickstart/inventory.ini
-echo "[workers]" >> ../ansible/ansible_quickstart/inventory.ini
+[workers]
+EOF
 
-# Loop through worker IPs and add them
 for ip in "${workerips[@]}"; do
   echo "${ip} ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_ed25519 ansible_ssh_common_args='-o StrictHostKeyChecking=no'" >> ../ansible/ansible_quickstart/inventory.ini
 done
+
+# Create worker.sh with master_ip and token if token file exists locally
+cat > ../ansible/ansible_quickstart/worker.sh << EOF
+#!/bin/bash
+
+MASTER_IP="${masterip}"
+
+TOKEN=\$(cat /home/token.txt)
+
+curl -sfL https://get.k3s.io | K3S_URL=https://\$MASTER_IP:6443 K3S_TOKEN=\$TOKEN sh -
+
+sudo snap install kubelet --classic && sudo snap install kubeadm --classic
+EOF
+
