@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MASTER_IP="165.22.44.190"
+MASTER_IP="167.99.48.206"
 
 TOKEN=$(cat /home/token.txt)
 

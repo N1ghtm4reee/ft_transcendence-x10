@@ -11,6 +11,13 @@ provider "digitalocean" {
   token = var.do_token
 }
 
+resource "digitalocean_project" "ft_transcendence-x10" {
+  name        = "ft_transcendence-x10"
+  description = "ft_transcendence-x10 project"
+  purpose     = "Web Application"
+  resources   = [digitalocean_droplet.k8s_node1.urn, digitalocean_droplet.k8s_node2.urn, digitalocean_droplet.k8s_node3.urn, digitalocean_droplet.k8s_node4.urn]
+}
+
 resource "digitalocean_droplet" "k8s_node1" {
     name = "k8s-node1"
     region = "nyc3"

@@ -1,21 +1,21 @@
 - name : installing k3s in master node
   hosts: master
-  become: true # set to true if you need sudo priv
+  become: true # useless because in ansible.cfg we specified that defaut is becaome=true so no need to re-specify it here
   tasks:
     # - name: copy installation script to cloud machine
     #   ansible.builtin.copy:
     #     src: ./master.sh
     #     dest: /tmp/master.sh
     #     mode: '0755'
-    
+
     - name: run the script to setup master node
-      ansible.builtin.script: ./master.sh
+      ansible.builtin.script: ../scripts/master.sh
       # ansible.builtin.shell: /tmp/master.sh
 
     - name: copy token to local file system
       ansible.builtin.fetch:
         src: /home/token.txt
-        dest: ./token.txt
+        dest: ../env_files/token.txt
         flat: yes
 
 - name: installing k3s in agents nodes and joining master node server with token
@@ -26,32 +26,45 @@
   tasks:
     - name: copy token file on the cloud machine fs 
       ansible.builtin.copy:
-        src: ./token.txt
+        src: ../env_files/token.txt
         dest: /home/token.txt
         mode: '0644'
     - name: copy worker.sh to the cloud machine
       ansible.builtin.copy:
-        src: ./worker.sh
+        src: ../scripts/worker.sh
         dest: /home/worker.sh
         mode: '0777'
 
     - name: install k3s and joing nodes to server
       ansible.builtin.shell: /home/worker.sh
+    # - name: run worker.sh
+    #   ansible.builtin.script: ../scripts/worker.sh
 
 - name: installing dashboard ui for cluster visualization
   hosts: master
   become: true
   tasks:
     - name: run the script
-      ansible.builtin.script: ./dashboard.sh
+      ansible.builtin.script: ../scripts/dashboard.sh
     - name: Fetch dashboard_token.txt to local machine
       ansible.builtin.fetch:
         src: /home/dashboard_token.txt
-        dest: ./dashboard_token.txt
+        dest: ../env_files/dashboard_token.txt
         flat: yes
 
     - name: Fetch dashboard_ip_port.txt to local machine
       ansible.builtin.fetch:
         src: /home/dashboard_ip_port.txt
-        dest: ./dashboard_ip_port.txt
+        dest: ../env_files/dashboard_ip_port.txt
         flat: yes
+
+# deployement phase (k3s -- local)
+
+# - name: deploy app
+#   hosts: master
+#   become: true
+#   tasks:
+#     - name: create namespaces
+#       ansible.builtin.shell: ./namespaces.sh
+
+# and need to split playbook into smaller playbooks for each job or task
