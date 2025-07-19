@@ -42,15 +42,12 @@ jobs:
       - name: Update K8s deployment image tags
         run: |
           sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/manifests/app.yaml
-      #     sed -i "s|\(trandandan_auth-service:\).*|\1$IMAGE_TAG|" k8s/dev/auth-deployment.yaml
-      #     sed -i "s|\(trandandan_user-service:\).*|\1$IMAGE_TAG|" k8s/dev/user-deployment.yaml
-      #     sed -i "s|\(trandandan_chat-service:\).*|\1$IMAGE_TAG|" k8s/dev/chat-deployment.yaml
 
       - name: Commit and push updated manifests
         run: |
           git config user.name "GitHub Actions"
           git config user.email "ci@github.com"
-          git add k8s/dev/*.yaml
+          git add k8s/manifests/*.yaml
           git commit -m "ci: update image tags to $IMAGE_TAG"
           git push
         env:
