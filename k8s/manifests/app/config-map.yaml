@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: transcendence-config
+  namespace: transcendence
+data:
+  # Email Configuration (non-sensitive)
+  VERIFICATION_EMAIL: "souhaib.smsm50@gmail.com"
+  
+  # Service URLs (Internal Kubernetes service communication)
+  AUTH_SERVICE_URL: "http://auth-service:3001"
+  USER_MANAGEMENT_SERVICE_URL: "http://user-service:3002"
+  CHAT_SERVICE_URL: "http://chat-service:3004"
+  
+  # Port Configuration
+  API_GATEWAY_PORT: "3000"
+  AUTH_PORT: "3001"
+  USER_MANAGEMENT_PORT: "3002"
+  CHAT_PORT: "3004"
+  
+  # Application Configuration
+  NODE_ENV: "production"
+  PORT: "3000"
+  VERIFICATION_EMAIL_PASS: "cWhueSBjbWRzIHRudm4geXhrdQ=="  # qhnm cmds tnvn yxku
+  JWT_SECRET: "N2Y2ZmEwMjUwYWUwZTE5NWE0N2UwZTBiNjkzM2QxOTA2MjAxYzlkZmM5ZDBjYWQ2MmMyYzRiZTgyYzU3MDlmMDAwODc5ZDkwMDZkZDQzYjMwOGI4ZjI0MzAzZDlkNjM0YjFkMzVmODVlZGY2NTQwOWRlZjU1NTJiZTgzODZiNDM3NDE0NDFiY2JiMGZiNDkwNzgzNzkxYTEyYjUwN2U1NjQ4OTI5NzM3NGMxOGQ4YzhhZjhmNzBkOWUxODUyNDQ1YjQ4NzVjNDBiNzQ3NjdjYTM0ZTEwOTQzMDQ5ZjI5NTMzYmUxZmRhMWRmZDY0NTk5YzA2NmI1ZWQ4NDZlODNkZjJjZjkwMmE4NzhmYWNkMjgzMTRiMDc4MDg3ZTFjMzllODQyYzk1OWI2NDNhOGIwYjc2MjFjOTg5MTQwNjRiNWE1MzNkMzhkZjNmOTI0ZTRlYjBlMGI2NmUyYzU2MjdkYjhlZDkyYTVlNzM3NDIwYThlY2IxMjVjMjc5ODY1MGU3MmQ1MTUzZDc4NmU4ZDMzNzU1NjYyM2EyZTFiZjA5NWQyODkyYzk5ZjEwYjhlYzI1NWJjZTY4MGU3YjdhMTBhYjI2OTViNWIzMzdjNGU0MDYyMzgzZjRiMzkxZTUyZThkMjhkODFjMmJmM2RmYjkwYzIxYjYxNTZkM2Q4MzQwMzk="
+  GOOGLE_CLIENT_ID: "ODEyNDE1OTE5MTgta2dubG12dHRsNmgxaHRwMzY3ajkyc29iNTk4NzJxYWIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20="
+  GOOGLE_CLIENT_SECRET: "R09DU1BYLVlYbDdtZmJsamNMMm5JOTZHT2thbmdSQXh1aHU="

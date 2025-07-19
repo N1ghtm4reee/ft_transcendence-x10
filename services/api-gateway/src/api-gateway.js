@@ -108,7 +108,6 @@ app.register(proxy, createProxyWithHeaders(
   '/api/chat'
 ));
 
-
 app.register(proxy, {
   wsUpstream: process.env.CHAT_SERVICE_URL || 'ws://chat-service:3004',
   prefix: '/ws/chat',

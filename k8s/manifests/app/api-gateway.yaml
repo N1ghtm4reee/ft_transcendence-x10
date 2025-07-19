@@ -1,0 +1,44 @@
+---
+# api-gateway.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: transcendence
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: n1ghtm4r3e/trandandan_api-gateway:latest
+          ports:
+            - containerPort: 3000
+          env:
+            # Explicitly override PORT to ensure correct value
+            - name: PORT
+              value: "3000"
+          envFrom:
+            # Load non-sensitive config
+            - configMapRef:
+                name: transcendence-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+  namespace: transcendence
+spec:
+  selector:
+    app: api-gateway
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

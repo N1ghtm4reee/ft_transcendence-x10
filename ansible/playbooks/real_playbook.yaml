@@ -1,51 +1,45 @@
-- name : installing k3s in master node
+---
+- name: Installing k3s in master node
   hosts: master
-  become: true # useless because in ansible.cfg we specified that defaut is becaome=true so no need to re-specify it here
+  become: true
   tasks:
-    # - name: copy installation script to cloud machine
-    #   ansible.builtin.copy:
-    #     src: ./master.sh
-    #     dest: /tmp/master.sh
-    #     mode: '0755'
-
-    - name: run the script to setup master node
+    - name: Run the script to setup master node
       ansible.builtin.script: ../scripts/master.sh
-      # ansible.builtin.shell: /tmp/master.sh
 
-    - name: copy token to local file system
+    - name: Copy token to local file system
       ansible.builtin.fetch:
         src: /home/token.txt
         dest: ../env_files/token.txt
         flat: yes
 
-- name: installing k3s in agents nodes and joining master node server with token
+- name: Installing k3s in agent nodes and joining master node server with token
   hosts: workers
   become: true
   vars:
     master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4']['address'] }}"
   tasks:
-    - name: copy token file on the cloud machine fs 
+    - name: Copy token file to the cloud machine filesystem
       ansible.builtin.copy:
         src: ../env_files/token.txt
         dest: /home/token.txt
         mode: '0644'
-    - name: copy worker.sh to the cloud machine
+
+    - name: Copy worker.sh to the cloud machine
       ansible.builtin.copy:
         src: ../scripts/worker.sh
         dest: /home/worker.sh
-        mode: '0777'
+        mode: '0755'
 
-    - name: install k3s and joing nodes to server
+    - name: Install k3s and join nodes to server
       ansible.builtin.shell: /home/worker.sh
-    # - name: run worker.sh
-    #   ansible.builtin.script: ../scripts/worker.sh
 
-- name: installing dashboard ui for cluster visualization
+- name: Installing dashboard UI for cluster visualization
   hosts: master
   become: true
   tasks:
-    - name: run the script
+    - name: Run the dashboard script
       ansible.builtin.script: ../scripts/dashboard.sh
+
     - name: Fetch dashboard_token.txt to local machine
       ansible.builtin.fetch:
         src: /home/dashboard_token.txt
@@ -58,13 +52,25 @@
         dest: ../env_files/dashboard_ip_port.txt
         flat: yes
 
-# deployement phase (k3s -- local)
+- name: Copy manifests to cloud machine
+  hosts: master
+  become: true
+  tasks:
+    - name: Copy entire manifests directory to cloud machine
+      ansible.builtin.copy:
+        src: ../../k8s/manifests/
+        dest: /home/manifests/
+        mode: '0644'
 
-# - name: deploy app
-#   hosts: master
-#   become: true
-#   tasks:
-#     - name: create namespaces
-#       ansible.builtin.shell: ./namespaces.sh
-
-# and need to split playbook into smaller playbooks for each job or task
+- name: Deploy services
+  hosts: master
+  become: true
+  tasks:
+    - name: create namespace
+      ansible.builtin.command: kubectl apply -f /home/manifests/namespace.yaml
+    - name: Apply Config Map 
+      ansible.builtin.command: kubectl apply -f /home/manifests/config-map.yaml
+    - name: Apply api-gateway manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/api-gateway.yaml
+    - name: Apply chat-service manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/chat-service.yaml

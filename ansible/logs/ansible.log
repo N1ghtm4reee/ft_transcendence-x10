@@ -188,3 +188,415 @@ the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/referen
 2025-07-16 14:40:54,643 p=154482 u=aakhrif n=ansible INFO| 159.65.250.76              : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-16 14:40:54,643 p=154482 u=aakhrif n=ansible INFO| 167.99.48.206              : ok=7    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-16 14:40:54,643 p=154482 u=aakhrif n=ansible INFO| 64.225.29.187              : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:40:18,028 p=331931 u=aakhrif n=ansible INFO| PLAY [installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 15:40:18,041 p=331931 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:40:41,246 p=331931 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.172.21.27 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:40:41,246 p=331931 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:40:41,254 p=331931 u=aakhrif n=ansible INFO| TASK [run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 15:41:24,205 p=331931 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:41:24,213 p=331931 u=aakhrif n=ansible INFO| TASK [copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 15:41:39,667 p=331931 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:41:39,671 p=331931 u=aakhrif n=ansible INFO| PLAY [installing k3s in agents nodes and joining master node server with token] ********************************************************************************************************
+2025-07-19 15:41:39,674 p=331931 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:41:58,530 p=331931 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.99.116.166 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:41:58,530 p=331931 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 15:41:58,587 p=331931 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 64.225.23.33 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:41:58,587 p=331931 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 15:41:58,695 p=331931 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 68.183.49.6 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change the
+meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:41:58,695 p=331931 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 15:41:58,705 p=331931 u=aakhrif n=ansible INFO| TASK [copy token file on the cloud machine fs] *****************************************************************************************************************************************
+2025-07-19 15:42:23,608 p=331931 u=aakhrif n=ansible INFO| changed: [68.183.49.6]
+2025-07-19 15:42:23,816 p=331931 u=aakhrif n=ansible INFO| changed: [64.225.23.33]
+2025-07-19 15:42:23,817 p=331931 u=aakhrif n=ansible INFO| changed: [167.99.116.166]
+2025-07-19 15:42:23,829 p=331931 u=aakhrif n=ansible INFO| TASK [copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 15:42:47,656 p=331931 u=aakhrif n=ansible INFO| changed: [68.183.49.6]
+2025-07-19 15:42:47,727 p=331931 u=aakhrif n=ansible INFO| changed: [167.99.116.166]
+2025-07-19 15:42:47,928 p=331931 u=aakhrif n=ansible INFO| changed: [64.225.23.33]
+2025-07-19 15:42:47,939 p=331931 u=aakhrif n=ansible INFO| TASK [install k3s and joing nodes to server] *******************************************************************************************************************************************
+2025-07-19 15:43:22,808 p=331931 u=aakhrif n=ansible INFO| changed: [167.99.116.166]
+2025-07-19 15:43:22,843 p=331931 u=aakhrif n=ansible INFO| changed: [64.225.23.33]
+2025-07-19 15:43:26,907 p=331931 u=aakhrif n=ansible INFO| changed: [68.183.49.6]
+2025-07-19 15:43:26,909 p=331931 u=aakhrif n=ansible INFO| PLAY [installing dashboard ui for cluster visualization] *******************************************************************************************************************************
+2025-07-19 15:43:26,913 p=331931 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:43:44,940 p=331931 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:43:44,952 p=331931 u=aakhrif n=ansible INFO| TASK [run the script] ******************************************************************************************************************************************************************
+2025-07-19 15:44:02,311 p=331931 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:44:02,316 p=331931 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 15:44:17,700 p=331931 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:44:17,710 p=331931 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 15:44:32,928 p=331931 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:44:32,930 p=331931 u=aakhrif n=ansible INFO| PLAY [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 15:44:32,936 p=331931 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:44:50,116 p=331931 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:44:50,121 p=331931 u=aakhrif n=ansible INFO| TASK [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 15:44:56,583 p=331931 u=aakhrif n=ansible INFO| An exception occurred during task execution. To see the full traceback, use -vvv. The error was: If you are using a module and expect the file to exist on the remote, see the remote_src option
+2025-07-19 15:44:56,583 p=331931 u=aakhrif n=ansible INFO| fatal: [167.172.21.27]: FAILED! => {"changed": false, "msg": "Could not find or access '../k8s/'\nSearched in:\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../k8s/\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../k8s/\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../k8s/\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../k8s/ on the Ansible Controller.\nIf you are using a module and expect the file to exist on the remote, see the remote_src option"}
+2025-07-19 15:44:56,584 p=331931 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 15:44:56,584 p=331931 u=aakhrif n=ansible INFO| 167.172.21.27              : ok=8    changed=5    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:44:56,584 p=331931 u=aakhrif n=ansible INFO| 167.99.116.166             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:44:56,584 p=331931 u=aakhrif n=ansible INFO| 64.225.23.33               : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:44:56,584 p=331931 u=aakhrif n=ansible INFO| 68.183.49.6                : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:49:01,103 p=352602 u=aakhrif n=ansible INFO| PLAY [installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 15:49:01,112 p=352602 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:49:22,689 p=352602 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.172.21.27 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:49:22,689 p=352602 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:49:22,694 p=352602 u=aakhrif n=ansible INFO| TASK [run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 15:49:42,078 p=352602 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:49:42,097 p=352602 u=aakhrif n=ansible INFO| TASK [copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 15:49:54,284 p=352602 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:49:54,288 p=352602 u=aakhrif n=ansible INFO| PLAY [installing k3s in agents nodes and joining master node server with token] ********************************************************************************************************
+2025-07-19 15:49:54,292 p=352602 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:50:10,726 p=352602 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 64.225.23.33 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:50:10,726 p=352602 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 15:50:10,926 p=352602 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 68.183.49.6 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change the
+meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:50:10,927 p=352602 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 15:50:11,173 p=352602 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.99.116.166 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 15:50:11,173 p=352602 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 15:50:11,182 p=352602 u=aakhrif n=ansible INFO| TASK [copy token file on the cloud machine fs] *****************************************************************************************************************************************
+2025-07-19 15:50:28,439 p=352602 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 15:50:28,488 p=352602 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 15:50:28,648 p=352602 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 15:50:28,652 p=352602 u=aakhrif n=ansible INFO| TASK [copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 15:50:46,795 p=352602 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 15:50:47,338 p=352602 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 15:50:47,425 p=352602 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 15:50:47,436 p=352602 u=aakhrif n=ansible INFO| TASK [install k3s and joing nodes to server] *******************************************************************************************************************************************
+2025-07-19 15:51:03,146 p=352602 u=aakhrif n=ansible INFO| changed: [64.225.23.33]
+2025-07-19 15:51:03,337 p=352602 u=aakhrif n=ansible INFO| changed: [167.99.116.166]
+2025-07-19 15:51:03,523 p=352602 u=aakhrif n=ansible INFO| changed: [68.183.49.6]
+2025-07-19 15:51:03,534 p=352602 u=aakhrif n=ansible INFO| PLAY [installing dashboard ui for cluster visualization] *******************************************************************************************************************************
+2025-07-19 15:51:03,545 p=352602 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:51:19,400 p=352602 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:51:19,404 p=352602 u=aakhrif n=ansible INFO| TASK [run the script] ******************************************************************************************************************************************************************
+2025-07-19 15:51:36,869 p=352602 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:51:36,873 p=352602 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 15:51:51,483 p=352602 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:51:51,499 p=352602 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 15:52:06,054 p=352602 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:52:06,056 p=352602 u=aakhrif n=ansible INFO| PLAY [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 15:52:06,062 p=352602 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:52:22,344 p=352602 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:52:22,348 p=352602 u=aakhrif n=ansible INFO| TASK [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 15:55:16,018 p=352602 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 15:55:16,038 p=352602 u=aakhrif n=ansible INFO| PLAY [deploy test service] *************************************************************************************************************************************************************
+2025-07-19 15:55:16,060 p=352602 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 15:55:32,734 p=352602 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 15:55:32,741 p=352602 u=aakhrif n=ansible INFO| TASK [apply api-gateway manifest] ******************************************************************************************************************************************************
+2025-07-19 15:55:47,154 p=352602 u=aakhrif n=ansible INFO| fatal: [167.172.21.27]: FAILED! => {"changed": true, "cmd": ["kubectl", "apply", "-f", "/home/k8s/manifests/app/api-gateway.yaml"], "delta": "0:00:00.153068", "end": "2025-07-19 14:55:44.933642", "msg": "non-zero return code", "rc": 1, "start": "2025-07-19 14:55:44.780574", "stderr": "error: the path \"/home/k8s/manifests/app/api-gateway.yaml\" does not exist", "stderr_lines": ["error: the path \"/home/k8s/manifests/app/api-gateway.yaml\" does not exist"], "stdout": "", "stdout_lines": []}
+2025-07-19 15:55:47,156 p=352602 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 15:55:47,156 p=352602 u=aakhrif n=ansible INFO| 167.172.21.27              : ok=10   changed=5    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:55:47,157 p=352602 u=aakhrif n=ansible INFO| 167.99.116.166             : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:55:47,157 p=352602 u=aakhrif n=ansible INFO| 64.225.23.33               : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 15:55:47,157 p=352602 u=aakhrif n=ansible INFO| 68.183.49.6                : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:00:51,225 p=380790 u=aakhrif n=ansible INFO| PLAY [installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 16:00:51,237 p=380790 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:01:11,579 p=380790 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.172.21.27 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:01:11,579 p=380790 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 16:01:11,584 p=380790 u=aakhrif n=ansible INFO| TASK [run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 16:01:30,910 p=380790 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 16:01:30,917 p=380790 u=aakhrif n=ansible INFO| TASK [copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 16:01:43,793 p=380790 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 16:01:43,796 p=380790 u=aakhrif n=ansible INFO| PLAY [installing k3s in agents nodes and joining master node server with token] ********************************************************************************************************
+2025-07-19 16:01:43,801 p=380790 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:01:59,752 p=380790 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.99.116.166 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:01:59,752 p=380790 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 16:01:59,808 p=380790 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 64.225.23.33 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:01:59,809 p=380790 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 16:01:59,956 p=380790 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 68.183.49.6 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change the
+meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:01:59,957 p=380790 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 16:01:59,962 p=380790 u=aakhrif n=ansible INFO| TASK [copy token file on the cloud machine fs] *****************************************************************************************************************************************
+2025-07-19 16:02:17,216 p=380790 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 16:02:17,238 p=380790 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 16:02:17,433 p=380790 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 16:02:17,440 p=380790 u=aakhrif n=ansible INFO| TASK [copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 16:02:35,505 p=380790 u=aakhrif n=ansible INFO| ok: [167.99.116.166]
+2025-07-19 16:02:35,685 p=380790 u=aakhrif n=ansible INFO| ok: [68.183.49.6]
+2025-07-19 16:02:35,936 p=380790 u=aakhrif n=ansible INFO| ok: [64.225.23.33]
+2025-07-19 16:02:35,947 p=380790 u=aakhrif n=ansible INFO| TASK [install k3s and joing nodes to server] *******************************************************************************************************************************************
+2025-07-19 16:02:51,061 p=380790 u=aakhrif n=ansible INFO| changed: [167.99.116.166]
+2025-07-19 16:02:51,273 p=380790 u=aakhrif n=ansible INFO| changed: [64.225.23.33]
+2025-07-19 16:02:51,816 p=380790 u=aakhrif n=ansible INFO| changed: [68.183.49.6]
+2025-07-19 16:02:51,819 p=380790 u=aakhrif n=ansible INFO| PLAY [installing dashboard ui for cluster visualization] *******************************************************************************************************************************
+2025-07-19 16:02:51,826 p=380790 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:03:07,464 p=380790 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 16:03:07,469 p=380790 u=aakhrif n=ansible INFO| TASK [run the script] ******************************************************************************************************************************************************************
+2025-07-19 16:03:24,372 p=380790 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 16:03:24,380 p=380790 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 16:03:38,072 p=380790 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 16:03:38,080 p=380790 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 16:03:52,328 p=380790 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 16:03:52,330 p=380790 u=aakhrif n=ansible INFO| PLAY [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 16:03:52,336 p=380790 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:04:07,819 p=380790 u=aakhrif n=ansible INFO| ok: [167.172.21.27]
+2025-07-19 16:04:07,824 p=380790 u=aakhrif n=ansible INFO| TASK [check pwd] ***********************************************************************************************************************************************************************
+2025-07-19 16:04:22,801 p=380790 u=aakhrif n=ansible INFO| changed: [167.172.21.27]
+2025-07-19 16:04:22,809 p=380790 u=aakhrif n=ansible INFO| TASK [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 16:04:29,559 p=380790 u=aakhrif n=ansible INFO| An exception occurred during task execution. To see the full traceback, use -vvv. The error was: If you are using a module and expect the file to exist on the remote, see the remote_src option
+2025-07-19 16:04:29,559 p=380790 u=aakhrif n=ansible INFO| fatal: [167.172.21.27]: FAILED! => {"changed": false, "msg": "Could not find or access '../../k8s/manifests/app/apt-gateway.yaml'\nSearched in:\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../../k8s/manifests/app/apt-gateway.yaml on the Ansible Controller.\nIf you are using a module and expect the file to exist on the remote, see the remote_src option"}
+2025-07-19 16:04:29,561 p=380790 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 16:04:29,561 p=380790 u=aakhrif n=ansible INFO| 167.172.21.27              : ok=9    changed=5    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:04:29,561 p=380790 u=aakhrif n=ansible INFO| 167.99.116.166             : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:04:29,561 p=380790 u=aakhrif n=ansible INFO| 64.225.23.33               : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:04:29,561 p=380790 u=aakhrif n=ansible INFO| 68.183.49.6                : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:47:21,201 p=489851 u=aakhrif n=ansible INFO| PLAY [installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 16:47:21,214 p=489851 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:47:44,115 p=489851 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 104.236.253.117 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:47:44,115 p=489851 u=aakhrif n=ansible INFO| ok: [104.236.253.117]
+2025-07-19 16:47:44,120 p=489851 u=aakhrif n=ansible INFO| TASK [run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 16:48:27,291 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:48:27,300 p=489851 u=aakhrif n=ansible INFO| TASK [copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 16:48:43,590 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:48:43,592 p=489851 u=aakhrif n=ansible INFO| PLAY [installing k3s in agents nodes and joining master node server with token] ********************************************************************************************************
+2025-07-19 16:48:43,595 p=489851 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:49:01,113 p=489851 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 159.65.180.196 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:49:01,113 p=489851 u=aakhrif n=ansible INFO| ok: [159.65.180.196]
+2025-07-19 16:49:01,124 p=489851 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 157.245.4.180 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:49:01,125 p=489851 u=aakhrif n=ansible INFO| ok: [157.245.4.180]
+2025-07-19 16:49:01,126 p=489851 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 104.236.203.51 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 16:49:01,126 p=489851 u=aakhrif n=ansible INFO| ok: [104.236.203.51]
+2025-07-19 16:49:01,131 p=489851 u=aakhrif n=ansible INFO| TASK [copy token file on the cloud machine fs] *****************************************************************************************************************************************
+2025-07-19 16:49:27,520 p=489851 u=aakhrif n=ansible INFO| changed: [159.65.180.196]
+2025-07-19 16:49:27,520 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.203.51]
+2025-07-19 16:49:27,521 p=489851 u=aakhrif n=ansible INFO| changed: [157.245.4.180]
+2025-07-19 16:49:27,530 p=489851 u=aakhrif n=ansible INFO| TASK [copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 16:49:50,253 p=489851 u=aakhrif n=ansible INFO| changed: [157.245.4.180]
+2025-07-19 16:49:50,253 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.203.51]
+2025-07-19 16:49:50,253 p=489851 u=aakhrif n=ansible INFO| changed: [159.65.180.196]
+2025-07-19 16:49:50,258 p=489851 u=aakhrif n=ansible INFO| TASK [install k3s and joing nodes to server] *******************************************************************************************************************************************
+2025-07-19 16:50:29,854 p=489851 u=aakhrif n=ansible INFO| changed: [159.65.180.196]
+2025-07-19 16:50:30,082 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.203.51]
+2025-07-19 16:50:31,192 p=489851 u=aakhrif n=ansible INFO| changed: [157.245.4.180]
+2025-07-19 16:50:31,194 p=489851 u=aakhrif n=ansible INFO| PLAY [installing dashboard ui for cluster visualization] *******************************************************************************************************************************
+2025-07-19 16:50:31,198 p=489851 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:50:47,405 p=489851 u=aakhrif n=ansible INFO| ok: [104.236.253.117]
+2025-07-19 16:50:47,409 p=489851 u=aakhrif n=ansible INFO| TASK [run the script] ******************************************************************************************************************************************************************
+2025-07-19 16:51:02,240 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:51:02,247 p=489851 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 16:51:17,088 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:51:17,094 p=489851 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 16:51:30,404 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:51:30,409 p=489851 u=aakhrif n=ansible INFO| PLAY [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 16:51:30,416 p=489851 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 16:51:46,080 p=489851 u=aakhrif n=ansible INFO| ok: [104.236.253.117]
+2025-07-19 16:51:46,090 p=489851 u=aakhrif n=ansible INFO| TASK [check pwd] ***********************************************************************************************************************************************************************
+2025-07-19 16:51:59,175 p=489851 u=aakhrif n=ansible INFO| changed: [104.236.253.117]
+2025-07-19 16:51:59,181 p=489851 u=aakhrif n=ansible INFO| TASK [copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 16:52:05,526 p=489851 u=aakhrif n=ansible INFO| An exception occurred during task execution. To see the full traceback, use -vvv. The error was: If you are using a module and expect the file to exist on the remote, see the remote_src option
+2025-07-19 16:52:05,528 p=489851 u=aakhrif n=ansible INFO| fatal: [104.236.253.117]: FAILED! => {"changed": false, "msg": "Could not find or access '../../k8s/manifests/app/apt-gateway.yaml'\nSearched in:\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/files/../../k8s/manifests/app/apt-gateway.yaml\n\t/home/aakhrif/ft_transcendence-x10/ansible/playbooks/../../k8s/manifests/app/apt-gateway.yaml on the Ansible Controller.\nIf you are using a module and expect the file to exist on the remote, see the remote_src option"}
+2025-07-19 16:52:05,529 p=489851 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 16:52:05,530 p=489851 u=aakhrif n=ansible INFO| 104.236.203.51             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:52:05,530 p=489851 u=aakhrif n=ansible INFO| 104.236.253.117            : ok=9    changed=6    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:52:05,530 p=489851 u=aakhrif n=ansible INFO| 157.245.4.180              : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 16:52:05,530 p=489851 u=aakhrif n=ansible INFO| 159.65.180.196             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 17:01:34,789 p=522863 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 17:01:34,807 p=522863 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 17:01:34,833 p=522863 u=aakhrif n=ansible INFO| fatal: [ansible_user=root]: UNREACHABLE! => {"changed": false, "msg": "Failed to connect to the host via ssh: ssh: Could not resolve hostname ansible_user=root: Name or service not known", "unreachable": true}
+2025-07-19 17:01:34,834 p=522863 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 17:01:34,834 p=522863 u=aakhrif n=ansible INFO| ansible_user=root          : ok=0    changed=0    unreachable=1    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 17:02:36,276 p=525327 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 17:02:36,283 p=525327 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 17:02:57,314 p=525327 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 174.138.62.137 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 17:02:57,315 p=525327 u=aakhrif n=ansible INFO| ok: [174.138.62.137]
+2025-07-19 17:02:57,320 p=525327 u=aakhrif n=ansible INFO| TASK [Run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 17:03:36,520 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:03:36,528 p=525327 u=aakhrif n=ansible INFO| TASK [Copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 17:03:51,675 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:03:51,677 p=525327 u=aakhrif n=ansible INFO| PLAY [Installing k3s in agent nodes and joining master node server with token] *********************************************************************************************************
+2025-07-19 17:03:51,679 p=525327 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 17:04:11,171 p=525327 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 159.65.46.26 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 17:04:11,171 p=525327 u=aakhrif n=ansible INFO| ok: [159.65.46.26]
+2025-07-19 17:04:11,254 p=525327 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 143.198.13.34 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 17:04:11,255 p=525327 u=aakhrif n=ansible INFO| ok: [143.198.13.34]
+2025-07-19 17:04:11,557 p=525327 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 165.227.77.8 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 17:04:11,557 p=525327 u=aakhrif n=ansible INFO| ok: [165.227.77.8]
+2025-07-19 17:04:11,562 p=525327 u=aakhrif n=ansible INFO| TASK [Copy token file to the cloud machine filesystem] *********************************************************************************************************************************
+2025-07-19 17:04:33,533 p=525327 u=aakhrif n=ansible INFO| changed: [143.198.13.34]
+2025-07-19 17:04:33,608 p=525327 u=aakhrif n=ansible INFO| changed: [159.65.46.26]
+2025-07-19 17:04:33,628 p=525327 u=aakhrif n=ansible INFO| changed: [165.227.77.8]
+2025-07-19 17:04:33,631 p=525327 u=aakhrif n=ansible INFO| TASK [Copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 17:04:55,405 p=525327 u=aakhrif n=ansible INFO| changed: [159.65.46.26]
+2025-07-19 17:04:55,437 p=525327 u=aakhrif n=ansible INFO| changed: [165.227.77.8]
+2025-07-19 17:04:56,289 p=525327 u=aakhrif n=ansible INFO| changed: [143.198.13.34]
+2025-07-19 17:04:56,298 p=525327 u=aakhrif n=ansible INFO| TASK [Install k3s and join nodes to server] ********************************************************************************************************************************************
+2025-07-19 17:05:31,274 p=525327 u=aakhrif n=ansible INFO| changed: [143.198.13.34]
+2025-07-19 17:05:32,158 p=525327 u=aakhrif n=ansible INFO| changed: [165.227.77.8]
+2025-07-19 17:05:32,317 p=525327 u=aakhrif n=ansible INFO| changed: [159.65.46.26]
+2025-07-19 17:05:32,319 p=525327 u=aakhrif n=ansible INFO| PLAY [Installing dashboard UI for cluster visualization] *******************************************************************************************************************************
+2025-07-19 17:05:32,328 p=525327 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 17:05:49,652 p=525327 u=aakhrif n=ansible INFO| ok: [174.138.62.137]
+2025-07-19 17:05:49,656 p=525327 u=aakhrif n=ansible INFO| TASK [Run the dashboard script] ********************************************************************************************************************************************************
+2025-07-19 17:06:05,742 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:06:05,747 p=525327 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 17:06:20,687 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:06:20,697 p=525327 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 17:06:35,905 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:06:35,907 p=525327 u=aakhrif n=ansible INFO| PLAY [Copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 17:06:35,914 p=525327 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 17:06:53,249 p=525327 u=aakhrif n=ansible INFO| ok: [174.138.62.137]
+2025-07-19 17:06:53,253 p=525327 u=aakhrif n=ansible INFO| TASK [Copy entire manifests directory to cloud machine] ********************************************************************************************************************************
+2025-07-19 17:09:46,798 p=525327 u=aakhrif n=ansible INFO| changed: [174.138.62.137]
+2025-07-19 17:09:46,803 p=525327 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 17:09:46,804 p=525327 u=aakhrif n=ansible INFO| 143.198.13.34              : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 17:09:46,804 p=525327 u=aakhrif n=ansible INFO| 159.65.46.26               : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 17:09:46,804 p=525327 u=aakhrif n=ansible INFO| 165.227.77.8               : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 17:09:46,804 p=525327 u=aakhrif n=ansible INFO| 174.138.62.137             : ok=9    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:12:31,598 p=965644 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 20:12:31,611 p=965644 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:12:52,151 p=965644 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.172.29.221 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:12:52,152 p=965644 u=aakhrif n=ansible INFO| ok: [167.172.29.221]
+2025-07-19 20:12:52,160 p=965644 u=aakhrif n=ansible INFO| TASK [Run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 20:13:32,786 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:13:32,804 p=965644 u=aakhrif n=ansible INFO| TASK [Copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 20:13:48,911 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:13:48,922 p=965644 u=aakhrif n=ansible INFO| PLAY [Installing k3s in agent nodes and joining master node server with token] *********************************************************************************************************
+2025-07-19 20:13:48,929 p=965644 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:14:04,983 p=965644 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 134.209.40.232 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:14:04,983 p=965644 u=aakhrif n=ansible INFO| ok: [134.209.40.232]
+2025-07-19 20:14:05,260 p=965644 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.172.240.207 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:14:05,261 p=965644 u=aakhrif n=ansible INFO| ok: [167.172.240.207]
+2025-07-19 20:14:05,411 p=965644 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 159.203.166.254 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:14:05,411 p=965644 u=aakhrif n=ansible INFO| ok: [159.203.166.254]
+2025-07-19 20:14:05,422 p=965644 u=aakhrif n=ansible INFO| TASK [Copy token file to the cloud machine filesystem] *********************************************************************************************************************************
+2025-07-19 20:14:28,301 p=965644 u=aakhrif n=ansible INFO| changed: [159.203.166.254]
+2025-07-19 20:14:28,471 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.240.207]
+2025-07-19 20:14:28,676 p=965644 u=aakhrif n=ansible INFO| changed: [134.209.40.232]
+2025-07-19 20:14:28,681 p=965644 u=aakhrif n=ansible INFO| TASK [Copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 20:14:51,733 p=965644 u=aakhrif n=ansible INFO| changed: [134.209.40.232]
+2025-07-19 20:14:51,960 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.240.207]
+2025-07-19 20:14:52,159 p=965644 u=aakhrif n=ansible INFO| changed: [159.203.166.254]
+2025-07-19 20:14:52,167 p=965644 u=aakhrif n=ansible INFO| TASK [Install k3s and join nodes to server] ********************************************************************************************************************************************
+2025-07-19 20:15:31,427 p=965644 u=aakhrif n=ansible INFO| changed: [159.203.166.254]
+2025-07-19 20:15:32,792 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.240.207]
+2025-07-19 20:15:33,174 p=965644 u=aakhrif n=ansible INFO| changed: [134.209.40.232]
+2025-07-19 20:15:33,177 p=965644 u=aakhrif n=ansible INFO| PLAY [Installing dashboard UI for cluster visualization] *******************************************************************************************************************************
+2025-07-19 20:15:33,185 p=965644 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:15:49,796 p=965644 u=aakhrif n=ansible INFO| ok: [167.172.29.221]
+2025-07-19 20:15:49,805 p=965644 u=aakhrif n=ansible INFO| TASK [Run the dashboard script] ********************************************************************************************************************************************************
+2025-07-19 20:16:06,709 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:16:06,755 p=965644 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 20:16:21,918 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:16:21,930 p=965644 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 20:16:37,689 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:16:37,694 p=965644 u=aakhrif n=ansible INFO| PLAY [Copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 20:16:37,700 p=965644 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:16:54,597 p=965644 u=aakhrif n=ansible INFO| ok: [167.172.29.221]
+2025-07-19 20:16:54,606 p=965644 u=aakhrif n=ansible INFO| TASK [Copy entire manifests directory to cloud machine] ********************************************************************************************************************************
+2025-07-19 20:19:43,790 p=965644 u=aakhrif n=ansible INFO| changed: [167.172.29.221]
+2025-07-19 20:19:43,819 p=965644 u=aakhrif n=ansible INFO| PLAY [Deploy services] *****************************************************************************************************************************************************************
+2025-07-19 20:19:43,842 p=965644 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:20:00,029 p=965644 u=aakhrif n=ansible INFO| ok: [167.172.29.221]
+2025-07-19 20:20:00,040 p=965644 u=aakhrif n=ansible INFO| TASK [create namespace] ****************************************************************************************************************************************************************
+2025-07-19 20:20:14,263 p=965644 u=aakhrif n=ansible INFO| fatal: [167.172.29.221]: FAILED! => {"changed": true, "cmd": ["kubectl", "apply", "-f", "/home/manifests/namespace.yaml"], "delta": "0:00:00.190501", "end": "2025-07-19 19:20:11.861022", "msg": "non-zero return code", "rc": 1, "start": "2025-07-19 19:20:11.670521", "stderr": "error: the path \"/home/manifests/namespace.yaml\" does not exist", "stderr_lines": ["error: the path \"/home/manifests/namespace.yaml\" does not exist"], "stdout": "", "stdout_lines": []}
+2025-07-19 20:20:14,264 p=965644 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 20:20:14,265 p=965644 u=aakhrif n=ansible INFO| 134.209.40.232             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:20:14,265 p=965644 u=aakhrif n=ansible INFO| 159.203.166.254            : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:20:14,265 p=965644 u=aakhrif n=ansible INFO| 167.172.240.207            : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:20:14,265 p=965644 u=aakhrif n=ansible INFO| 167.172.29.221             : ok=10   changed=6    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:33:54,717 p=1015841 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-19 20:33:54,736 p=1015841 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:34:17,139 p=1015841 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 165.22.47.154 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:34:17,139 p=1015841 u=aakhrif n=ansible INFO| ok: [165.22.47.154]
+2025-07-19 20:34:17,150 p=1015841 u=aakhrif n=ansible INFO| TASK [Run the script to setup master node] *********************************************************************************************************************************************
+2025-07-19 20:34:59,438 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:34:59,449 p=1015841 u=aakhrif n=ansible INFO| TASK [Copy token to local file system] *************************************************************************************************************************************************
+2025-07-19 20:35:14,571 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:35:14,576 p=1015841 u=aakhrif n=ansible INFO| PLAY [Installing k3s in agent nodes and joining master node server with token] *********************************************************************************************************
+2025-07-19 20:35:14,579 p=1015841 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:35:31,424 p=1015841 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 157.245.121.137 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:35:31,424 p=1015841 u=aakhrif n=ansible INFO| ok: [157.245.121.137]
+2025-07-19 20:35:31,462 p=1015841 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 174.138.50.221 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:35:31,462 p=1015841 u=aakhrif n=ansible INFO| ok: [174.138.50.221]
+2025-07-19 20:35:31,988 p=1015841 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 104.131.188.220 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-19 20:35:31,988 p=1015841 u=aakhrif n=ansible INFO| ok: [104.131.188.220]
+2025-07-19 20:35:31,996 p=1015841 u=aakhrif n=ansible INFO| TASK [Copy token file to the cloud machine filesystem] *********************************************************************************************************************************
+2025-07-19 20:35:56,645 p=1015841 u=aakhrif n=ansible INFO| changed: [157.245.121.137]
+2025-07-19 20:35:56,835 p=1015841 u=aakhrif n=ansible INFO| changed: [174.138.50.221]
+2025-07-19 20:35:56,991 p=1015841 u=aakhrif n=ansible INFO| changed: [104.131.188.220]
+2025-07-19 20:35:56,995 p=1015841 u=aakhrif n=ansible INFO| TASK [Copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-19 20:36:19,983 p=1015841 u=aakhrif n=ansible INFO| changed: [157.245.121.137]
+2025-07-19 20:36:20,040 p=1015841 u=aakhrif n=ansible INFO| changed: [174.138.50.221]
+2025-07-19 20:36:20,252 p=1015841 u=aakhrif n=ansible INFO| changed: [104.131.188.220]
+2025-07-19 20:36:20,260 p=1015841 u=aakhrif n=ansible INFO| TASK [Install k3s and join nodes to server] ********************************************************************************************************************************************
+2025-07-19 20:36:55,128 p=1015841 u=aakhrif n=ansible INFO| changed: [104.131.188.220]
+2025-07-19 20:36:56,046 p=1015841 u=aakhrif n=ansible INFO| changed: [157.245.121.137]
+2025-07-19 20:36:56,465 p=1015841 u=aakhrif n=ansible INFO| changed: [174.138.50.221]
+2025-07-19 20:36:56,467 p=1015841 u=aakhrif n=ansible INFO| PLAY [Installing dashboard UI for cluster visualization] *******************************************************************************************************************************
+2025-07-19 20:36:56,471 p=1015841 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:37:14,395 p=1015841 u=aakhrif n=ansible INFO| ok: [165.22.47.154]
+2025-07-19 20:37:14,400 p=1015841 u=aakhrif n=ansible INFO| TASK [Run the dashboard script] ********************************************************************************************************************************************************
+2025-07-19 20:37:31,265 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:37:31,281 p=1015841 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-19 20:37:46,427 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:37:46,433 p=1015841 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-19 20:38:02,299 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:38:02,302 p=1015841 u=aakhrif n=ansible INFO| PLAY [Copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-19 20:38:02,307 p=1015841 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:38:19,140 p=1015841 u=aakhrif n=ansible INFO| ok: [165.22.47.154]
+2025-07-19 20:38:19,146 p=1015841 u=aakhrif n=ansible INFO| TASK [Copy entire manifests directory to cloud machine] ********************************************************************************************************************************
+2025-07-19 20:41:08,165 p=1015841 u=aakhrif n=ansible INFO| changed: [165.22.47.154]
+2025-07-19 20:41:08,184 p=1015841 u=aakhrif n=ansible INFO| PLAY [Deploy services] *****************************************************************************************************************************************************************
+2025-07-19 20:41:08,197 p=1015841 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-19 20:41:25,179 p=1015841 u=aakhrif n=ansible INFO| ok: [165.22.47.154]
+2025-07-19 20:41:25,185 p=1015841 u=aakhrif n=ansible INFO| TASK [create namespace] ****************************************************************************************************************************************************************
+2025-07-19 20:41:40,822 p=1015841 u=aakhrif n=ansible INFO| fatal: [165.22.47.154]: FAILED! => {"changed": true, "cmd": ["kubectl", "apply", "-f", "/home/manifests/namespace.yaml"], "delta": "0:00:00.161601", "end": "2025-07-19 19:41:38.571604", "msg": "non-zero return code", "rc": 1, "start": "2025-07-19 19:41:38.410003", "stderr": "error: the path \"/home/manifests/namespace.yaml\" does not exist", "stderr_lines": ["error: the path \"/home/manifests/namespace.yaml\" does not exist"], "stdout": "", "stdout_lines": []}
+2025-07-19 20:41:40,823 p=1015841 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-19 20:41:40,823 p=1015841 u=aakhrif n=ansible INFO| 104.131.188.220            : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:41:40,824 p=1015841 u=aakhrif n=ansible INFO| 157.245.121.137            : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:41:40,824 p=1015841 u=aakhrif n=ansible INFO| 165.22.47.154              : ok=10   changed=6    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-19 20:41:40,824 p=1015841 u=aakhrif n=ansible INFO| 174.138.50.221             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
