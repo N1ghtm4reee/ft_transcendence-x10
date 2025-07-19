@@ -1,40 +1,65 @@
-# name: transcendence CI/CD
-# on:
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
+name: transcendence CI/CD
 
-# jobs:
-#   build-and-push:
-#     runs-on: ubuntu-latest
-#     env:
-#       IMAGE_TAG: ${{ github.sha }}
-#       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-#       REGISTRY: docker.io
-    
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-      
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v3
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-#       - name: Log in to Docker Hub
-#         uses: docker/login-action@v3
-#         with:
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-      
-#       - name: Build all images with Makefile
-#         run: make
-      
-#       - name: Push images
-#         run: |
-#           docker push ${{ secrets.DOCKER_USERNAME }}/trandandan_api-gateway:latest
-#           docker push ${{secrets.DOCKER_USERNAME}}/trandandan_auth-service:latest
-#           docker push ${{secrets.DOCKER_USERNAME}}/trandandan_user-service:latest
-#           docker push ${{secrets.DOCKER_USERNAME}}/trandandan_chat-service:latest
-#         if: true
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
 
-# # need to add tests and push images to dockerhub and add a deployement phase with gitOps tools (argoCD) and k8s
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+      REGISTRY: docker.io
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build all images with Makefile
+        run: |
+          IMAGE_TAG=${{ env.IMAGE_TAG }} make
+
+      - name: Tag and Push Images
+        run: |
+          docker tag trandandan_api-gateway $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
+          docker tag trandandan_auth-service $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
+          docker tag trandandan_user-service $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
+          docker tag trandandan_chat-service $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
+
+          docker push $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
+          docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
+          docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
+          docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
+
+      - name: Update K8s deployment image tags
+        run: |
+          sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/dev/app.yaml
+      #     sed -i "s|\(trandandan_auth-service:\).*|\1$IMAGE_TAG|" k8s/dev/auth-deployment.yaml
+      #     sed -i "s|\(trandandan_user-service:\).*|\1$IMAGE_TAG|" k8s/dev/user-deployment.yaml
+      #     sed -i "s|\(trandandan_chat-service:\).*|\1$IMAGE_TAG|" k8s/dev/chat-deployment.yaml
+
+      - name: Commit and push updated manifests
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "ci@github.com"
+          git add k8s/dev/*.yaml
+          git commit -m "ci: update image tags to $IMAGE_TAG"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+
+
+# need to add tests
