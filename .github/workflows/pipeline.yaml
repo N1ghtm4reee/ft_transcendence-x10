@@ -34,12 +34,10 @@ jobs:
 
       - name: Push Images
         run: |
-          docker tag trandandan_api-gateway:latest $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
-
-          docker push $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
-          # docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
-          # docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
-          # docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
+          docker push n1ghtm4r3e/trandandan_api-gateway:latest
+        #  docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
+        #  docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
+        #  docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
 
       - name: Update K8s deployment image tags
         run: |
