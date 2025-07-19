@@ -43,15 +43,20 @@ jobs:
         run: |
           sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/manifests/app.yaml
 
-      - name: Commit and push updated manifests
+      - name: Set up Git user
         run: |
           git config user.name "GitHub Actions"
           git config user.email "ci@github.com"
-          git add k8s/manifests/*.yaml
-          git commit -m "ci: update image tags to $IMAGE_TAG"
-          git push
+
+      - name: Commit and push
         env:
-          GITHUB_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          git add k8s/manifests/*.yaml
+          git commit -m "ci: update image tags to $IMAGE_TAG" || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git
+          git push
 
 
 # need to add tests
