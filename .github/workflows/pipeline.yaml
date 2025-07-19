@@ -34,14 +34,16 @@ jobs:
 
       - name: Push Images
         run: |
+          docker tag trandandan_api-gateway:latest $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
+
           docker push $DOCKER_USERNAME/trandandan_api-gateway:$IMAGE_TAG
-          docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
-          docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
-          docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
+          # docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
+          # docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
+          # docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
 
       - name: Update K8s deployment image tags
         run: |
-          sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/dev/app.yaml
+          sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/manifests/app.yaml
       #     sed -i "s|\(trandandan_auth-service:\).*|\1$IMAGE_TAG|" k8s/dev/auth-deployment.yaml
       #     sed -i "s|\(trandandan_user-service:\).*|\1$IMAGE_TAG|" k8s/dev/user-deployment.yaml
       #     sed -i "s|\(trandandan_chat-service:\).*|\1$IMAGE_TAG|" k8s/dev/chat-deployment.yaml
