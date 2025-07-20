@@ -43,9 +43,9 @@ jobs:
         #  docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
         #  docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
 
-      - name: Update K8s deployment image tags
-        run: |
-          sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/manifests/app.yaml
+      # - name: Update K8s deployment image tags
+      #   run: |
+      #     sed -i "s|\(trandandan_api-gateway:\).*|\1$IMAGE_TAG|" k8s/manifests/app.yaml
 
       - name: Set up Git user
         run: |

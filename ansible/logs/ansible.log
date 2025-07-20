@@ -1127,3 +1127,83 @@ the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/referen
 2025-07-20 02:25:05,404 p=1619273 u=aakhrif n=ansible INFO| 138.197.3.191              : ok=14   changed=10   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-20 02:25:05,404 p=1619273 u=aakhrif n=ansible INFO| 167.71.89.153              : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-20 02:25:05,404 p=1619273 u=aakhrif n=ansible INFO| 45.55.81.99                : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-20 13:43:39,990 p=209633 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] *******************************************
+2025-07-20 13:43:40,004 p=209633 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *********************************************************
+2025-07-20 13:44:03,524 p=209633 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 104.248.6.46 is using the discovered Python
+interpreter at /usr/bin/python3.10, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-20 13:44:03,524 p=209633 u=aakhrif n=ansible INFO| ok: [104.248.6.46]
+2025-07-20 13:44:03,529 p=209633 u=aakhrif n=ansible INFO| TASK [Run the script to setup master node] *************************************
+2025-07-20 13:44:39,552 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:44:39,556 p=209633 u=aakhrif n=ansible INFO| TASK [Copy token to local file system] *****************************************
+2025-07-20 13:44:55,108 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:44:55,120 p=209633 u=aakhrif n=ansible INFO| PLAY [Installing k3s in agent nodes and joining master node server with token] ***
+2025-07-20 13:44:55,137 p=209633 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *********************************************************
+2025-07-20 13:45:11,619 p=209633 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 142.93.178.173 is using the discovered Python
+interpreter at /usr/bin/python3.10, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-20 13:45:11,619 p=209633 u=aakhrif n=ansible INFO| ok: [142.93.178.173]
+2025-07-20 13:45:11,665 p=209633 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 159.203.87.104 is using the discovered Python
+interpreter at /usr/bin/python3.10, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-20 13:45:11,665 p=209633 u=aakhrif n=ansible INFO| ok: [159.203.87.104]
+2025-07-20 13:45:11,870 p=209633 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 68.183.62.226 is using the discovered Python
+interpreter at /usr/bin/python3.10, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-20 13:45:11,870 p=209633 u=aakhrif n=ansible INFO| ok: [68.183.62.226]
+2025-07-20 13:45:11,878 p=209633 u=aakhrif n=ansible INFO| TASK [Copy token file to the cloud machine filesystem] *************************
+2025-07-20 13:45:34,609 p=209633 u=aakhrif n=ansible INFO| changed: [142.93.178.173]
+2025-07-20 13:45:34,689 p=209633 u=aakhrif n=ansible INFO| changed: [68.183.62.226]
+2025-07-20 13:45:35,569 p=209633 u=aakhrif n=ansible INFO| changed: [159.203.87.104]
+2025-07-20 13:45:35,573 p=209633 u=aakhrif n=ansible INFO| TASK [Copy worker.sh to the cloud machine] *************************************
+2025-07-20 13:45:59,311 p=209633 u=aakhrif n=ansible INFO| changed: [68.183.62.226]
+2025-07-20 13:45:59,618 p=209633 u=aakhrif n=ansible INFO| changed: [159.203.87.104]
+2025-07-20 13:45:59,618 p=209633 u=aakhrif n=ansible INFO| changed: [142.93.178.173]
+2025-07-20 13:45:59,627 p=209633 u=aakhrif n=ansible INFO| TASK [Install k3s and join nodes to server] ************************************
+2025-07-20 13:46:34,212 p=209633 u=aakhrif n=ansible INFO| changed: [142.93.178.173]
+2025-07-20 13:46:34,479 p=209633 u=aakhrif n=ansible INFO| changed: [68.183.62.226]
+2025-07-20 13:46:36,789 p=209633 u=aakhrif n=ansible INFO| changed: [159.203.87.104]
+2025-07-20 13:46:36,791 p=209633 u=aakhrif n=ansible INFO| PLAY [Installing dashboard UI for cluster visualization] ***********************
+2025-07-20 13:46:36,795 p=209633 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *********************************************************
+2025-07-20 13:46:53,933 p=209633 u=aakhrif n=ansible INFO| ok: [104.248.6.46]
+2025-07-20 13:46:53,937 p=209633 u=aakhrif n=ansible INFO| TASK [Run the dashboard script] ************************************************
+2025-07-20 13:47:11,096 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:47:11,100 p=209633 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] ******************************
+2025-07-20 13:47:25,332 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:47:25,337 p=209633 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ****************************
+2025-07-20 13:47:41,179 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:47:41,181 p=209633 u=aakhrif n=ansible INFO| PLAY [Copy manifests to cloud machine] *****************************************
+2025-07-20 13:47:41,185 p=209633 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *********************************************************
+2025-07-20 13:47:55,257 p=209633 u=aakhrif n=ansible INFO| ok: [104.248.6.46]
+2025-07-20 13:47:55,261 p=209633 u=aakhrif n=ansible INFO| TASK [Copy entire manifests directory to cloud machine] ************************
+2025-07-20 13:51:19,028 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:51:19,029 p=209633 u=aakhrif n=ansible INFO| PLAY [Deploy services] *********************************************************
+2025-07-20 13:51:19,034 p=209633 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *********************************************************
+2025-07-20 13:51:36,859 p=209633 u=aakhrif n=ansible INFO| ok: [104.248.6.46]
+2025-07-20 13:51:36,864 p=209633 u=aakhrif n=ansible INFO| TASK [create namespace] ********************************************************
+2025-07-20 13:51:51,632 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:51:51,644 p=209633 u=aakhrif n=ansible INFO| TASK [Apply Config Map] ********************************************************
+2025-07-20 13:52:05,029 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:52:05,043 p=209633 u=aakhrif n=ansible INFO| TASK [Apply api-gateway manifest] **********************************************
+2025-07-20 13:52:18,636 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:52:18,645 p=209633 u=aakhrif n=ansible INFO| TASK [Apply chat-service manifest] *********************************************
+2025-07-20 13:52:31,833 p=209633 u=aakhrif n=ansible INFO| changed: [104.248.6.46]
+2025-07-20 13:52:31,839 p=209633 u=aakhrif n=ansible INFO| TASK [Apply auth-service manifest] *********************************************
+2025-07-20 13:52:46,330 p=209633 u=aakhrif n=ansible INFO| fatal: [104.248.6.46]: FAILED! => {"changed": true, "cmd": ["kubectl", "apply", "-f", "/home/manifests/app/auth-service.yaml"], "delta": "0:00:00.330441", "end": "2025-07-20 12:52:44.379068", "msg": "non-zero return code", "rc": 1, "start": "2025-07-20 12:52:44.048627", "stderr": "The Deployment \"auth-service\" is invalid: \n* spec.template.spec.containers[0].volumeMounts[0].name: Not found: \"auth-db\"\n* spec.template.spec.containers[0].volumeMounts[1].name: Not found: \"auth-logs\"", "stderr_lines": ["The Deployment \"auth-service\" is invalid: ", "* spec.template.spec.containers[0].volumeMounts[0].name: Not found: \"auth-db\"", "* spec.template.spec.containers[0].volumeMounts[1].name: Not found: \"auth-logs\""], "stdout": "service/auth-service created", "stdout_lines": ["service/auth-service created"]}
+2025-07-20 13:52:46,334 p=209633 u=aakhrif n=ansible INFO| PLAY RECAP *********************************************************************
+2025-07-20 13:52:46,337 p=209633 u=aakhrif n=ansible INFO| 104.248.6.46               : ok=14   changed=10   unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+2025-07-20 13:52:46,337 p=209633 u=aakhrif n=ansible INFO| 142.93.178.173             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-20 13:52:46,337 p=209633 u=aakhrif n=ansible INFO| 159.203.87.104             : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-20 13:52:46,337 p=209633 u=aakhrif n=ansible INFO| 68.183.62.226              : ok=4    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   

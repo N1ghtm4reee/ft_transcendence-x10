@@ -74,5 +74,5 @@
       ansible.builtin.command: kubectl apply -f /home/manifests/app/api-gateway.yaml
     - name: Apply chat-service manifest
       ansible.builtin.command: kubectl apply -f /home/manifests/app/chat-service.yaml
-    # - name: Apply ingress manifest
-    #   ansible.builtin.command: kubectl apply -f /home/manifests/app/ingress.yaml
+    - name: Apply auth-service manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/auth-service.yaml

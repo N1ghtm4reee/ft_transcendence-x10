@@ -68,11 +68,13 @@ app.addHook('preHandler', async (request, reply) => {
   
   if (publicRoutes.some(route => request.routeOptions.url.startsWith(route))) return;
 
-  if (request.routeOptions.url.startsWith('/ws/')) {
-    await authenticateWs(request, reply);
-  } else {
-    await authenticateUser(request, reply);
-  }
+  // auth in api-gateway
+
+  // if (request.routeOptions.url.startsWith('/ws/')) {
+  //   await authenticateWs(request, reply);
+  // } else {
+  //   await authenticateUser(request, reply);
+  // }
 });
 
 
