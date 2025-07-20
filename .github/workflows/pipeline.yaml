@@ -34,14 +34,14 @@ jobs:
 
       - name: Build all images with Makefile
         run: |
-          IMAGE_TAG=${{ env.IMAGE_TAG }} make
+          docker compose -f docker-compose.backend.yml up --build -d
 
       - name: Push Images
         run: |
           docker push n1ghtm4r3e/trandandan_api-gateway:latest
-        #  docker push $DOCKER_USERNAME/trandandan_auth-service:$IMAGE_TAG
-        #  docker push $DOCKER_USERNAME/trandandan_user-service:$IMAGE_TAG
-        #  docker push $DOCKER_USERNAME/trandandan_chat-service:$IMAGE_TAG
+          docker push n1ghtm4r3e/trandandan_chat-service:latest
+          docker push n1ghtm4r3e/trandandan_auth-service:latest
+          docker push n1ghtm4r3e/trandandan_user-service:latest
 
       # - name: Update K8s deployment image tags
       #   run: |
