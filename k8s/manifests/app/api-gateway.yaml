@@ -35,10 +35,10 @@ metadata:
   name: api-gateway
   namespace: transcendence
 spec:
+  type: NodePort
   selector:
     app: api-gateway
   ports:
-    - protocol: TCP
-      port: 3000
+    - port: 3000
       targetPort: 3000
-  type: ClusterIP
+      nodePort: 31000

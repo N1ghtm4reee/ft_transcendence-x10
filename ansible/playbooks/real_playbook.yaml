@@ -67,10 +67,12 @@
   become: true
   tasks:
     - name: create namespace
-      ansible.builtin.command: kubectl apply -f /home/manifests/namespace.yaml
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/namespace.yaml
     - name: Apply Config Map 
-      ansible.builtin.command: kubectl apply -f /home/manifests/config-map.yaml
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/config-map.yaml
     - name: Apply api-gateway manifest
       ansible.builtin.command: kubectl apply -f /home/manifests/app/api-gateway.yaml
     - name: Apply chat-service manifest
       ansible.builtin.command: kubectl apply -f /home/manifests/app/chat-service.yaml
+    # - name: Apply ingress manifest
+    #   ansible.builtin.command: kubectl apply -f /home/manifests/app/ingress.yaml

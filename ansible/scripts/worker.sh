@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MASTER_IP="165.22.47.154"
+MASTER_IP="138.197.3.191"
 
 TOKEN=$(cat /home/token.txt)
 
@@ -10,3 +10,4 @@ sudo snap install kubelet --classic && sudo snap install kubeadm --classic
 
 mkdir -p /home/logs
 mkdir -p /home/databases
+
