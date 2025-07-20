@@ -20,6 +20,8 @@ spec:
           ports:
             - containerPort: 3004
           env:
+            - name: PORT
+              value: "3004"
             - name: DATABASE_PATH
               value: file:/home/databases/chats.db
             - name: NOTIFICATION_SERVICE_URL
