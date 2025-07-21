@@ -145,35 +145,43 @@
         state: present
         update_cache: yes
 
-# - name: Deploy backend services
-#   hosts: master
-#   become: true
-#   tasks:
-#     - name: apply shared logs persistent volume
-#       ansible.builtin.command: kubectl apply -f /home/manifests/shared-logs-pv.yaml
-#     - name: apply shared logs persistent volume claim
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/transcendence-pvc.yaml
-#     - name: create namespace
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/namespace.yaml
-#     - name: Apply Config Map 
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/config-map.yaml
-#     - name: Apply api-gateway manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/api-gateway.yaml
-#     - name: Apply chat-service manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/chat-service.yaml
-#     - name: Apply auth-service manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/auth-service.yaml
-#     - name: Apply user-service manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/app/user-service.yaml
+- name: Deploy backend services
+  hosts: master
+  become: true
+  tasks:
+    - name: create namespace
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/namespace.yaml
+    - name: Apply Config Map 
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/config-map.yaml
+    - name: apply shared logs persistent volume
+      ansible.builtin.command: kubectl apply -f /home/manifests/shared-logs-pv.yaml
+    - name: apply shared logs persistent volume claim
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/transcendence-pvc.yaml
+    - name: Apply api-gateway manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/api-gateway.yaml
+    - name: Apply user-service manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/user-service.yaml
+    - name: Apply auth-service manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/auth-service.yaml
+    - name: Apply chat-service manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/app/chat-service.yaml
 
-# - name: Deploy elk stack
-#   hosts: master
-#   become: true
-#   tasks:
-#     - name: Create namespace for ELK stack
-#       ansible.builtin.command: kubectl apply -f /home/manifests/elk/namespace.yaml
-#     - name: Apply elasticsearch manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch.yaml
+- name: Deploy elk stack
+  hosts: master
+  become: true
+  tasks:
+    - name: Create namespace for ELK stack
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/namespace.yaml
+    - name: Apply shared logs persistent volume
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat-cfg-map.yaml
+    - name: Apply filebeat manifest
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/elk-pv.yaml
+    - name: Apply filebeat persistent volume claim
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat-pvc.yaml
+    - name: Apply filebeat config map
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat.yaml
+    # - name: Apply elasticsearch manifest
+    #   ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch.yaml
 #     - name: Apply kibana manifest
 #       ansible.builtin.command: kubectl apply -f /home/manifests/elk/kibana.yaml
 #     - name: Apply logstash manifest

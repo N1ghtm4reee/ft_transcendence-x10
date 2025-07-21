@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-MASTER_IP="138.197.64.17"
+MASTER_IP="165.227.188.63"
 
 # Check if token file exists
 if [[ ! -f "/home/token.txt" ]]; then
@@ -26,7 +26,6 @@ curl -sfL https://get.k3s.io | K3S_URL=https://$MASTER_IP:6443 K3S_TOKEN=$TOKEN 
 
 echo "Creating directories..."
 mkdir -p /home/logs
-mkdir -p /app/logs
 mkdir -p /home/databases
 
 echo "K3s worker node setup complete!"

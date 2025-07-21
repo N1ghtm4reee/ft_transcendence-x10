@@ -137,6 +137,23 @@ spec:
     server: ${nfsip}
 EOF
 
+cat > ../k8s/manifests/elk/elk-pv.yaml << EOF
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elk-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /srv/nfs/logs
+    server: ${nfsip}
+
+EOF
+
 log "Files generated successfully:"
 log "  - ../ansible/inventory/inventory.ini"
 log "  - ../ansible/scripts/worker.sh"

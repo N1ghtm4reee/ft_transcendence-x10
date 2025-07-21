@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: shared-logs-pv
+  name: elk-pv
 spec:
   capacity:
     storage: 1Gi
@@ -11,3 +11,4 @@ spec:
   nfs:
     path: /srv/nfs/logs
     server: 167.71.108.219
+
