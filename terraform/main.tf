@@ -15,7 +15,7 @@ resource "digitalocean_project" "ft_transcendence-x10" {
   name        = "ft_transcendence-x10"
   description = "ft_transcendence-x10 project"
   purpose     = "Web Application"
-  resources   = [digitalocean_droplet.k8s_node1.urn, digitalocean_droplet.k8s_node2.urn, digitalocean_droplet.k8s_node3.urn, digitalocean_droplet.k8s_node4.urn]
+  resources   = [digitalocean_droplet.nfs.urn, digitalocean_droplet.k8s_node1.urn, digitalocean_droplet.k8s_node2.urn, digitalocean_droplet.k8s_node3.urn, digitalocean_droplet.k8s_node4.urn]
 }
 
 resource "digitalocean_droplet" "k8s_node1" {
@@ -46,6 +46,14 @@ resource "digitalocean_droplet" "k8s_node4" {
     name = "k8s-node4"
     region = "nyc3"
     size   = "s-2vcpu-4gb"
+    image  = "ubuntu-22-04-x64"
+    ssh_keys = [var.ssh_fingerprint]
+}
+
+resource "digitalocean_droplet" "nfs" {
+    name = "nfs"
+    region = "nyc3"
+    size   = "s-1vcpu-2gb"
     image  = "ubuntu-22-04-x64"
     ssh_keys = [var.ssh_fingerprint]
 }

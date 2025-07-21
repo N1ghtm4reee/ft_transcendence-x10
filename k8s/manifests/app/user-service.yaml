@@ -1,57 +1,53 @@
-# ---
-# # User Service Deployment
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: user-service
-#   namespace: transcendence
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: user-service
-#   template:
-#     metadata:
-#       labels:
-#         app: user-service
-#     spec:
-#       containers:
-#         - name: user-service
-#           image: n1ghtm4r3e/trandandan_user-service:latest
-#           ports:
-#             - containerPort: 3002
-#           env:
-#             - name: DATABASE_PATH
-#               value: file:/databases/users.db
-#           envFrom:
-#             - configMapRef:
-#                 name: transcendence-config
-#           volumeMounts:
-#             - name: user-db
-#               mountPath: /databases/users.db
-#               subPath: users.db
-#             - name: user-logs
-#               mountPath: /app/logs
-#       volumes:
-#         - name: user-db
-#           hostPath:
-#             path: /path/to/databases
-#             type: Directory
-#         - name: user-logs
-#           hostPath:
-#             path: /path/to/services/logs/user-service
-#             type: Directory
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: user-service
-#   namespace: transcendence
-# spec:
-#   selector:
-#     app: user-service
-#   ports:
-#     - protocol: TCP
-#       port: 3002
-#       targetPort: 3002
-#   type: ClusterIP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: transcendence
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: n1ghtm4r3e/trandandan_user-service:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: DATABASE_PATH
+              value: file:/home/databases/users.db
+          envFrom:
+            - configMapRef:
+                name: transcendence-config
+          volumeMounts:
+            - name: user-db
+              mountPath: /home/databases
+            - name: user-logs
+              mountPath: /app/logs
+      volumes:
+        - name: user-db
+          hostPath:
+            path: /home/databases
+            type: Directory
+        - name: user-logs
+          persistentVolumeClaim:
+            claimName: shared-logs-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: transcendence
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP

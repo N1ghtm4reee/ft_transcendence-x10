@@ -3,7 +3,7 @@
 # terraform
 (cd terraform && ./terraform_init.sh)
 
-sleep 20
+sleep 60
 
 # ansible
 (cd ansible && ./run.sh)
