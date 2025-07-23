@@ -66,73 +66,62 @@
   hosts: nfs
   become: true
   vars:
-    nfs_export_path: "/srv/nfs/logs"
+    nfs_export_path1: "/srv/nfs/logs"
+    nfs_export_path2: "/srv/nfs/es-data"
     nfs_export_options: "*(rw,sync,no_subtree_check,no_root_squash)"
-    
-  tasks:    
-    - name: Wait for apt lock to be released
-      shell: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done
-      changed_when: false
 
-    - name: Update apt cache
-      apt:
-        update_cache: yes
-        cache_valid_time: 3600
-      timeout: 300
-    
+  tasks:
     - name: Install NFS packages
       apt:
-        name: 
+        name:
           - nfs-kernel-server
           - nfs-common
         state: present
-      timeout: 300
-    
-    - name: Create NFS directory
+        update_cache: yes
+
+    - name: Create NFS directories
       file:
-        path: "{{ nfs_export_path }}"
+        path: "{{ item }}"
         state: directory
-        mode: '0755'
+        mode: '0777'
         recurse: yes
-    
-    - name: Set ownership of NFS directory
-      file:
-        path: "{{ nfs_export_path }}"
-        owner: nobody
-        group: nogroup
-        recurse: yes
-    
-    - name: Check if export already exists in /etc/exports
+      loop:
+        - "{{ nfs_export_path1 }}"
+        - "{{ nfs_export_path2 }}"
+
+    - name: Set correct ownership for ES data directory
+      command: chown -R 1000:1000 {{ nfs_export_path2 }}
+
+    - name: Add exports entry for logs
       lineinfile:
         path: /etc/exports
-        line: "{{ nfs_export_path }} {{ nfs_export_options }}"
+        line: "{{ nfs_export_path1 }} {{ nfs_export_options }}"
         state: present
         create: yes
         backup: yes
-      register: exports_changed
-    
+
+    - name: Add exports entry for es-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path2 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
     - name: Export NFS shares
       command: exportfs -rav
-      when: exports_changed.changed
-      notify: restart nfs server
-    
-    - name: Start and enable nfs-kernel-server
+
+    - name: Restart and enable NFS server
       systemd:
         name: nfs-kernel-server
-        state: started
+        state: restarted
         enabled: yes
-    
-    - name: Check NFS server status
+
+    - name: Ensure NFS server is active
       command: systemctl is-active nfs-kernel-server
       register: nfs_status
       changed_when: false
       failed_when: nfs_status.stdout != "active"
-      
-  handlers:
-    - name: restart nfs server
-      systemd:
-        name: nfs-kernel-server
-        state: restarted
 
 
 - name: Install nfs-common
@@ -172,16 +161,28 @@
   tasks:
     - name: Create namespace for ELK stack
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/namespace.yaml
-    - name: Apply shared logs persistent volume
+    - name: Apply config map for filebeat
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat-cfg-map.yaml
-    - name: Apply filebeat manifest
+    - name: Apply pv for filebeat
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/elk-pv.yaml
     - name: Apply filebeat persistent volume claim
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat-pvc.yaml
-    - name: Apply filebeat config map
+    - name: Apply filebeat deployment
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/filebeat/filebeat.yaml
-    # - name: Apply elasticsearch manifest
-    #   ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch.yaml
+
+    - name: Apply logstash config map
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/logstash/logstash-cfg-map.yaml
+    - name: apply logstash deployment and service
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/logstash/logstash.yaml
+    - name: Apply elasticsearch persistent volume
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch-pv.yaml
+    - name: Apply elasticsearch persistent volume claim
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch-pvc.yaml
+    - name: Apply elasticsearch config map
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch-cfg-map.yaml
+    - name: Apply elasticsearch deployment and service
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch.yaml
+
 #     - name: Apply kibana manifest
 #       ansible.builtin.command: kubectl apply -f /home/manifests/elk/kibana.yaml
 #     - name: Apply logstash manifest

@@ -154,6 +154,23 @@ spec:
 
 EOF
 
+cat > ../k8s/manifests/elk/elasticsearch/elasticsearch-pv.yaml << EOF
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /srv/nfs/es-data
+    server: ${nfsip}
+
+EOF
+
 log "Files generated successfully:"
 log "  - ../ansible/inventory/inventory.ini"
 log "  - ../ansible/scripts/worker.sh"

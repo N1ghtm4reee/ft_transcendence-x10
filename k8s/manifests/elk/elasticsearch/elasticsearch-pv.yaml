@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: elk-pv
+  name: elasticsearch-pv
 spec:
   capacity:
     storage: 1Gi
@@ -9,6 +9,6 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    path: /srv/nfs/logs
+    path: /srv/nfs/es-data
     server: 174.138.66.3
 
