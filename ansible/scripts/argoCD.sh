@@ -13,9 +13,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 # wait for argocd to be ready
 # echo "Waiting for ArgoCD to be ready..."
-# kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
-
-sleep 10
+kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 
 # start port-forwarding for argocd in background ??
 kubectl -n argocd patch svc argocd-server \
@@ -24,14 +22,15 @@ kubectl -n argocd patch svc argocd-server \
 # ARGOCD_PF_PID=$!
 
 # wait for port-forward to be ready
-sleep 5
+sleep 20
 
 # get secret to access the UI
+NODE_IP=$(kubectl get nodes -o jsonpath="{.items[0].status.addresses[?(@.type=='InternalIP')].address}")
 ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 echo "ArgoCD admin password: $ARGOCD_PASSWORD"
 
 # setup argocd app
-argocd login localhost:8443 --username admin --password $ARGOCD_PASSWORD --insecure
+argocd login $NODE_IP:32000 --username admin --password "$ARGOCD_PASSWORD" --insecure
 
 argocd app create transcendence \
   --repo https://github.com/N1ghtm4reee/ft_transcendence-x10.git \

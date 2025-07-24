@@ -2907,3 +2907,173 @@ core/2.18/reference_appendices/interpreter_discovery.html for more information.
 2025-07-24 13:49:53,523 p=332207 u=aakhrif n=ansible INFO| 161.35.183.49              : ok=11   changed=9    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-24 13:49:53,523 p=332207 u=aakhrif n=ansible INFO| 167.71.191.206             : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2025-07-24 13:49:53,523 p=332207 u=aakhrif n=ansible INFO| 45.55.173.49               : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-24 15:59:50,157 p=413808 u=aakhrif n=ansible INFO| PLAY [Installing k3s in master node] ***************************************************************************************************************************************************
+2025-07-24 15:59:50,171 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:00:13,918 p=413808 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 68.183.153.79 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-24 16:00:13,918 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:00:13,926 p=413808 u=aakhrif n=ansible INFO| TASK [Run the script to setup master node] *********************************************************************************************************************************************
+2025-07-24 16:00:57,500 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:00:57,518 p=413808 u=aakhrif n=ansible INFO| TASK [Copy token to local file system] *************************************************************************************************************************************************
+2025-07-24 16:01:13,576 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:01:13,581 p=413808 u=aakhrif n=ansible INFO| PLAY [Installing k3s in agent nodes and joining master node server with token] *********************************************************************************************************
+2025-07-24 16:01:13,586 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:01:30,713 p=413808 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 134.209.171.184 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-24 16:01:30,714 p=413808 u=aakhrif n=ansible INFO| ok: [134.209.171.184]
+2025-07-24 16:01:31,105 p=413808 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 174.138.70.188 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-24 16:01:31,106 p=413808 u=aakhrif n=ansible INFO| ok: [174.138.70.188]
+2025-07-24 16:01:32,231 p=413808 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 167.71.177.203 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-24 16:01:32,231 p=413808 u=aakhrif n=ansible INFO| ok: [167.71.177.203]
+2025-07-24 16:01:32,239 p=413808 u=aakhrif n=ansible INFO| TASK [Copy token file to the cloud machine filesystem] *********************************************************************************************************************************
+2025-07-24 16:01:54,120 p=413808 u=aakhrif n=ansible INFO| changed: [174.138.70.188]
+2025-07-24 16:01:54,637 p=413808 u=aakhrif n=ansible INFO| changed: [134.209.171.184]
+2025-07-24 16:01:54,842 p=413808 u=aakhrif n=ansible INFO| changed: [167.71.177.203]
+2025-07-24 16:01:54,853 p=413808 u=aakhrif n=ansible INFO| TASK [Copy worker.sh to the cloud machine] *********************************************************************************************************************************************
+2025-07-24 16:02:15,766 p=413808 u=aakhrif n=ansible INFO| changed: [174.138.70.188]
+2025-07-24 16:02:16,095 p=413808 u=aakhrif n=ansible INFO| changed: [134.209.171.184]
+2025-07-24 16:02:17,010 p=413808 u=aakhrif n=ansible INFO| changed: [167.71.177.203]
+2025-07-24 16:02:17,027 p=413808 u=aakhrif n=ansible INFO| TASK [Install k3s and join nodes to server] ********************************************************************************************************************************************
+2025-07-24 16:02:45,739 p=413808 u=aakhrif n=ansible INFO| changed: [174.138.70.188]
+2025-07-24 16:02:46,148 p=413808 u=aakhrif n=ansible INFO| changed: [167.71.177.203]
+2025-07-24 16:02:46,658 p=413808 u=aakhrif n=ansible INFO| changed: [134.209.171.184]
+2025-07-24 16:02:46,662 p=413808 u=aakhrif n=ansible INFO| PLAY [Installing dashboard UI for cluster visualization] *******************************************************************************************************************************
+2025-07-24 16:02:46,674 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:03:03,679 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:03:03,684 p=413808 u=aakhrif n=ansible INFO| TASK [Run the dashboard script] ********************************************************************************************************************************************************
+2025-07-24 16:03:20,862 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:03:20,878 p=413808 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_token.txt to local machine] **************************************************************************************************************************************
+2025-07-24 16:03:35,731 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:03:35,744 p=413808 u=aakhrif n=ansible INFO| TASK [Fetch dashboard_ip_port.txt to local machine] ************************************************************************************************************************************
+2025-07-24 16:03:51,683 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:03:51,688 p=413808 u=aakhrif n=ansible INFO| PLAY [Copy manifests to cloud machine] *************************************************************************************************************************************************
+2025-07-24 16:03:51,700 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:04:08,213 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:04:08,217 p=413808 u=aakhrif n=ansible INFO| TASK [Copy entire manifests directory to cloud machine] ********************************************************************************************************************************
+2025-07-24 16:21:17,236 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:21:17,371 p=413808 u=aakhrif n=ansible INFO| PLAY [Configure NFS Server] ************************************************************************************************************************************************************
+2025-07-24 16:21:17,452 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:21:40,154 p=413808 u=aakhrif n=ansible WARNING| [WARNING]: Platform linux on host 142.93.75.60 is using the discovered Python interpreter at /usr/bin/python3.10, but future installation of another Python interpreter could change
+the meaning of that path. See https://docs.ansible.com/ansible-core/2.18/reference_appendices/interpreter_discovery.html for more information.
+
+2025-07-24 16:21:40,155 p=413808 u=aakhrif n=ansible INFO| ok: [142.93.75.60]
+2025-07-24 16:21:40,163 p=413808 u=aakhrif n=ansible INFO| TASK [Install NFS packages] ************************************************************************************************************************************************************
+2025-07-24 16:22:21,804 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:22:21,819 p=413808 u=aakhrif n=ansible INFO| TASK [Create NFS directories] **********************************************************************************************************************************************************
+2025-07-24 16:22:37,273 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60] => (item=/srv/nfs/logs)
+2025-07-24 16:22:52,436 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60] => (item=/srv/nfs/es-data)
+2025-07-24 16:23:08,190 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60] => (item=/srv/nfs/prometheus-data)
+2025-07-24 16:23:23,517 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60] => (item=/srv/nfs/grafana-data)
+2025-07-24 16:23:23,532 p=413808 u=aakhrif n=ansible INFO| TASK [Set correct ownership for ES data directory] *************************************************************************************************************************************
+2025-07-24 16:23:39,832 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:23:39,843 p=413808 u=aakhrif n=ansible INFO| TASK [Add exports entry for logs] ******************************************************************************************************************************************************
+2025-07-24 16:23:55,812 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:23:55,829 p=413808 u=aakhrif n=ansible INFO| TASK [Add exports entry for es-data] ***************************************************************************************************************************************************
+2025-07-24 16:24:10,657 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:24:10,663 p=413808 u=aakhrif n=ansible INFO| TASK [Add exports entry for prometheus-data] *******************************************************************************************************************************************
+2025-07-24 16:24:26,835 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:24:26,841 p=413808 u=aakhrif n=ansible INFO| TASK [Add exports entry for grafana-data] **********************************************************************************************************************************************
+2025-07-24 16:24:41,713 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:24:41,721 p=413808 u=aakhrif n=ansible INFO| TASK [Export NFS shares] ***************************************************************************************************************************************************************
+2025-07-24 16:24:56,427 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:24:56,431 p=413808 u=aakhrif n=ansible INFO| TASK [Restart and enable NFS server] ***************************************************************************************************************************************************
+2025-07-24 16:25:14,150 p=413808 u=aakhrif n=ansible INFO| changed: [142.93.75.60]
+2025-07-24 16:25:14,160 p=413808 u=aakhrif n=ansible INFO| TASK [Ensure NFS server is active] *****************************************************************************************************************************************************
+2025-07-24 16:25:30,126 p=413808 u=aakhrif n=ansible INFO| ok: [142.93.75.60]
+2025-07-24 16:25:30,130 p=413808 u=aakhrif n=ansible INFO| PLAY [Install nfs-common] **************************************************************************************************************************************************************
+2025-07-24 16:25:30,138 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:25:43,089 p=413808 u=aakhrif n=ansible INFO| ok: [167.71.177.203]
+2025-07-24 16:25:43,148 p=413808 u=aakhrif n=ansible INFO| ok: [174.138.70.188]
+2025-07-24 16:25:43,155 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:25:43,756 p=413808 u=aakhrif n=ansible INFO| ok: [134.209.171.184]
+2025-07-24 16:25:43,761 p=413808 u=aakhrif n=ansible INFO| TASK [Install nfs-common package] ******************************************************************************************************************************************************
+2025-07-24 16:26:14,835 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:26:15,200 p=413808 u=aakhrif n=ansible INFO| changed: [167.71.177.203]
+2025-07-24 16:26:16,199 p=413808 u=aakhrif n=ansible INFO| changed: [174.138.70.188]
+2025-07-24 16:26:19,548 p=413808 u=aakhrif n=ansible INFO| changed: [134.209.171.184]
+2025-07-24 16:26:19,553 p=413808 u=aakhrif n=ansible INFO| PLAY [Deploy backend services] *********************************************************************************************************************************************************
+2025-07-24 16:26:19,567 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:26:38,545 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:26:38,552 p=413808 u=aakhrif n=ansible INFO| TASK [create namespace] ****************************************************************************************************************************************************************
+2025-07-24 16:26:54,598 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:26:54,612 p=413808 u=aakhrif n=ansible INFO| TASK [Apply Config Map] ****************************************************************************************************************************************************************
+2025-07-24 16:27:10,775 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:27:10,780 p=413808 u=aakhrif n=ansible INFO| TASK [apply shared logs persistent volume] *********************************************************************************************************************************************
+2025-07-24 16:27:26,575 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:27:26,592 p=413808 u=aakhrif n=ansible INFO| TASK [apply shared logs persistent volume claim] ***************************************************************************************************************************************
+2025-07-24 16:27:42,646 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:27:42,661 p=413808 u=aakhrif n=ansible INFO| TASK [Apply api-gateway manifest] ******************************************************************************************************************************************************
+2025-07-24 16:27:58,803 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:27:58,816 p=413808 u=aakhrif n=ansible INFO| TASK [Apply user-service manifest] *****************************************************************************************************************************************************
+2025-07-24 16:28:13,325 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:28:13,331 p=413808 u=aakhrif n=ansible INFO| TASK [Apply auth-service manifest] *****************************************************************************************************************************************************
+2025-07-24 16:28:28,503 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:28:28,519 p=413808 u=aakhrif n=ansible INFO| TASK [Apply chat-service manifest] *****************************************************************************************************************************************************
+2025-07-24 16:28:43,581 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:28:43,584 p=413808 u=aakhrif n=ansible INFO| PLAY [Deploy elk stack] ****************************************************************************************************************************************************************
+2025-07-24 16:28:43,590 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:28:59,953 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:28:59,958 p=413808 u=aakhrif n=ansible INFO| TASK [Create namespace for ELK stack] **************************************************************************************************************************************************
+2025-07-24 16:29:14,806 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:29:14,819 p=413808 u=aakhrif n=ansible INFO| TASK [Apply config map for filebeat] ***************************************************************************************************************************************************
+2025-07-24 16:29:30,047 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:29:30,054 p=413808 u=aakhrif n=ansible INFO| TASK [Apply pv for filebeat] ***********************************************************************************************************************************************************
+2025-07-24 16:29:46,119 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:29:46,131 p=413808 u=aakhrif n=ansible INFO| TASK [Apply filebeat persistent volume claim] ******************************************************************************************************************************************
+2025-07-24 16:30:01,582 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:30:01,595 p=413808 u=aakhrif n=ansible INFO| TASK [Apply filebeat deployment] *******************************************************************************************************************************************************
+2025-07-24 16:30:17,965 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:30:17,972 p=413808 u=aakhrif n=ansible INFO| TASK [Apply logstash config map] *******************************************************************************************************************************************************
+2025-07-24 16:30:33,121 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:30:33,134 p=413808 u=aakhrif n=ansible INFO| TASK [apply logstash deployment and service] *******************************************************************************************************************************************
+2025-07-24 16:30:49,092 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:30:49,098 p=413808 u=aakhrif n=ansible INFO| TASK [Apply elasticsearch persistent volume] *******************************************************************************************************************************************
+2025-07-24 16:31:03,838 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:31:03,843 p=413808 u=aakhrif n=ansible INFO| TASK [Apply elasticsearch persistent volume claim] *************************************************************************************************************************************
+2025-07-24 16:31:19,161 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:31:19,175 p=413808 u=aakhrif n=ansible INFO| TASK [Apply elasticsearch config map] **************************************************************************************************************************************************
+2025-07-24 16:31:33,841 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:31:33,846 p=413808 u=aakhrif n=ansible INFO| TASK [Apply elasticsearch deployment and service] **************************************************************************************************************************************
+2025-07-24 16:31:48,695 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:31:48,709 p=413808 u=aakhrif n=ansible INFO| TASK [Apply kibana ConfigMap] **********************************************************************************************************************************************************
+2025-07-24 16:32:03,744 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:32:03,749 p=413808 u=aakhrif n=ansible INFO| TASK [Apply kibana deployment and service] *********************************************************************************************************************************************
+2025-07-24 16:32:19,518 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:32:19,526 p=413808 u=aakhrif n=ansible INFO| PLAY [Deploy prom/grafana stack] *******************************************************************************************************************************************************
+2025-07-24 16:32:19,540 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:32:36,317 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:32:36,322 p=413808 u=aakhrif n=ansible INFO| TASK [Create namespace for monitoring] *************************************************************************************************************************************************
+2025-07-24 16:32:50,748 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:32:50,762 p=413808 u=aakhrif n=ansible INFO| TASK [Apply prometheus persistent volume] **********************************************************************************************************************************************
+2025-07-24 16:33:06,030 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:33:06,036 p=413808 u=aakhrif n=ansible INFO| TASK [Apply prometheus persistent volume claim] ****************************************************************************************************************************************
+2025-07-24 16:33:21,264 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:33:21,276 p=413808 u=aakhrif n=ansible INFO| TASK [Apply prometheus config map] *****************************************************************************************************************************************************
+2025-07-24 16:33:36,647 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:33:36,655 p=413808 u=aakhrif n=ansible INFO| TASK [Apply node-exporter daemonset] ***************************************************************************************************************************************************
+2025-07-24 16:33:51,494 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:33:51,507 p=413808 u=aakhrif n=ansible INFO| TASK [Apply prometheus deployment and service] *****************************************************************************************************************************************
+2025-07-24 16:34:07,856 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:34:07,868 p=413808 u=aakhrif n=ansible INFO| TASK [Apply grafana persistent volume] *************************************************************************************************************************************************
+2025-07-24 16:34:23,116 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:34:23,131 p=413808 u=aakhrif n=ansible INFO| TASK [Apply grafana persistent volume claim] *******************************************************************************************************************************************
+2025-07-24 16:34:39,374 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:34:39,390 p=413808 u=aakhrif n=ansible INFO| TASK [Apply grafana deployment and service] ********************************************************************************************************************************************
+2025-07-24 16:34:55,370 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:34:55,375 p=413808 u=aakhrif n=ansible INFO| PLAY [setup ArgoCD] ********************************************************************************************************************************************************************
+2025-07-24 16:34:55,385 p=413808 u=aakhrif n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************************************************************
+2025-07-24 16:35:11,540 p=413808 u=aakhrif n=ansible INFO| ok: [68.183.153.79]
+2025-07-24 16:35:11,544 p=413808 u=aakhrif n=ansible INFO| TASK [run the ArgoCD script] ***********************************************************************************************************************************************************
+2025-07-24 16:35:50,668 p=413808 u=aakhrif n=ansible INFO| changed: [68.183.153.79]
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| PLAY RECAP *****************************************************************************************************************************************************************************
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| 134.209.171.184            : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| 142.93.75.60               : ok=11   changed=9    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| 167.71.177.203             : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| 174.138.70.188             : ok=6    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2025-07-24 16:35:50,670 p=413808 u=aakhrif n=ansible INFO| 68.183.153.79              : ok=46   changed=38   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
