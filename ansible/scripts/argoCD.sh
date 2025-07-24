@@ -57,6 +57,8 @@ argocd app create monitoring \
   --dest-namespace monitoring \
   --sync-policy automated
 
+argocd app sync monitoring
+
 # get pod name after deployment is ready
 # POD_NAME=$(kubectl get pods -n transcendence --no-headers | grep "^app" | awk '{print $1}' | head -n 1)
 

@@ -1,6 +1,6 @@
 resources:
   - prometheus.yaml
-  - prometheus-pv.yaml
-  - prometheus-pvc.yaml
-  - prometheus-cfg-map.yaml
+  - prom-pv.yaml
+  - prom-pvc.yaml
+  - prom-cfg-map.yaml
   - node-exporter.yaml
