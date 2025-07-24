@@ -50,6 +50,13 @@ argocd app create elk \
 
 argocd app sync elk
 
+argocd app create monitoring \
+  --repo https://github.com/N1ghtm4reee/ft_transcendence-x10.git \
+  --path k8s/manifests/monitoring \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace monitoring \
+  --sync-policy automated
+
 # get pod name after deployment is ready
 # POD_NAME=$(kubectl get pods -n transcendence --no-headers | grep "^app" | awk '{print $1}' | head -n 1)
 
