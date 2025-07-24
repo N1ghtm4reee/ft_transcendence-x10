@@ -229,3 +229,10 @@
       ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/grafana/grafana-pvc.yaml
     - name: Apply grafana deployment and service
       ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/grafana/grafana.yaml
+
+- name: setup ArgoCD 
+  hosts: master
+  become: true
+  tasks:
+    - name: run the ArgoCD script
+      ansible.builtin.script: ../scripts/argoCD.sh

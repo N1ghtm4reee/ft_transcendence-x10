@@ -18,7 +18,8 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 sleep 10
 
 # start port-forwarding for argocd in background ??
-kubectl -n argocd patch svc argocd-server -p '{"spec": {"type": "NodePort"}}'
+kubectl -n argocd patch svc argocd-server \
+  -p '{"spec": {"type": "NodePort", "ports": [{"port": 443, "targetPort": 8080, "nodePort": 32000}]}}'
 # kubectl port-forward svc/argocd-server -n argocd 8443:443 > /dev/null 2>&1 &
 # ARGOCD_PF_PID=$!
 
