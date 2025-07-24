@@ -3,7 +3,8 @@ kind: Kustomization
 
 resources:
   - elasticsearch/
-  # - logstash/
-  # - kibana/
-  # - prometheus/
-  # - filebeat/
+  - logstash/
+  - kibana/
+  - filebeat/
+  - elk-pv.yaml
+  - namespace.yaml
