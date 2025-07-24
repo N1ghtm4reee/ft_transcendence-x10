@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - elasticsearch/
-  - logstash/
-  - kibana/
-  - prometheus/
-  - filebeat/
+  # - logstash/
+  # - kibana/
+  # - prometheus/
+  # - filebeat/
