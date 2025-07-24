@@ -68,6 +68,8 @@
   vars:
     nfs_export_path1: "/srv/nfs/logs"
     nfs_export_path2: "/srv/nfs/es-data"
+    nfs_export_path3: "/srv/nfs/prometheus-data"
+    nfs_export_path4: "/srv/nfs/grafana-data"
     nfs_export_options: "*(rw,sync,no_subtree_check,no_root_squash)"
 
   tasks:
@@ -88,6 +90,8 @@
       loop:
         - "{{ nfs_export_path1 }}"
         - "{{ nfs_export_path2 }}"
+        - "{{ nfs_export_path3 }}"
+        - "{{ nfs_export_path4 }}"
 
     - name: Set correct ownership for ES data directory
       command: chown -R 1000:1000 {{ nfs_export_path2 }}
@@ -104,6 +108,22 @@
       lineinfile:
         path: /etc/exports
         line: "{{ nfs_export_path2 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Add exports entry for prometheus-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path3 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Add exports entry for grafana-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path4 }} {{ nfs_export_options }}"
         state: present
         create: yes
         backup: yes
@@ -182,8 +202,30 @@
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch-cfg-map.yaml
     - name: Apply elasticsearch deployment and service
       ansible.builtin.command: kubectl apply -f /home/manifests/elk/elasticsearch/elasticsearch.yaml
+    - name: Apply kibana ConfigMap
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/kibana/kibana-cfg-map.yaml
+    - name: Apply kibana deployment and service
+      ansible.builtin.command: kubectl apply -f /home/manifests/elk/kibana/kibana.yaml
 
-#     - name: Apply kibana manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/elk/kibana.yaml
-#     - name: Apply logstash manifest
-#       ansible.builtin.command: kubectl apply -f /home/manifests/elk/logstash.yaml
+- name: Deploy prom/grafana stack
+  hosts: master
+  become: true
+  tasks:
+    - name: Create namespace for monitoring
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/namespace.yaml
+    - name: Apply prometheus persistent volume
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/prometheus/prom-pv.yaml
+    - name: Apply prometheus persistent volume claim
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/prometheus/prom-pvc.yaml
+    - name: Apply prometheus config map
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/prometheus/prom-cfg-map.yaml
+    - name: Apply node-exporter daemonset
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/prometheus/node-exporter.yaml
+    - name: Apply prometheus deployment and service
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/prometheus/prometheus.yaml
+    - name: Apply grafana persistent volume
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/grafana/grafana-pv.yaml
+    - name: Apply grafana persistent volume claim
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/grafana/grafana-pvc.yaml
+    - name: Apply grafana deployment and service
+      ansible.builtin.command: kubectl apply -f /home/manifests/monitoring/grafana/grafana.yaml

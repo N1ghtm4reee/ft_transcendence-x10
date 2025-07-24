@@ -171,6 +171,71 @@ spec:
 
 EOF
 
+node2_ip="${workerips[0]:-None}"
+node3_ip="${workerips[1]:-None}"
+node4_ip="${workerips[2]:-None}"
+
+
+# Create Prometheus PersistentVolume
+cat > ../k8s/manifests/monitoring/prometheus/prom-pv.yaml << EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /srv/nfs/prometheus-data
+    server: ${nfsip}
+EOF
+
+# Create Grafana PersistentVolume
+cat > ../k8s/manifests/monitoring/grafana/grafana-pv.yaml << EOF
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /srv/nfs/grafana-data
+    server: ${nfsip}
+EOF
+
+# Create Prometheus configuration
+cat > ../k8s/manifests/monitoring/prometheus/prom-cfg-map.yaml << EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 15s
+
+    scrape_configs:
+      - job_name: 'node_exporter'
+        static_configs:
+          - targets: ['${masterip}:9100', '${node2_ip}:9100', '${node3_ip}:9100', '${node4_ip}:9100']
+
+EOF
+
+#   - job_name: 'es_exporter'
+    # static_configs:
+      # - targets: ['es_exporter:9114']
+
+
 log "Files generated successfully:"
 log "  - ../ansible/inventory/inventory.ini"
 log "  - ../ansible/scripts/worker.sh"

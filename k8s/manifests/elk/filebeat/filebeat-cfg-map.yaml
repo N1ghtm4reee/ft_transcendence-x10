@@ -9,7 +9,7 @@ data:
     - type: log
       enabled: true
       paths:
-        - /srv/nfs/log/*.log
+        - /var/log/*.log
       json.keys_under_root: true
       json.add_error_key: true
       ignore_older: 72h
