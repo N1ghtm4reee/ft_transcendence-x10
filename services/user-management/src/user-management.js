@@ -5,11 +5,9 @@ import multipart from '@fastify/multipart'; // later for image profile uploads
 import {friendshipRoutes} from './routes/friendship.routes.js';
 import {internalRoutes} from './routes/internal.routes.js'
 import { blocksRoutes } from './routes/blocks.routes.js';
-// import pino from 'pino';
+import swagger from '@fastify/swagger';
+import swaggerUI from '@fastify/swagger-ui';
 
-// const customLogger = pino({
-//   level: 'info'
-// }, pino.destination('/app/logs/user-management.log'));
 
 const app = fastify({
   logger: {
@@ -19,6 +17,30 @@ const app = fastify({
       options: { destination: '/app/logs/user-management.log' }
     }
   }
+});
+
+await app.register(swagger, {
+  swagger: {
+    info: {
+      title: 'Chat Service API',
+      description: 'API docs for the chat service',
+      version: '1.0.0',
+    },
+    host: 'localhost:3002',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+  }
+});
+
+await app.register(swaggerUI, {
+  routePrefix: '/docs',
+  uiConfig: {
+    docExpansion: 'list',
+    deepLinking: false
+  },
+  staticCSP: true,
+  transformSpecificationClone: true
 });
 
 dotevn.config();

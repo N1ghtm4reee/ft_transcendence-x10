@@ -10,7 +10,6 @@ const app = Fastify({ logger: true });
 
 app.decorate('prisma', prisma);
 
-// Register Swagger docs
 await app.register(swagger, {
   swagger: {
     info: {
