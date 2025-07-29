@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-MASTER_IP="68.183.153.79"
+MASTER_IP="165.227.115.62"
 
 # Check if token file exists
 if [[ ! -f "/home/token.txt" ]]; then
