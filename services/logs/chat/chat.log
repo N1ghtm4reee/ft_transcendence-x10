@@ -14,3 +14,32 @@
 {"level":30,"time":1753871123479,"pid":163,"hostname":"dba7a0c80f5b","reqId":"req-4","ip":"172.20.0.1","msg":"new request to chat-service"}
 {"level":30,"time":1753871123479,"pid":163,"hostname":"dba7a0c80f5b","reqId":"req-4","msg":"Route GET:/favicon.ico not found"}
 {"level":30,"time":1753871123481,"pid":163,"hostname":"dba7a0c80f5b","reqId":"req-4","res":{"statusCode":404},"responseTime":1.7037080004811287,"msg":"request completed"}
+{"level":30,"time":1753872400523,"pid":118,"hostname":"dba7a0c80f5b","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1753872400523,"pid":118,"hostname":"dba7a0c80f5b","msg":"Server listening at http://172.20.0.3:3004"}
+{"level":30,"time":1753872479804,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-1","req":{"method":"GET","url":"/health","host":"127.0.0.1:3004","remoteAddress":"172.20.0.1","remotePort":49006},"msg":"incoming request"}
+{"level":30,"time":1753872479804,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-1","ip":"172.20.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1753872479808,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-1","res":{"statusCode":200},"responseTime":3.7035909965634346,"msg":"request completed"}
+{"level":30,"time":1753872479904,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3004","remoteAddress":"172.20.0.1","remotePort":49008},"msg":"incoming request"}
+{"level":30,"time":1753872479904,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-2","ip":"172.20.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1753872479904,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-2","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753872479904,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-2","res":{"statusCode":404},"responseTime":0.4494270011782646,"msg":"request completed"}
+{"level":30,"time":1753872485541,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-3","req":{"method":"GET","url":"/","host":"127.0.0.1:3004","remoteAddress":"172.20.0.1","remotePort":49006},"msg":"incoming request"}
+{"level":30,"time":1753872485541,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-3","ip":"172.20.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1753872485541,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-3","msg":"Route GET:/ not found"}
+{"level":30,"time":1753872485542,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-3","res":{"statusCode":404},"responseTime":0.42620299756526947,"msg":"request completed"}
+{"level":30,"time":1753872485578,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-4","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3004","remoteAddress":"172.20.0.1","remotePort":49008},"msg":"incoming request"}
+{"level":30,"time":1753872485578,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-4","ip":"172.20.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1753872485578,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-4","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753872485578,"pid":118,"hostname":"dba7a0c80f5b","reqId":"req-4","res":{"statusCode":404},"responseTime":0.4831639975309372,"msg":"request completed"}
+{"level":30,"time":1753872555464,"pid":118,"hostname":"dba7a0c80f5b","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1753872555464,"pid":118,"hostname":"dba7a0c80f5b","msg":"Server listening at http://172.20.0.2:3004"}
+{"level":30,"time":1753872766077,"pid":117,"hostname":"dba7a0c80f5b","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1753872766077,"pid":117,"hostname":"dba7a0c80f5b","msg":"Server listening at http://172.20.0.2:3004"}
+{"level":30,"time":1753873313912,"pid":161,"hostname":"a61737b72342","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1753873313912,"pid":161,"hostname":"a61737b72342","msg":"Server listening at http://172.20.0.3:3004"}
+{"level":30,"time":1753873338978,"pid":161,"hostname":"a61737b72342","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3004","remoteAddress":"172.20.0.1","remotePort":34700},"msg":"incoming request"}
+{"level":30,"time":1753873338978,"pid":161,"hostname":"a61737b72342","reqId":"req-2","ip":"172.20.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1753873338979,"pid":161,"hostname":"a61737b72342","reqId":"req-2","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753873338980,"pid":161,"hostname":"a61737b72342","reqId":"req-2","res":{"statusCode":404},"responseTime":1.6605370044708252,"msg":"request completed"}
+{"level":30,"time":1753873499878,"pid":118,"hostname":"a61737b72342","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1753873499878,"pid":118,"hostname":"a61737b72342","msg":"Server listening at http://172.20.0.3:3004"}

@@ -6,6 +6,8 @@ services:
     ports:
       - "3000:3000"
     env_file: .env
+    volumes:
+      - ./services/logs/api-gateway:/app/logs
     depends_on:
       - auth-service
       - user-service

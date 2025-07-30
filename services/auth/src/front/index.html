@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome - Auth DanDan</title>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+      "
+    >
+      <h1>Welcome to Auth DanDan</h1>
+      <p style="margin-bottom: 30px; color: #666">
+        A simple authentication system with Google OAuth
+      </p>
+
+      <div style="margin-bottom: 20px">
+        <button
+          onclick="window.location.href='signup.html'"
+          style="
+            padding: 15px 30px;
+            margin-right: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+          "
+        >
+          Sign Up
+        </button>
+        <button
+          onclick="window.location.href='login.html'"
+          style="
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+          "
+        >
+          Login
+        </button>
+      </div>
+
+      <div style="margin-top: 10px">
+        <button
+          onclick="loginWithGoogle()"
+          style="
+            padding: 15px 30px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+          "
+        >
+          <span style="margin-right: 8px">🔗</span>
+          Continue with Google
+        </button>
+      </div>
+    </div>
+
+    <!-- 2FA Modal -->
+    <div
+      id="twoFactorModal"
+      style="
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      "
+    >
+      <div
+        style="
+          background-color: white;
+          margin: 15% auto;
+          padding: 30px;
+          border-radius: 8px;
+          width: 400px;
+          max-width: 90%;
+          text-align: center;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <h2 style="margin-bottom: 20px; color: #333">
+          Two-Factor Authentication
+        </h2>
+        <p style="margin-bottom: 20px; color: #666">
+          Please enter the 6-digit code from your authenticator app:
+        </p>
+        <input
+          type="text"
+          id="twoFactorInput"
+          placeholder="123456"
+          maxlength="6"
+          style="
+            width: 200px;
+            padding: 12px;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+          "
+        />
+        <div>
+          <button
+            onclick="verifyTwoFactor()"
+            style="
+              padding: 12px 24px;
+              background-color: #28a745;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 16px;
+              margin-right: 10px;
+            "
+          >
+            Verify
+          </button>
+          <button
+            onclick="closeTwoFactorModal()"
+            style="
+              padding: 12px 24px;
+              background-color: #6c757d;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 16px;
+            "
+          >
+            Cancel
+          </button>
+        </div>
+        <div
+          id="twoFactorError"
+          style="margin-top: 15px; color: #dc3545; display: none"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      // Google OAuth popup function
+      function loginWithGoogle() {
+        console.log("Opening Google OAuth popup...");
+        const popup = window.open(
+          "/auth/google",
+          "googleOAuth",
+          "width=500,height=600,scrollbars=yes,resizable=yes"
+        );
+
+        console.log("Popup opened:", popup);
+
+        if (!popup) {
+          alert("Popup blocked! Please allow popups for this site.");
+          return;
+        }
+
+        // Listen for messages from the popup
+        const messageHandler = (event) => {
+          console.log("Parent window: received message", event);
+          console.log("Event origin:", event.origin);
+          console.log("Window origin:", window.location.origin);
+          console.log("Event data:", event.data);
+
+          if (event.origin !== window.location.origin) {
+            console.log("Origin mismatch, ignoring message");
+            return;
+          }
+
+          if (event.data.type === "GOOGLE_AUTH_SUCCESS") {
+            // Authentication successful
+            console.log("Google auth successful:", event.data.user);
+            window.removeEventListener("message", messageHandler);
+            console.log("Redirecting to dashboard...");
+            window.location.href = "dashboard.html";
+          } else if (event.data.type === "GOOGLE_AUTH_2FA_REQUIRED") {
+            // 2FA required for Google OAuth user
+            console.log("Google auth requires 2FA:", event.data.user);
+            window.removeEventListener("message", messageHandler);
+
+            // Create and show 2FA modal
+            showTwoFactorModal(event.data.tempToken);
+          } else if (event.data.type === "GOOGLE_AUTH_ERROR") {
+            // Authentication failed
+            console.error("Google auth error:", event.data.error);
+            window.removeEventListener("message", messageHandler);
+            alert("Google authentication failed. Please try again.");
+          }
+        };
+
+        window.addEventListener("message", messageHandler);
+        console.log("Message listener added");
+
+        // Check if popup was closed without completing auth
+        const checkClosed = setInterval(() => {
+          if (popup.closed) {
+            console.log("Popup was closed");
+            clearInterval(checkClosed);
+            window.removeEventListener("message", messageHandler);
+          }
+        }, 1000);
+      }
+
+      // 2FA Modal functions
+      let currentTempToken = null;
+
+      function showTwoFactorModal(tempToken) {
+        currentTempToken = tempToken;
+        document.getElementById("twoFactorModal").style.display = "block";
+        document.getElementById("twoFactorInput").focus();
+        document.getElementById("twoFactorError").style.display = "none";
+        document.getElementById("twoFactorInput").value = "";
+      }
+
+      function closeTwoFactorModal() {
+        document.getElementById("twoFactorModal").style.display = "none";
+        currentTempToken = null;
+      }
+
+      async function verifyTwoFactor() {
+        const twoFactorToken = document.getElementById("twoFactorInput").value;
+        const errorDiv = document.getElementById("twoFactorError");
+
+        if (!twoFactorToken || twoFactorToken.length !== 6) {
+          errorDiv.textContent = "Please enter a 6-digit code";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        try {
+          const twoFAResponse = await fetch("/login/2fa", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              tempToken: currentTempToken,
+              twoFactorToken: twoFactorToken,
+            }),
+            credentials: "include",
+          });
+
+          const twoFAData = await twoFAResponse.json();
+
+          if (twoFAResponse.ok) {
+            // 2FA successful, redirect to dashboard
+            console.log("2FA verification successful!");
+            closeTwoFactorModal();
+            window.location.href = "dashboard.html";
+          } else {
+            // Show 2FA error
+            errorDiv.textContent = twoFAData.error || "Invalid 2FA code";
+            errorDiv.style.display = "block";
+            document.getElementById("twoFactorInput").value = "";
+            document.getElementById("twoFactorInput").focus();
+          }
+        } catch (twoFAError) {
+          console.error("2FA error:", twoFAError);
+          errorDiv.textContent = "An error occurred during 2FA verification";
+          errorDiv.style.display = "block";
+        }
+      }
+
+      // Allow Enter key to submit 2FA
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .getElementById("twoFactorInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              verifyTwoFactor();
+            }
+          });
+
+        // Only allow numbers in 2FA input
+        document
+          .getElementById("twoFactorInput")
+          .addEventListener("input", function (e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, "");
+          });
+      });
+    </script>
+  </body>
+</html>

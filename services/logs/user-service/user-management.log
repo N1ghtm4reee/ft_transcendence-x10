@@ -31,3 +31,34 @@
 {"level":30,"time":1753871073692,"pid":118,"hostname":"e4012b2edb3c","msg":"Server listening at http://127.0.0.1:3002"}
 {"level":30,"time":1753871073692,"pid":118,"hostname":"e4012b2edb3c","msg":"Server listening at http://172.20.0.4:3002"}
 {"level":30,"time":1753871073692,"pid":118,"hostname":"e4012b2edb3c","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872397030,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872397031,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://172.20.0.4:3002"}
+{"level":30,"time":1753872397031,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872466733,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-1","req":{"method":"GET","url":"/health","host":"127.0.0.1:3002","remoteAddress":"172.20.0.1","remotePort":49398},"msg":"incoming request"}
+{"level":30,"time":1753872466735,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-1","ip":"172.20.0.1","msg":"new request to user-management"}
+{"level":30,"time":1753872466737,"pid":118,"hostname":"2ffcf50c7dc6","msg":"health request, healthy response !!"}
+{"level":30,"time":1753872466744,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-1","res":{"statusCode":200},"responseTime":7.9707740023732185,"msg":"request completed"}
+{"level":30,"time":1753872466927,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3002","remoteAddress":"172.20.0.1","remotePort":49412},"msg":"incoming request"}
+{"level":30,"time":1753872466928,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","ip":"172.20.0.1","msg":"new request to user-management"}
+{"level":30,"time":1753872466928,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753872466928,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","res":{"statusCode":404},"responseTime":0.551146999001503,"msg":"request completed"}
+{"level":30,"time":1753872470902,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-4","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3002","remoteAddress":"172.20.0.1","remotePort":49398},"msg":"incoming request"}
+{"level":30,"time":1753872470902,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-4","ip":"172.20.0.1","msg":"new request to user-management"}
+{"level":30,"time":1753872470902,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-4","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753872470903,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-4","res":{"statusCode":404},"responseTime":0.9744340032339096,"msg":"request completed"}
+{"level":30,"time":1753872552244,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872552244,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://172.20.0.4:3002"}
+{"level":30,"time":1753872552245,"pid":118,"hostname":"2ffcf50c7dc6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872560267,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3002","remoteAddress":"172.20.0.1","remotePort":42916},"msg":"incoming request"}
+{"level":30,"time":1753872560267,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","ip":"172.20.0.1","msg":"new request to user-management"}
+{"level":30,"time":1753872560267,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753872560268,"pid":118,"hostname":"2ffcf50c7dc6","reqId":"req-2","res":{"statusCode":404},"responseTime":1.0317259952425957,"msg":"request completed"}
+{"level":30,"time":1753872763183,"pid":117,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753872763183,"pid":117,"hostname":"6e60b891e734","msg":"Server listening at http://172.20.0.4:3002"}
+{"level":30,"time":1753872763183,"pid":117,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753873268172,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753873268172,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://172.20.0.4:3002"}
+{"level":30,"time":1753873268172,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753873496751,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1753873496751,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://172.20.0.4:3002"}
+{"level":30,"time":1753873496751,"pid":118,"hostname":"6e60b891e734","msg":"Server listening at http://127.0.0.1:3002"}

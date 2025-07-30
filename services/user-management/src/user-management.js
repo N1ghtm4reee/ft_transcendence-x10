@@ -7,6 +7,7 @@ import {internalRoutes} from './routes/internal.routes.js'
 import { blocksRoutes } from './routes/blocks.routes.js';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
+import fastifyMetrics from 'fastify-metrics';
 
 
 const app = fastify({
@@ -42,6 +43,13 @@ await app.register(swaggerUI, {
   staticCSP: true,
   transformSpecificationClone: true
 });
+
+// metrics
+await app.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  defaultMetrics: true
+});
+
 
 dotevn.config();
 

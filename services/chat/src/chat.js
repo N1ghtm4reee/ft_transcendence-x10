@@ -4,6 +4,7 @@ import fastifyWebsocket from '@fastify/websocket';
 import { chatRoutes, chatSocket } from './routes/message.routes.js'
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
+import fastifyMetrics from 'fastify-metrics'
 
 export const prisma = new PrismaClient();
 const app = Fastify({
@@ -31,6 +32,12 @@ await app.register(swagger, {
     consumes: ['application/json'],
     produces: ['application/json'],
   }
+});
+
+// metrics
+await app.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  defaultMetrics: true
 });
 
 await app.register(swaggerUI, {

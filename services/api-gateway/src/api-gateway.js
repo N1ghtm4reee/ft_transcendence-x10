@@ -1,14 +1,36 @@
 import fastify from 'fastify';
 import proxy from '@fastify/http-proxy';
 import dotenv from 'dotenv';
+import fastifyMetrics from 'fastify-metrics'
 
 dotenv.config();
-const app = fastify({logger : true});
+const app = fastify({
+  logger: {
+    level: 'info',
+    transport: {
+      target: 'pino/file',
+      options: { destination: '/app/logs/api-gateway.log' }
+    }
+  }
+});
 
+// metrics
+await app.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  defaultMetrics: true
+});
 
+app.addHook('onRequest', async (request, reply) => {
+  if (request.url.startsWith('/')) {
+    request.log.info({ ip: request.ip }, 'api-gateway received request');
+  }
+});
 
 const authenticateUser = async (req, res) => {
   try {
+    if (req.url == "/metrics")
+      return ;
+
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -66,15 +88,13 @@ const authenticateWs = async (request, reply) => {
 app.addHook('preHandler', async (request, reply) => {
   const publicRoutes = ['/api/auth/', '/health'];
   
-  if (publicRoutes.some(route => request.routeOptions.url.startsWith(route))) return;
+  if (publicRoutes.some(route => request.url.startsWith(route))) return;
 
-  // auth in api-gateway
-
-  // if (request.routeOptions.url.startsWith('/ws/')) {
-  //   await authenticateWs(request, reply);
-  // } else {
-  //   await authenticateUser(request, reply);
-  // }
+  if (request.url.startsWith('/ws/')) {
+    await authenticateWs(request, reply);
+  } else {
+    await authenticateUser(request, reply);
+  }
 });
 
 
@@ -110,6 +130,7 @@ app.register(proxy, createProxyWithHeaders(
   '/api/chat'
 ));
 
+
 app.register(proxy, {
   wsUpstream: process.env.CHAT_SERVICE_URL || 'ws://chat-service:3004',
   prefix: '/ws/chat',
@@ -123,7 +144,7 @@ app.get('/health', () => {
 });
 
 
-app.listen({ port: process.env.API_GATEWAY_PORT, host:'0.0.0.0' }, (err, address) => {
+app.listen({ port: 3000, host:'0.0.0.0' }, (err, address) => {
   if (err) {
     app.log.error(err);
     process.exit(1);
