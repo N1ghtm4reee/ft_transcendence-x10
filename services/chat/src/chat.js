@@ -6,7 +6,16 @@ import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 
 export const prisma = new PrismaClient();
-const app = Fastify({ logger: true });
+const app = Fastify({
+  logger: {
+    level: 'info',
+    transport: {
+      target: 'pino/file',
+      options: { destination: '/app/logs/chat.log' }
+    }
+  }
+});
+
 
 app.decorate('prisma', prisma);
 
@@ -37,6 +46,12 @@ await app.register(swaggerUI, {
 app.register(fastifyWebsocket);
 app.register(chatRoutes, { prefix: '/api/chat/' });
 app.register(chatSocket, { prefix: '/ws/chat' });
+
+app.addHook('onRequest', async (request, reply) => {
+  if (request.url.startsWith('/')) {
+    request.log.info({ ip: request.ip }, 'new request to chat-service');
+  }
+});
 
 app.get('/health', () => {
   return { message: 'healthy' };

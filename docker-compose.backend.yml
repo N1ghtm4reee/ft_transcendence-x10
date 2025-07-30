@@ -26,7 +26,7 @@ services:
     env_file: .env
     volumes:
       - ./databases/auth.db:/databases/auth.db
-      - ./services/logs/user-service:/app/logs
+      - ./services/logs/auth:/app/logs
     networks:
       - transcendence-network
 
@@ -59,7 +59,7 @@ services:
       - NOTIFICATION_SERVICE_URL=http://notification-service:3005
     volumes:
       - ./databases:/app/databases
-      - ./services/logs/user-service:/app/logs
+      - ./services/logs/chat:/app/logs
     networks:
       - transcendence-network
 
