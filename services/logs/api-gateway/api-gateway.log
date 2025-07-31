@@ -51,3 +51,12 @@
 {"level":30,"time":1753873497991,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3000","remoteAddress":"172.20.0.1","remotePort":47352},"msg":"incoming request"}
 {"level":30,"time":1753873497991,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","ip":"172.20.0.1","msg":"api-gateway received request"}
 {"level":30,"time":1753873497992,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","res":{"statusCode":401},"responseTime":0.809577003121376,"msg":"request completed"}
+{"level":30,"time":1753961430089,"pid":18,"hostname":"e9b6acd9b374","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1753961430090,"pid":18,"hostname":"e9b6acd9b374","msg":"Server listening at http://172.20.0.5:3000"}
+{"level":30,"time":1753961430090,"pid":18,"hostname":"e9b6acd9b374","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1753964564562,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-1","req":{"method":"GET","url":"/","host":"105.79.59.237","remoteAddress":"24.199.98.183","remotePort":54210},"msg":"incoming request"}
+{"level":30,"time":1753964564586,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-1","ip":"24.199.98.183","msg":"api-gateway received request"}
+{"level":30,"time":1753964564656,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-1","res":{"statusCode":401},"responseTime":80.80075500160456,"msg":"request completed"}
+{"level":30,"time":1753964565063,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","req":{"method":"GET","url":"/favicon.ico","host":"105.79.59.237","remoteAddress":"24.199.98.183","remotePort":54226},"msg":"incoming request"}
+{"level":30,"time":1753964565063,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","ip":"24.199.98.183","msg":"api-gateway received request"}
+{"level":30,"time":1753964565064,"pid":18,"hostname":"e9b6acd9b374","reqId":"req-2","res":{"statusCode":401},"responseTime":0.6507560014724731,"msg":"request completed"}

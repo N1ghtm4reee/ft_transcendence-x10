@@ -51,3 +51,15 @@
 {"level":30,"time":1753873268205,"pid":118,"hostname":"d0d9bcaa399d","msg":"Server listening at http://172.20.0.2:3001"}
 {"level":30,"time":1753873496884,"pid":118,"hostname":"d0d9bcaa399d","msg":"Server listening at http://127.0.0.1:3001"}
 {"level":30,"time":1753873496885,"pid":118,"hostname":"d0d9bcaa399d","msg":"Server listening at http://172.20.0.2:3001"}
+{"level":30,"time":1753961435057,"pid":118,"hostname":"85639fa81817","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1753961435057,"pid":118,"hostname":"85639fa81817","msg":"Server listening at http://172.20.0.2:3001"}
+{"level":30,"time":1753961518488,"pid":118,"hostname":"85639fa81817","reqId":"req-1","req":{"method":"GET","url":"/","host":"127.0.0.1:3001","remoteAddress":"172.20.0.1","remotePort":44706},"msg":"incoming request"}
+{"level":30,"time":1753961518489,"pid":118,"hostname":"85639fa81817","reqId":"req-1","ip":"172.20.0.1","msg":"new request to auth-service"}
+{"level":30,"time":1753961518494,"pid":118,"hostname":"85639fa81817","reqId":"req-1","res":{"statusCode":302},"responseTime":4.786786995828152,"msg":"request completed"}
+{"level":30,"time":1753961518541,"pid":118,"hostname":"85639fa81817","reqId":"req-2","req":{"method":"GET","url":"/front/index.html","host":"127.0.0.1:3001","remoteAddress":"172.20.0.1","remotePort":44706},"msg":"incoming request"}
+{"level":30,"time":1753961518541,"pid":118,"hostname":"85639fa81817","reqId":"req-2","ip":"172.20.0.1","msg":"new request to auth-service"}
+{"level":30,"time":1753961518548,"pid":118,"hostname":"85639fa81817","reqId":"req-2","res":{"statusCode":200},"responseTime":6.994452998042107,"msg":"request completed"}
+{"level":30,"time":1753961518965,"pid":118,"hostname":"85639fa81817","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"127.0.0.1:3001","remoteAddress":"172.20.0.1","remotePort":44706},"msg":"incoming request"}
+{"level":30,"time":1753961518966,"pid":118,"hostname":"85639fa81817","reqId":"req-3","ip":"172.20.0.1","msg":"new request to auth-service"}
+{"level":30,"time":1753961518966,"pid":118,"hostname":"85639fa81817","reqId":"req-3","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1753961518967,"pid":118,"hostname":"85639fa81817","reqId":"req-3","res":{"statusCode":404},"responseTime":1.4643920063972473,"msg":"request completed"}

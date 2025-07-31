@@ -2,6 +2,30 @@ import argon2 from "argon2";
 import { signupSchema, loginSchema, userInfoSchema } from "./schema.js";
 import TwoFactorService from "../services/TwoFactorService.js";
 
+async function createNewProfile(userData) {
+  const userProfile = {
+    id: userData.id,
+    displayName: userData.name,
+    avatar: userData.avatar || "/default-avatar.png",
+    bio: "hey there! want to play a game?",
+  };
+
+  // should be internal service call
+  const profileResponse = await fetch(
+    "http://user-service:3002/api/user-management/profiles",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...userProfile }),
+    }
+  );
+
+  if (!profileResponse.ok) {
+    throw new Error("Failed to create user profile");
+  }
+}
+
+
 async function authRoutes(fastify, options) {
   fastify.post(
     "/signup",
@@ -40,6 +64,13 @@ async function authRoutes(fastify, options) {
             passwordHash: hashedPassword,
           },
         });
+
+        try {
+          await createNewProfile(user);
+        } catch (err) {
+          console.error("Error calling user service", err);
+        }
+
 
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 

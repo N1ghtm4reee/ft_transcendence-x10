@@ -9,7 +9,7 @@ import authRoutes from "./routes/auth.js";
 import oauthRoutes from "./routes/oauth.js";
 import twoFactorRoutes from "./routes/2fa.js";
 import fastifyCookie from "@fastify/cookie";
-import fastifyMetrics from "fastify-metrics"
+import fastifyMetrics from "fastify-metrics";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
