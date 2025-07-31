@@ -40,7 +40,7 @@ services:
     ports:
       - "3002:3002"
     environment:
-      - DATABASE_PATH=file:./databases/users.db
+      - DATABASE_PATH=file:/databases/users.db
     volumes:
       - ./databases/users.db:/databases/users.db
       - ./services/logs/user-service:/app/logs

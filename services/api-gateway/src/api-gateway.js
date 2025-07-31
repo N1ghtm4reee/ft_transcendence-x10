@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import fastifyMetrics from 'fastify-metrics'
 
 dotenv.config();
+
 const app = fastify({
   logger: {
     level: 'info',
@@ -39,7 +40,7 @@ const authenticateUser = async (req, res) => {
     
     const token = authHeader.split(' ')[1];
     
-    const authResponse = await fetch(`${process.env.AUTH_SERVICE_URL}/api/auth/verify`, {
+    const authResponse = await fetch(`${process.env.AUTH_SERVICE_URL}/verify`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ token })

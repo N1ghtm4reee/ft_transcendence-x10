@@ -16,6 +16,11 @@ export default async function profileRoutes(app) {
     handler: userController.getProfile
   });
 
+  app.get('/profiles/:id/history', {
+    // schema: userSchemas.getProfile,
+    handler: userController.getHistory
+  });
+
   app.patch('/profiles', {
     schema: userSchemas.updateProfile,
     handler: userController.updateProfile 

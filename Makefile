@@ -1,6 +1,6 @@
 .PHONY: help build up down logs clean 
 
-all: db-setup build backend ELKUP PROMUP
+all: db-setup build backend #ELKUP PROMUP
 
 build:
 	@docker network create monitoring_network || true

@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import { signupSchema, loginSchema, userInfoSchema } from "./schema.js";
 import TwoFactorService from "../services/TwoFactorService.js";
 
+// controller
 async function createNewProfile(userData) {
   const userProfile = {
     id: userData.id,
@@ -93,6 +94,7 @@ async function authRoutes(fastify, options) {
         });
       } catch (error) {
         fastify.log.error(error);
+        console.log(error);
         return reply.status(500).send({ error: "Internal Server Error" });
       }
     }
@@ -377,6 +379,62 @@ async function authRoutes(fastify, options) {
       return reply.send({ message: "Logged out successfully" });
     }
   );
+
+fastify.post(
+  "/verify",
+  {
+    schema: {
+      tags: ["Authentication"],
+      summary: "Verify JWT Token",
+      description: "Verify the user token with JWT",
+      body: {
+        type: "object",
+        required: ["token"],
+        properties: {
+          token: { type: "string" },
+        },
+      },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            message: { type: "string" },
+            user: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                email: { type: "string" },
+              },
+            },
+          },
+        },
+        401: {
+          type: "object",
+          properties: {
+            message: { type: "string" },
+          },
+        },
+      },
+    },
+  },
+  async (req, res) => {
+    try {
+      const { token } = req.body;
+
+      const decoded = fastify.jwt.verify(token);
+
+      return res.send({
+        message: "Token is valid",
+        user: {
+          id: decoded.id,
+          email: decoded.email,
+        },
+      });
+    } catch (error) {
+      return res.status(401).send({ message: "Invalid or expired token" });
+    }
+  }
+);
 }
 
 export default authRoutes;
