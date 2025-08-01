@@ -26,6 +26,10 @@ export default async function profileRoutes(app) {
     handler: userController.updateProfile 
   })
 
+  app.get('/me', {
+    // schema: userSchemas.me,
+    handler: userController.myProfile 
+  })
   // implement later
   // app.patch('/profiles/avatar', userController.updateAvatar);
 

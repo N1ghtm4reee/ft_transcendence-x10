@@ -116,6 +116,46 @@ export const userController = {
             console.error(error);
             return reply.status(500).send({ error: 'Failed to fetch games history' });
         }
+    },
+
+myProfile: async function (request, reply) {
+    const idHeader = request.headers['x-user-id'];
+    const id = parseInt(idHeader, 10);
+    console.log('Parsed ID:', id);
+
+    if (isNaN(id)) {
+        return reply.status(400).send({ error: 'Invalid user ID' });
     }
+
+    try {
+        // Get user profile
+        const user = await prisma.userProfile.findUnique({
+            where: { id: id },
+        });
+
+        if (!user) {
+            return reply.status(404).send({ error: 'User profile not found' });
+        }
+
+        // Get last 10 games
+        const games = await prisma.gameHistory.findMany({
+            where: {
+                userId: id
+            },
+            orderBy: {
+                playedAt: 'desc'
+            },
+            take: 10
+        });
+
+        return reply.send({
+            profile: user,
+            gameHistory: games
+        });
+    } catch (error) {
+        console.error('Prisma error:', error);
+        return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
+    }
+}
 
 }

@@ -1374,3 +1374,100 @@
 {"level":30,"time":1754060263881,"pid":118,"hostname":"3513dcf7022e","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/profiles/1/history","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":37248},"msg":"incoming request"}
 {"level":30,"time":1754060263882,"pid":118,"hostname":"3513dcf7022e","reqId":"req-1","ip":"172.21.0.6","msg":"new request to user-management"}
 {"level":30,"time":1754060263925,"pid":118,"hostname":"3513dcf7022e","reqId":"req-1","res":{"statusCode":200},"responseTime":41.7071490008384,"msg":"request completed"}
+{"level":30,"time":1754066751804,"pid":118,"hostname":"3b28b59203f9","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754066751805,"pid":118,"hostname":"3b28b59203f9","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754066751805,"pid":118,"hostname":"3b28b59203f9","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754066818758,"pid":118,"hostname":"3b28b59203f9","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066818780,"pid":118,"hostname":"3b28b59203f9","reqId":"req-1","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066818825,"pid":118,"hostname":"3b28b59203f9","reqId":"req-1","res":{"statusCode":400},"responseTime":45.834711000323296,"msg":"request completed"}
+{"level":30,"time":1754066826427,"pid":118,"hostname":"3b28b59203f9","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066826427,"pid":118,"hostname":"3b28b59203f9","reqId":"req-2","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066826429,"pid":118,"hostname":"3b28b59203f9","reqId":"req-2","res":{"statusCode":400},"responseTime":0.8361829966306686,"msg":"request completed"}
+{"level":30,"time":1754066827839,"pid":118,"hostname":"3b28b59203f9","reqId":"req-3","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066827840,"pid":118,"hostname":"3b28b59203f9","reqId":"req-3","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066827841,"pid":118,"hostname":"3b28b59203f9","reqId":"req-3","res":{"statusCode":400},"responseTime":0.400349996984005,"msg":"request completed"}
+{"level":30,"time":1754066833152,"pid":118,"hostname":"3b28b59203f9","reqId":"req-4","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066833154,"pid":118,"hostname":"3b28b59203f9","reqId":"req-4","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066833154,"pid":118,"hostname":"3b28b59203f9","reqId":"req-4","res":{"statusCode":400},"responseTime":0.375560000538826,"msg":"request completed"}
+{"level":30,"time":1754066834191,"pid":118,"hostname":"3b28b59203f9","reqId":"req-5","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066834192,"pid":118,"hostname":"3b28b59203f9","reqId":"req-5","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066834192,"pid":118,"hostname":"3b28b59203f9","reqId":"req-5","res":{"statusCode":400},"responseTime":0.5153420008718967,"msg":"request completed"}
+{"level":30,"time":1754066846389,"pid":118,"hostname":"3b28b59203f9","reqId":"req-6","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37594},"msg":"incoming request"}
+{"level":30,"time":1754066846390,"pid":118,"hostname":"3b28b59203f9","reqId":"req-6","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066846392,"pid":118,"hostname":"3b28b59203f9","reqId":"req-6","res":{"statusCode":400},"responseTime":2.2678730003535748,"msg":"request completed"}
+{"level":30,"time":1754066998712,"pid":118,"hostname":"3b28b59203f9","reqId":"req-7","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":42178},"msg":"incoming request"}
+{"level":30,"time":1754066998712,"pid":118,"hostname":"3b28b59203f9","reqId":"req-7","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754066998714,"pid":118,"hostname":"3b28b59203f9","reqId":"req-7","res":{"statusCode":400},"responseTime":1.035962998867035,"msg":"request completed"}
+{"level":30,"time":1754067026914,"pid":118,"hostname":"3b28b59203f9","reqId":"req-8","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":50372},"msg":"incoming request"}
+{"level":30,"time":1754067026914,"pid":118,"hostname":"3b28b59203f9","reqId":"req-8","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067026915,"pid":118,"hostname":"3b28b59203f9","reqId":"req-8","res":{"statusCode":400},"responseTime":0.7703769989311695,"msg":"request completed"}
+{"level":30,"time":1754067036324,"pid":118,"hostname":"3b28b59203f9","reqId":"req-9","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":48928},"msg":"incoming request"}
+{"level":30,"time":1754067036324,"pid":118,"hostname":"3b28b59203f9","reqId":"req-9","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067036325,"pid":118,"hostname":"3b28b59203f9","reqId":"req-9","res":{"statusCode":400},"responseTime":0.9923890009522438,"msg":"request completed"}
+{"level":30,"time":1754067044585,"pid":118,"hostname":"3b28b59203f9","reqId":"req-a","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":45622},"msg":"incoming request"}
+{"level":30,"time":1754067044585,"pid":118,"hostname":"3b28b59203f9","reqId":"req-a","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067044585,"pid":118,"hostname":"3b28b59203f9","reqId":"req-a","res":{"statusCode":400},"responseTime":0.3847550004720688,"msg":"request completed"}
+{"level":30,"time":1754067111275,"pid":118,"hostname":"3b28b59203f9","reqId":"req-b","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":58834},"msg":"incoming request"}
+{"level":30,"time":1754067111276,"pid":118,"hostname":"3b28b59203f9","reqId":"req-b","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067111276,"pid":118,"hostname":"3b28b59203f9","reqId":"req-b","res":{"statusCode":400},"responseTime":0.6508660018444061,"msg":"request completed"}
+{"level":30,"time":1754067208095,"pid":118,"hostname":"3b28b59203f9","reqId":"req-c","req":{"method":"GET","url":"/api/user-management/profiles/1/history","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":59352},"msg":"incoming request"}
+{"level":30,"time":1754067208095,"pid":118,"hostname":"3b28b59203f9","reqId":"req-c","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067208170,"pid":118,"hostname":"3b28b59203f9","reqId":"req-c","res":{"statusCode":200},"responseTime":74.4447479993105,"msg":"request completed"}
+{"level":30,"time":1754067233603,"pid":118,"hostname":"3b28b59203f9","reqId":"req-d","req":{"method":"GET","url":"/api/user-management/profiles/1/history","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":59352},"msg":"incoming request"}
+{"level":30,"time":1754067233603,"pid":118,"hostname":"3b28b59203f9","reqId":"req-d","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067233610,"pid":118,"hostname":"3b28b59203f9","reqId":"req-d","res":{"statusCode":200},"responseTime":6.971090998500586,"msg":"request completed"}
+{"level":30,"time":1754067244373,"pid":118,"hostname":"3b28b59203f9","reqId":"req-e","req":{"method":"GET","url":"/api/user-management/profiles/2/history","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":59352},"msg":"incoming request"}
+{"level":30,"time":1754067244373,"pid":118,"hostname":"3b28b59203f9","reqId":"req-e","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067244377,"pid":118,"hostname":"3b28b59203f9","reqId":"req-e","res":{"statusCode":200},"responseTime":3.4727989993989468,"msg":"request completed"}
+{"level":30,"time":1754067249518,"pid":118,"hostname":"3b28b59203f9","reqId":"req-f","req":{"method":"GET","url":"/api/user-management/profiles/4/history","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":59352},"msg":"incoming request"}
+{"level":30,"time":1754067249518,"pid":118,"hostname":"3b28b59203f9","reqId":"req-f","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067249520,"pid":118,"hostname":"3b28b59203f9","reqId":"req-f","res":{"statusCode":200},"responseTime":2.3176410011947155,"msg":"request completed"}
+{"level":30,"time":1754067255867,"pid":118,"hostname":"3b28b59203f9","reqId":"req-g","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":59352},"msg":"incoming request"}
+{"level":30,"time":1754067255867,"pid":118,"hostname":"3b28b59203f9","reqId":"req-g","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067255868,"pid":118,"hostname":"3b28b59203f9","reqId":"req-g","res":{"statusCode":400},"responseTime":0.2761700004339218,"msg":"request completed"}
+{"level":30,"time":1754067276051,"pid":118,"hostname":"3b28b59203f9","reqId":"req-h","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":34266},"msg":"incoming request"}
+{"level":30,"time":1754067276052,"pid":118,"hostname":"3b28b59203f9","reqId":"req-h","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067276053,"pid":118,"hostname":"3b28b59203f9","reqId":"req-h","res":{"statusCode":400},"responseTime":0.7320869974792004,"msg":"request completed"}
+{"level":30,"time":1754067325383,"pid":118,"hostname":"503606c0404a","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067325383,"pid":118,"hostname":"503606c0404a","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754067325383,"pid":118,"hostname":"503606c0404a","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067327281,"pid":118,"hostname":"503606c0404a","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":57140},"msg":"incoming request"}
+{"level":30,"time":1754067327282,"pid":118,"hostname":"503606c0404a","reqId":"req-1","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067327288,"pid":118,"hostname":"503606c0404a","reqId":"req-1","res":{"statusCode":400},"responseTime":5.0331909991800785,"msg":"request completed"}
+{"level":30,"time":1754067409637,"pid":118,"hostname":"745a0e8ce6b5","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067409638,"pid":118,"hostname":"745a0e8ce6b5","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754067409638,"pid":118,"hostname":"745a0e8ce6b5","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067425303,"pid":118,"hostname":"745a0e8ce6b5","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":52594},"msg":"incoming request"}
+{"level":30,"time":1754067425304,"pid":118,"hostname":"745a0e8ce6b5","reqId":"req-1","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067425311,"pid":118,"hostname":"745a0e8ce6b5","reqId":"req-1","res":{"statusCode":400},"responseTime":5.94556599855423,"msg":"request completed"}
+{"level":30,"time":1754067627874,"pid":118,"hostname":"82478a9cbef4","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067627874,"pid":118,"hostname":"82478a9cbef4","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754067627874,"pid":118,"hostname":"82478a9cbef4","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067649827,"pid":118,"hostname":"82478a9cbef4","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37092},"msg":"incoming request"}
+{"level":30,"time":1754067649828,"pid":118,"hostname":"82478a9cbef4","reqId":"req-1","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067649834,"pid":118,"hostname":"82478a9cbef4","reqId":"req-1","res":{"statusCode":400},"responseTime":4.877778001129627,"msg":"request completed"}
+{"level":30,"time":1754067650548,"pid":118,"hostname":"82478a9cbef4","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":37106},"msg":"incoming request"}
+{"level":30,"time":1754067650548,"pid":118,"hostname":"82478a9cbef4","reqId":"req-2","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067650551,"pid":118,"hostname":"82478a9cbef4","reqId":"req-2","res":{"statusCode":400},"responseTime":1.39096499979496,"msg":"request completed"}
+{"level":30,"time":1754067676661,"pid":118,"hostname":"82478a9cbef4","reqId":"req-3","req":{"method":"GET","url":"/api/us0r-management/me","host":"localhost:3002","remoteAddress":"172.21.0.1","remotePort":35508},"msg":"incoming request"}
+{"level":30,"time":1754067676661,"pid":118,"hostname":"82478a9cbef4","reqId":"req-3","ip":"172.21.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754067676661,"pid":118,"hostname":"82478a9cbef4","reqId":"req-3","msg":"Route GET:/api/us0r-management/me not found"}
+{"level":30,"time":1754067676661,"pid":118,"hostname":"82478a9cbef4","reqId":"req-3","res":{"statusCode":404},"responseTime":0.5741169974207878,"msg":"request completed"}
+{"level":30,"time":1754067686086,"pid":118,"hostname":"82478a9cbef4","reqId":"req-4","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":52496},"msg":"incoming request"}
+{"level":30,"time":1754067686086,"pid":118,"hostname":"82478a9cbef4","reqId":"req-4","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067686134,"pid":118,"hostname":"82478a9cbef4","reqId":"req-4","res":{"statusCode":500},"responseTime":48.47046199813485,"msg":"request completed"}
+{"level":30,"time":1754067760493,"pid":118,"hostname":"205fae36f562","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067760493,"pid":118,"hostname":"205fae36f562","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754067760493,"pid":118,"hostname":"205fae36f562","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754067761169,"pid":118,"hostname":"205fae36f562","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":45162},"msg":"incoming request"}
+{"level":30,"time":1754067761171,"pid":118,"hostname":"205fae36f562","reqId":"req-1","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754067761220,"pid":118,"hostname":"205fae36f562","reqId":"req-1","res":{"statusCode":200},"responseTime":48.32088899984956,"msg":"request completed"}
+{"level":30,"time":1754068485167,"pid":118,"hostname":"1cfb7849bb03","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754068485168,"pid":118,"hostname":"1cfb7849bb03","msg":"Server listening at http://172.21.0.5:3002"}
+{"level":30,"time":1754068485168,"pid":118,"hostname":"1cfb7849bb03","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754068489701,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":57914},"msg":"incoming request"}
+{"level":30,"time":1754068489702,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-1","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754068489747,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-1","res":{"statusCode":200},"responseTime":44.74088500067592,"msg":"request completed"}
+{"level":30,"time":1754068493465,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":57914},"msg":"incoming request"}
+{"level":30,"time":1754068493465,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","ip":"172.21.0.6","msg":"new request to user-management"}
+{"level":30,"time":1754068493468,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","res":{"statusCode":200},"responseTime":2.434043001383543,"msg":"request completed"}
