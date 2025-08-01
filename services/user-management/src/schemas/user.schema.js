@@ -168,7 +168,6 @@ export const userSchemas = {
                 type: 'object',
                 properties: {
                     message: { type: 'string' }
-                    // optionally, user or updatedFields can be added here
                 },
                 required: ['message']
             },

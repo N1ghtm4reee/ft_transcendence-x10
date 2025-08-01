@@ -64,6 +64,19 @@ services:
       - ./services/logs/chat:/app/logs
     networks:
       - transcendence-network
+# game service
+  game-service:
+    build: ./services/game
+    image: n1ghtm4r3e/trandandan_game-service:latest
+    ports:
+      - "3006:3006"
+    environment:
+      - DATABASE_PATH=file:./databases/users.db
+    volumes:
+      - ./databases:/app/databases
+      - ./services/logs/game:/app/logs
+    networks:
+      - transcendence-network
 
   # Notification Service
   # notification-service:

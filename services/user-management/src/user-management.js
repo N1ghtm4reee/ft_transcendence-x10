@@ -23,7 +23,7 @@ const app = fastify({
 await app.register(swagger, {
   swagger: {
     info: {
-      title: 'Chat Service API',
+      title: 'User-management Service API',
       description: 'API docs for the chat service',
       version: '1.0.0',
     },

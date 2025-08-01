@@ -56,8 +56,14 @@ export const userController = {
 
 
     updateProfile: async function (request, reply) {
-        const userId = request.headers['x-user-id'];
-        const updates = request.body;
+        const userId = parseInt(request.headers['x-user-id']);
+        // const userId = 1;
+        console.log(userId);
+        let updates = request.body;
+        if (typeof updates === 'string') {
+            updates = JSON.parse(updates);
+        }
+        console.log(updates);
 
         if (Object.keys(updates).length === 0) {
             return reply.status(400).send({ error: 'Nothing to change' });
@@ -81,6 +87,7 @@ export const userController = {
                 // updatedFields: Object.keys(updates)
             });
         } catch (error) {
+            console.error("Update error:", error);
             return reply.status(500).send({ error: 'Failed to update user info' });
         }
     },
@@ -90,6 +97,7 @@ export const userController = {
         if (isNaN(id))
             return reply.status(400).send({ error: 'Invalid user ID' });
         try {
+            // get the last 10 games
             const games = await prisma.gameHistory.findMany({
                 where: {
                     userId: id

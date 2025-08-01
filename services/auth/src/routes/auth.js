@@ -72,7 +72,7 @@ async function authRoutes(fastify, options) {
           console.error("Error calling user service", err);
         }
 
-
+        console.log('user id : ' + user.id);
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", token, {
@@ -422,6 +422,7 @@ fastify.post(
       const { token } = req.body;
 
       const decoded = fastify.jwt.verify(token);
+      console.log('decoded : ', decoded);
 
       return res.send({
         message: "Token is valid",

@@ -22,7 +22,7 @@ export default async function profileRoutes(app) {
   });
 
   app.patch('/profiles', {
-    schema: userSchemas.updateProfile,
+    // schema: userSchemas.updateProfile,
     handler: userController.updateProfile 
   })
 

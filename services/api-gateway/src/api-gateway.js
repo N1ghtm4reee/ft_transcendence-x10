@@ -29,9 +29,6 @@ app.addHook('onRequest', async (request, reply) => {
 
 const authenticateUser = async (req, res) => {
   try {
-    if (req.url == "/metrics")
-      return ;
-
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -51,7 +48,9 @@ const authenticateUser = async (req, res) => {
     
     const userData = await authResponse.json();
     req.user = userData; // makandir biha walo db 
-    req.headers['x-user-id'] = userData.userId;
+    req.headers['x-user-id'] = userData.user.id;
+    console.log('auth response : ', userData);
+    console.log('userid', req.headers['x-user-id']);
   } catch (err) {
     res.status(401).send({ error: 'Unauthorized: missing/invalid token' });
   }
@@ -87,7 +86,7 @@ const authenticateWs = async (request, reply) => {
 }
 
 app.addHook('preHandler', async (request, reply) => {
-  const publicRoutes = ['/api/auth/', '/health'];
+  const publicRoutes = ['/api/auth/', '/health', '/metrics'];
   
   if (publicRoutes.some(route => request.url.startsWith(route))) return;
 
@@ -143,7 +142,6 @@ app.register(proxy, {
 app.get('/health', () => {
   return { message: 'healthy' };
 });
-
 
 app.listen({ port: 3000, host:'0.0.0.0' }, (err, address) => {
   if (err) {
