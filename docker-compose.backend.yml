@@ -73,7 +73,7 @@ services:
     environment:
       - DATABASE_PATH=file:./databases/users.db
     volumes:
-      - ./databases:/app/databases
+      - ./databases/users.db:/databases/users.db
       - ./services/logs/game:/app/logs
     networks:
       - transcendence-network

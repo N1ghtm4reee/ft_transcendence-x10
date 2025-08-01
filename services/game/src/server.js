@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import websocket from '@fastify/websocket'
 import url from 'url'
+import gameRoutes from './routes/game.routes.js';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -81,7 +82,7 @@ function startGameLoop(gameId) {
       return;
     }
 
-    updateBall(session);
+    updateBall(session, gameId);
     broadcastGameState(gameId);
   }, 1000 / 60); // 60 FPS
 }
@@ -102,7 +103,7 @@ function stopGameLoop(gameId) {
   }
 }
 
-function updateBall(session) {
+async function updateBall(session, gameId) {
   const ball = session.gameBoard.ball;
 
   // Update ball position
@@ -165,6 +166,41 @@ function updateBall(session) {
     resetBall(session);
     broadcastScoreUpdate(session);
   }
+
+  // end game if 5 goals reached and update database
+  if (session.score.player1 >= 5 || session.score.player2 >= 5) {
+  pauseGame(gameId);
+
+  try {
+    const cleanSession = {
+      player1username: session.player1username,
+      player2username: session.player2username,
+      score: session.score,
+      createdAt: session.createdAt,
+      gameType: session.gameType || 'classic',
+    };
+    console.log(cleanSession);
+    const response = await fetch('http://localhost:3006/api/game/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session: cleanSession,
+        gameId,
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to update game:', await response.text());
+    } else {
+      console.log('Game updated successfully');
+    }
+  } catch (error) {
+    console.error('Error updating game:', error);
+  }
+}
+
 
   // Limit ball velocity to prevent it from becoming too fast
   const maxSpeed = 0.4;
@@ -500,6 +536,8 @@ fastify.get('/health', async (request, reply) => {
     activeGameLoops: Object.keys(gameLoops).length
   };
 });
+
+fastify.register(gameRoutes, { prefix: '/api/game' })
 
 // Game stats endpoint
 fastify.get('/stats', async (request, reply) => {
