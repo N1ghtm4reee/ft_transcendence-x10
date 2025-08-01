@@ -1471,3 +1471,33 @@
 {"level":30,"time":1754068493465,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.21.0.6","remotePort":57914},"msg":"incoming request"}
 {"level":30,"time":1754068493465,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","ip":"172.21.0.6","msg":"new request to user-management"}
 {"level":30,"time":1754068493468,"pid":118,"hostname":"1cfb7849bb03","reqId":"req-2","res":{"statusCode":200},"responseTime":2.434043001383543,"msg":"request completed"}
+{"level":30,"time":1754069541028,"pid":126,"hostname":"92acadc3d6c0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754069541028,"pid":126,"hostname":"92acadc3d6c0","msg":"Server listening at http://172.18.0.5:3002"}
+{"level":30,"time":1754069541028,"pid":126,"hostname":"92acadc3d6c0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754069587318,"pid":125,"hostname":"92acadc3d6c0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754069587318,"pid":125,"hostname":"92acadc3d6c0","msg":"Server listening at http://172.18.0.5:3002"}
+{"level":30,"time":1754069587318,"pid":125,"hostname":"92acadc3d6c0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1754069602146,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-1","req":{"method":"GET","url":"/docs","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55052},"msg":"incoming request"}
+{"level":30,"time":1754069602147,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-1","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602154,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-1","res":{"statusCode":200},"responseTime":6.856552999466658,"msg":"request completed"}
+{"level":30,"time":1754069602191,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-2","req":{"method":"GET","url":"/docs/static/swagger-ui.css","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55052},"msg":"incoming request"}
+{"level":30,"time":1754069602192,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-2","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602199,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-3","req":{"method":"GET","url":"/docs/static/index.css","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55054},"msg":"incoming request"}
+{"level":30,"time":1754069602200,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-3","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602201,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-4","req":{"method":"GET","url":"/docs/static/swagger-ui-standalone-preset.js","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55068},"msg":"incoming request"}
+{"level":30,"time":1754069602201,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-4","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602204,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-5","req":{"method":"GET","url":"/docs/static/swagger-initializer.js","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55082},"msg":"incoming request"}
+{"level":30,"time":1754069602204,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-5","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602205,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-5","res":{"statusCode":200},"responseTime":0.6262449994683266,"msg":"request completed"}
+{"level":30,"time":1754069602208,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-3","res":{"statusCode":200},"responseTime":7.022131999954581,"msg":"request completed"}
+{"level":30,"time":1754069602208,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-6","req":{"method":"GET","url":"/docs/static/swagger-ui-bundle.js","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55092},"msg":"incoming request"}
+{"level":30,"time":1754069602208,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-6","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602209,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-2","res":{"statusCode":200},"responseTime":17.850244000554085,"msg":"request completed"}
+{"level":30,"time":1754069602212,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-6","res":{"statusCode":304},"responseTime":4.111659999936819,"msg":"request completed"}
+{"level":30,"time":1754069602215,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-4","res":{"statusCode":200},"responseTime":13.182676000520587,"msg":"request completed"}
+{"level":30,"time":1754069602799,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-7","req":{"method":"GET","url":"/docs/json","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55068},"msg":"incoming request"}
+{"level":30,"time":1754069602799,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-7","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602807,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-7","res":{"statusCode":200},"responseTime":8.186092000454664,"msg":"request completed"}
+{"level":30,"time":1754069602814,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-8","req":{"method":"GET","url":"/docs/static/favicon-16x16.png","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":55068},"msg":"incoming request"}
+{"level":30,"time":1754069602814,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-8","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1754069602819,"pid":125,"hostname":"92acadc3d6c0","reqId":"req-8","res":{"statusCode":200},"msg":"stream closed prematurely"}

@@ -8,6 +8,7 @@ import swaggerPlugin from "./plugins/swagger.js";
 import authRoutes from "./routes/auth.js";
 import oauthRoutes from "./routes/oauth.js";
 import twoFactorRoutes from "./routes/2fa.js";
+import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifyMetrics from "fastify-metrics";
 
@@ -38,6 +39,13 @@ await app.register(googleOAuthPlugin);
 await app.register(import("@fastify/static"), {
   root: path.join(__dirname, "front"),
   prefix: "/front/",
+});
+
+await app.register(cors, {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 });
 
 await app.register(authRoutes);

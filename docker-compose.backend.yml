@@ -4,7 +4,7 @@ services:
     build: ./services/api-gateway
     image: n1ghtm4r3e/trandandan_api-gateway:latest
     ports:
-      - "3000:3000"
+      - "4000:4000"
     env_file: .env
     volumes:
       - ./services/logs/api-gateway:/app/logs

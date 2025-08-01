@@ -3,8 +3,7 @@ FROM node:alpine3.21
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
 
 COPY . .
 
-CMD ["sh", "-c", "npx prisma generate && npx prisma db push && npm run start"]
+CMD ["sh", "-c", "npm install && npx prisma generate && npx prisma db push && npm run start"]
