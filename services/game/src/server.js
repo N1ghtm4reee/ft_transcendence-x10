@@ -3,14 +3,19 @@ import websocket from '@fastify/websocket'
 import url from 'url'
 import gameRoutes from './routes/game.routes.js';
 import { PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto';
+
 const prisma = new PrismaClient();
 
 const fastify = Fastify()
 await fastify.register(websocket)
 
-const sessions = {};
-const gameLoops = {};
-let gameId = 0;
+// Use a Map for better performance with object keys
+const sessions = new Map();
+const gameLoops = new Map();
+const disconnected = new Map();
+
+let waitingGameId = null;
 
 // Game constants
 const GAME_WIDTH = 20;
@@ -18,23 +23,11 @@ const GAME_HEIGHT = 10;
 const BALL_SPEED = 0.15;
 const PADDLE_HEIGHT = 2;
 const PADDLE_SPEED = 0.5;
-const RECONNECT_TIMEOUT = 30000; // 30 seconds
-
-// Initialize first game session
-sessions[gameId] = createGameSession();
-
-const disconnected = {};
-
-disconnected[gameId] = {
-  count: 0,
-  gameId: gameId,
-  username: null,
-  time: null,
-  timeout: null,
-}
+const RECONNECT_TIMEOUT = 5000; // 30 seconds
 
 function createGameSession() {
-  return {
+  const gameId = randomUUID();
+  const session = {
     player1Sock: null,
     player1username: null,
     player2Sock: null,
@@ -60,35 +53,39 @@ function createGameSession() {
     gameStarted: false,
     createdAt: Date.now()
   };
+  sessions.set(gameId, session);
+  return gameId;
 }
 
 function startGameLoop(gameId) {
-  if (gameLoops[gameId]) return; // Already running
+  if (gameLoops.has(gameId)) return;
 
   console.log(`Starting game loop for game ${gameId}`);
   
-  gameLoops[gameId] = setInterval(() => {
-    const session = sessions[gameId];
+  const session = sessions.get(gameId);
+  if (!session) return;
+
+  gameLoops.set(gameId, setInterval(() => {
     if (!session || !session.gameStarted) {
       return;
     }
 
-    // Check if both players are still connected
     const p1Connected = session.player1Sock && session.player1Sock.readyState === 1;
     const p2Connected = session.player2Sock && session.player2Sock.readyState === 1;
     
     if (!p1Connected || !p2Connected) {
+      // This should be handled by the close event, but as a fallback
       pauseGame(gameId);
       return;
     }
 
     updateBall(session, gameId);
     broadcastGameState(gameId);
-  }, 1000 / 60); // 60 FPS
+  }, 1000 / 60)); // 60 FPS
 }
 
 function pauseGame(gameId) {
-  const session = sessions[gameId];
+  const session = sessions.get(gameId);
   if (session) {
     session.gameStarted = false;
     console.log(`Game ${gameId} paused due to player disconnection`);
@@ -96,9 +93,9 @@ function pauseGame(gameId) {
 }
 
 function stopGameLoop(gameId) {
-  if (gameLoops[gameId]) {
-    clearInterval(gameLoops[gameId]);
-    delete gameLoops[gameId];
+  if (gameLoops.has(gameId)) {
+    clearInterval(gameLoops.get(gameId));
+    gameLoops.delete(gameId);
     console.log(`Game loop stopped for game ${gameId}`);
   }
 }
@@ -106,108 +103,89 @@ function stopGameLoop(gameId) {
 async function updateBall(session, gameId) {
   const ball = session.gameBoard.ball;
 
-  // Update ball position
   ball.x += ball.vx;
   ball.y += ball.vy;
 
-  // Ball collision with top/bottom walls
   if (ball.y <= 0 || ball.y >= GAME_HEIGHT) {
     ball.vy = -ball.vy;
     ball.y = Math.max(0, Math.min(GAME_HEIGHT, ball.y));
-    
-    // Add slight randomization to prevent infinite bouncing
     ball.vy += (Math.random() - 0.5) * 0.01;
   }
 
-  // Ball collision with paddles
   const paddleWidth = 0.5;
 
-  // Left paddle (Player 1)
   if (ball.x <= paddleWidth && ball.vx < 0) {
     const p1Y = session.gameBoard.player1.paddleY;
     if (ball.y >= p1Y - PADDLE_HEIGHT / 2 && ball.y <= p1Y + PADDLE_HEIGHT / 2) {
       ball.vx = -ball.vx;
       ball.x = paddleWidth;
-      // Add angle variation based on paddle hit position
       const hitPos = (ball.y - p1Y) / (PADDLE_HEIGHT / 2);
       ball.vy += hitPos * 0.05;
-      
-      // Increase speed slightly on paddle hits
       const speedMultiplier = 1.02;
       ball.vx *= speedMultiplier;
       ball.vy *= speedMultiplier;
     }
   }
 
-  // Right paddle (Player 2)
   if (ball.x >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
     const p2Y = session.gameBoard.player2.paddleY;
     if (ball.y >= p2Y - PADDLE_HEIGHT / 2 && ball.y <= p2Y + PADDLE_HEIGHT / 2) {
       ball.vx = -ball.vx;
       ball.x = GAME_WIDTH - paddleWidth;
-      // Add angle variation
       const hitPos = (ball.y - p2Y) / (PADDLE_HEIGHT / 2);
       ball.vy += hitPos * 0.05;
-      
-      // Increase speed slightly on paddle hits
       const speedMultiplier = 1.02;
       ball.vx *= speedMultiplier;
       ball.vy *= speedMultiplier;
     }
   }
 
-  // Ball out of bounds - scoring
   if (ball.x < 0) {
     session.score.player2++;
     resetBall(session);
-    broadcastScoreUpdate(session);
+    broadcastScoreUpdate(gameId);
   } else if (ball.x > GAME_WIDTH) {
     session.score.player1++;
     resetBall(session);
-    broadcastScoreUpdate(session);
+    broadcastScoreUpdate(gameId);
   }
 
-  // end game if 5 goals reached and update database
   if (session.score.player1 >= 5 || session.score.player2 >= 5) {
-  pauseGame(gameId);
+    pauseGame(gameId);
 
-  try {
-    const cleanSession = {
-      player1username: session.player1username,
-      player2username: session.player2username,
-      score: session.score,
-      createdAt: session.createdAt,
-      gameType: session.gameType || 'classic',
-    };
-    console.log(cleanSession);
-    const response = await fetch('http://localhost:3006/api/game/update', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        session: cleanSession,
-        gameId,
-      })
-    });
+    try {
+      const cleanSession = {
+        player1username: session.player1username,
+        player2username: session.player2username,
+        score: session.score,
+        createdAt: session.createdAt,
+        gameType: session.gameType || 'classic',
+      };
+      const response = await fetch('http://localhost:3006/api/game/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          session: cleanSession,
+          gameId,
+        })
+      });
 
-    if (!response.ok) {
-      console.error('Failed to update game:', await response.text());
-    } else {
-      console.log('Game updated successfully');
+      if (!response.ok) {
+        console.error('Failed to update game:', await response.text());
+      } else {
+        console.log('Game updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating game:', error);
     }
-  } catch (error) {
-    console.error('Error updating game:', error);
   }
-}
 
-
-  // Limit ball velocity to prevent it from becoming too fast
   const maxSpeed = 0.4;
   if (Math.abs(ball.vx) > maxSpeed) ball.vx = maxSpeed * Math.sign(ball.vx);
   if (Math.abs(ball.vy) > maxSpeed) ball.vy = maxSpeed * Math.sign(ball.vy);
   
-  // Ensure minimum speed to prevent ball from getting stuck
   const minSpeed = 0.1;
   if (Math.abs(ball.vx) < minSpeed) ball.vx = minSpeed * Math.sign(ball.vx);
   if (Math.abs(ball.vy) < minSpeed) ball.vy = minSpeed * Math.sign(ball.vy);
@@ -222,7 +200,7 @@ function resetBall(session) {
 }
 
 function broadcastGameState(gameId) {
-  const session = sessions[gameId];
+  const session = sessions.get(gameId);
   if (!session) return;
 
   const updateMessage = JSON.stringify({
@@ -237,7 +215,10 @@ function broadcastGameState(gameId) {
   sendToPlayer(session.player2Sock, updateMessage);
 }
 
-function broadcastScoreUpdate(session) {
+function broadcastScoreUpdate(gameId) {
+  const session = sessions.get(gameId);
+  if (!session) return;
+
   const scoreMessage = JSON.stringify({
     type: 'scoreUpdate',
     score: session.score
@@ -258,43 +239,37 @@ function sendToPlayer(socket, message) {
 }
 
 function handleReconnection(connection, username) {
-  for (const gID in disconnected) {
-    const dis = disconnected[gID];
-
+  for (const [gameId, dis] of disconnected.entries()) {
     if (dis.username === username) {
-      // Reconnection detected
       clearTimeout(dis.timeout);
-      delete disconnected[gID];
+      disconnected.delete(gameId);
 
-      console.log(`${username} reconnected to game ${gID}`);
-      console.log(`Score: ${sessions[gID].score.player1} - ${sessions[gID].score.player2}`);
-
-      // Reassign socket to the session
-      const session = sessions[gID];
+      const session = sessions.get(gameId);
       if (!session) continue;
 
-      connection.gameId = parseInt(gID);
+      connection.gameId = gameId;
       
-      // Determine which player is reconnecting
+      let playerNumber = 0;
       if (session.player1username === username) {
         session.player1Sock = connection;
-        connection.send(JSON.stringify({
-          type: 'reconnection',
-          gameId: parseInt(gID),
-          playerNumber: 1,
-          gameBoard: session.gameBoard,
-          score: session.score
-        }));
+        playerNumber = 1;
       } else if (session.player2username === username) {
         session.player2Sock = connection;
-        connection.send(JSON.stringify({
-          type: 'reconnection',
-          gameId: parseInt(gID),
-          playerNumber: 2,
-          gameBoard: session.gameBoard,
-          score: session.score
-        }));
+        playerNumber = 2;
+      } else {
+        continue;
       }
+
+      console.log(`${username} reconnected to game ${gameId} as player ${playerNumber}`);
+      console.log(`Score: ${session.score.player1} - ${session.score.player2}`);
+
+      connection.send(JSON.stringify({
+        type: 'reconnection',
+        gameId: gameId,
+        playerNumber: playerNumber,
+        gameBoard: session.gameBoard,
+        score: session.score
+      }));
 
       // Resume game if both players are connected
       const p1Connected = session.player1Sock && session.player1Sock.readyState === 1;
@@ -302,7 +277,8 @@ function handleReconnection(connection, username) {
       
       if (p1Connected && p2Connected) {
         session.gameStarted = true;
-        startGameLoop(parseInt(gID));
+        startGameLoop(gameId);
+        broadcastGameState(gameId); // Send a final state update to sync both clients
       }
       
       return true;
@@ -315,97 +291,126 @@ function cleanupOldSessions() {
   const now = Date.now();
   const maxAge = 1800000; // 30 minutes
   
-  for (const id in sessions) {
-    const session = sessions[id];
+  for (const [id, session] of sessions.entries()) {
     if (session.createdAt && now - session.createdAt > maxAge) {
+      // Clean up sessions with no active players
       if (!session.player1Sock && !session.player2Sock) {
         stopGameLoop(id);
-        delete sessions[id];
+        sessions.delete(id);
+        disconnected.delete(id);
         console.log(`Cleaned up old session ${id}`);
       }
     }
   }
 }
 
-// Clean up old sessions every 5 minutes
 setInterval(cleanupOldSessions, 300000);
 
 fastify.get('/game', { websocket: true }, (connection, req) => {
-  const Url = url.parse(req.url, true);
-  const queryparams = Url.query;
-  let username = queryparams.username;
+  const { username, gameId: reconnectId } = url.parse(req.url, true).query;
   
   if (!username) {
     connection.close(1008, 'Username required');
     return;
   }
   
-  let currentGameId = gameId;
   connection.username = username;
 
-  // Check if reconnection
+  // Handle explicit reconnection
+  if (reconnectId) {
+    const session = sessions.get(reconnectId);
+    if (session) {
+      let isReconnected = false;
+      if (session.player1username === username) {
+        session.player1Sock = connection;
+        connection.gameId = reconnectId;
+        isReconnected = true;
+      } else if (session.player2username === username) {
+        session.player2Sock = connection;
+        connection.gameId = reconnectId;
+        isReconnected = true;
+      }
+
+      if (isReconnected) {
+        // Clear any pending timeout for this player
+        const disInfo = disconnected.get(reconnectId);
+        if (disInfo && disInfo.username === username) {
+          clearTimeout(disInfo.timeout);
+          disconnected.delete(reconnectId);
+        }
+
+        console.log(`${username} reconnected to game ${reconnectId}`);
+        const p1Connected = session.player1Sock && session.player1Sock.readyState === 1;
+        const p2Connected = session.player2Sock && session.player2Sock.readyState === 1;
+        
+        if (p1Connected && p2Connected) {
+          session.gameStarted = true;
+          startGameLoop(reconnectId);
+          broadcastGameState(reconnectId);
+        }
+        
+        return;
+      }
+    }
+  }
+  
+  // Handle automatic reconnection based on previous disconnection
   if (handleReconnection(connection, username)) {
     return;
   }
 
-  // Find or create game session
-  if (!sessions[currentGameId]) {
-    sessions[currentGameId] = createGameSession();
+  let currentGameId;
+
+  // Find a waiting game or create a new one
+  if (waitingGameId && sessions.has(waitingGameId)) {
+    currentGameId = waitingGameId;
+  } else {
+    currentGameId = createGameSession();
+    waitingGameId = currentGameId;
   }
 
   connection.gameId = currentGameId;
+  const session = sessions.get(currentGameId);
 
-  if (!sessions[currentGameId].player1Sock) {
-    sessions[currentGameId].player1Sock = connection;
-    sessions[currentGameId].player1username = username;
+  if (!session.player1Sock) {
+    session.player1Sock = connection;
+    session.player1username = username;
     console.log(`Game ${currentGameId}: Player 1 (${username}) joined`);
     
     connection.send(JSON.stringify({
       type: 'playerAssignment',
       gameId: currentGameId,
       playerNumber: 1,
-      gameBoard: sessions[currentGameId].gameBoard,
-      score: sessions[currentGameId].score,
+      gameBoard: session.gameBoard,
+      score: session.score,
       waitingForPlayer: true
     }));
-  }
-  else if (!sessions[currentGameId].player2Sock) {
-    sessions[currentGameId].player2Sock = connection;
-    sessions[currentGameId].player2username = username;
+  } else if (!session.player2Sock) {
+    session.player2Sock = connection;
+    session.player2username = username;
     console.log(`Game ${currentGameId}: Player 2 (${username}) joined`);
     
     connection.send(JSON.stringify({
       type: 'playerAssignment',
       gameId: currentGameId,
       playerNumber: 2,
-      gameBoard: sessions[currentGameId].gameBoard,
-      score: sessions[currentGameId].score,
+      gameBoard: session.gameBoard,
+      score: session.score,
       waitingForPlayer: false
     }));
 
-    // Notify player 1 that player 2 joined
-    sendToPlayer(sessions[currentGameId].player1Sock, JSON.stringify({
+    sendToPlayer(session.player1Sock, JSON.stringify({
       type: 'playerJoined',
       waitingForPlayer: false
     }));
 
-    // Start the game when both players are connected
-    sessions[currentGameId].gameStarted = true;
+    session.gameStarted = true;
     startGameLoop(currentGameId);
     console.log(`Game ${currentGameId} started!`);
 
-    // Create new game session for next players
-    gameId++;
-    sessions[gameId] = createGameSession();
-    disconnected[gameId] = {
-      count: 0,
-      gameId: gameId,
-      username: null,
-      time: null,
-      timeout: null,
-    };
+    // Reset waiting game ID
+    waitingGameId = null;
   } else {
-    // Game is full
     connection.send(JSON.stringify({
       type: 'error',
       message: 'Game is full'
@@ -416,11 +421,10 @@ fastify.get('/game', { websocket: true }, (connection, req) => {
   connection.on('message', msg => {
     try {
       const message = JSON.parse(msg.toString());
-
       if (message.type === 'move') {
-        const session = sessions[message.gameId];
+        const session = sessions.get(connection.gameId);
         if (!session) return;
-
+        
         let player = null;
         if (connection === session.player1Sock) {
           player = 'player1';
@@ -433,16 +437,14 @@ fastify.get('/game', { websocket: true }, (connection, req) => {
           let newY = currentY;
 
           if (message.direction === 'up') {
-            newY = Math.min(GAME_HEIGHT - PADDLE_HEIGHT / 2, currentY + PADDLE_SPEED);
-          } else if (message.direction === 'down') {
             newY = Math.max(PADDLE_HEIGHT / 2, currentY - PADDLE_SPEED);
+          } else if (message.direction === 'down') {
+            newY = Math.min(GAME_HEIGHT - PADDLE_HEIGHT / 2, currentY + PADDLE_SPEED);
           }
-
           session.gameBoard[player].paddleY = newY;
-
-          // Broadcast paddle movement immediately
+          
           if (!session.gameStarted) {
-            broadcastGameState(message.gameId);
+            broadcastGameState(connection.gameId);
           }
         }
       }
@@ -465,66 +467,111 @@ function handlePlayerDisconnection(connection) {
   const gameId = connection.gameId;
   const username = connection.username;
   
-  if (!gameId || !sessions[gameId]) return;
+  if (!gameId || !sessions.has(gameId)) return;
   
-  const session = sessions[gameId];
-  let disconnectedPlayer = null;
+  const session = sessions.get(gameId);
+  let disconnectedPlayerUsername = null;
+  let remainingPlayerSock = null;
 
   if (session.player1Sock === connection) {
     session.player1Sock = null;
-    disconnectedPlayer = 'player1';
+    disconnectedPlayerUsername = session.player1username;
+    remainingPlayerSock = session.player2Sock;
     console.log(`Player 1 (${username}) disconnected from game ${gameId}`);
   } else if (session.player2Sock === connection) {
     session.player2Sock = null;
-    disconnectedPlayer = 'player2';
+    disconnectedPlayerUsername = session.player2username;
+    remainingPlayerSock = session.player1Sock;
     console.log(`Player 2 (${username}) disconnected from game ${gameId}`);
   }
 
-  if (disconnectedPlayer) {
+  if (disconnectedPlayerUsername) {
     pauseGame(gameId);
     
-    // Notify remaining player
-    const remainingSocket = disconnectedPlayer === 'player1' ? session.player2Sock : session.player1Sock;
-    sendToPlayer(remainingSocket, JSON.stringify({
+    sendToPlayer(remainingPlayerSock, JSON.stringify({
       type: 'playerDisconnected',
       message: 'Opponent disconnected. Waiting for reconnection...'
     }));
 
-    // Handle disconnection tracking
-    if (!disconnected[gameId] || disconnected[gameId].count === 0) {
-      disconnected[gameId] = {
-        count: 1,
-        gameId: gameId,
-        username: username,
-        time: Date.now(),
-        timeout: setTimeout(() => {
-          console.log(`${username} did not reconnect in time. Ending game ${gameId}.`);
-          
-          // Notify remaining player and close game
-          const session = sessions[gameId];
-          if (session) {
-            const remainingSocket = disconnectedPlayer === 'player1' ? session.player2Sock : session.player1Sock;
-            sendToPlayer(remainingSocket, JSON.stringify({
-              type: 'gameEnded',
-              reason: 'Opponent did not reconnect',
-              winner: disconnectedPlayer === 'player1' ? 'player2' : 'player1'
-            }));
-          }
-          
-          stopGameLoop(gameId);
-          delete sessions[gameId];
-          delete disconnected[gameId];
-        }, RECONNECT_TIMEOUT)
-      };
-    } else if (disconnected[gameId].username !== username) {
-      // Both players disconnected
+    const existingDisconnection = disconnected.get(gameId);
+    if (existingDisconnection) {
+      clearTimeout(existingDisconnection.timeout);
       console.log(`Both players disconnected from game ${gameId}. Ending game.`);
-      clearTimeout(disconnected[gameId].timeout);
-      stopGameLoop(gameId);
-      delete sessions[gameId];
-      delete disconnected[gameId];
+      
+      const winner = existingDisconnection.username === session.player1username ? 'player2' : 'player1';
+      updateAndEndGame(gameId, session, winner);
+      
+      return;
     }
+
+    // Set up a new timeout for this disconnection
+    const timeout = setTimeout(async () => {
+      console.log(`${disconnectedPlayerUsername} did not reconnect to game ${gameId} in time. Ending game.`);
+      
+      const winner = disconnectedPlayerUsername === session.player1username ? 'player2' : 'player1';
+      
+      await updateAndEndGame(gameId, session, winner);
+      
+      const remainingSession = sessions.get(gameId);
+      if (remainingSession && remainingPlayerSock) {
+        sendToPlayer(remainingPlayerSock, JSON.stringify({
+          type: 'gameEnded',
+          reason: 'Opponent did not reconnect',
+          winner: winner
+        }));
+      }
+      
+    }, RECONNECT_TIMEOUT);
+
+    disconnected.set(gameId, {
+      username: disconnectedPlayerUsername,
+      time: Date.now(),
+      timeout: timeout
+    });
   }
+}
+
+async function updateAndEndGame(gameId, session, winner) {
+  if (winner === 'player1') {
+    session.score.player1 = 3;
+    session.score.player2 = 0;
+  } else {
+    session.score.player1 = 0;
+    session.score.player2 = 3;
+  }
+  
+  const cleanSession = {
+    player1username: session.player1username,
+    player2username: session.player2username,
+    score: session.score,
+    createdAt: session.createdAt,
+    gameType: session.gameType || 'classic',
+  };
+
+  try {
+    const response = await fetch('http://localhost:3006/api/game/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        session: cleanSession,
+        gameId,
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Failed to update game:', await response.text());
+    } else {
+      console.log('Game updated successfully with walkover score.');
+    }
+  } catch (error) {
+    console.error('Error updating game:', error);
+  }
+
+  stopGameLoop(gameId);
+  sessions.delete(gameId);
+  disconnected.delete(gameId);
 }
 
 // Health check endpoint
@@ -532,20 +579,19 @@ fastify.get('/health', async (request, reply) => {
   return { 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    activeSessions: Object.keys(sessions).length,
-    activeGameLoops: Object.keys(gameLoops).length
+    activeSessions: sessions.size,
+    activeGameLoops: gameLoops.size
   };
 });
 
 fastify.register(gameRoutes, { prefix: '/api/game' })
 
-// Game stats endpoint
 fastify.get('/stats', async (request, reply) => {
   const stats = {
-    totalSessions: Object.keys(sessions).length,
-    activeGames: Object.values(sessions).filter(s => s.gameStarted).length,
-    pendingGames: Object.values(sessions).filter(s => !s.gameStarted).length,
-    disconnectedPlayers: Object.keys(disconnected).length
+    totalSessions: sessions.size,
+    activeGames: [...sessions.values()].filter(s => s.gameStarted).length,
+    pendingGames: [...sessions.values()].filter(s => !s.gameStarted).length,
+    disconnectedPlayers: disconnected.size
   };
   return stats;
 });

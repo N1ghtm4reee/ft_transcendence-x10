@@ -1,7 +1,8 @@
 import fastify from 'fastify';
 import proxy from '@fastify/http-proxy';
 import dotenv from 'dotenv';
-import fastifyMetrics from 'fastify-metrics'
+import fastifyMetrics from 'fastify-metrics';
+import cookie from '@fastify/cookie';
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ await app.register(fastifyMetrics, {
   defaultMetrics: true
 });
 
+app.register(cookie)
+
 app.addHook('onRequest', async (request, reply) => {
   if (request.url.startsWith('/')) {
     request.log.info({ ip: request.ip }, 'api-gateway received request');
@@ -29,65 +32,81 @@ app.addHook('onRequest', async (request, reply) => {
 
 const authenticateUser = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).send({ error: 'Unauthorized: missing/invalid token' });
+    const token = req.cookies?.token;
+    if (!token)
+    {
+      console.log('invelid token');
+      return res.status(401).send({error: 'Unauthorized: missing/invalid token'})
     }
-    
-    const token = authHeader.split(' ')[1];
-    
+
     const authResponse = await fetch(`${process.env.AUTH_SERVICE_URL}/verify`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ token })
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': `token=${token}`
+      }
     });
+
     if (!authResponse.ok) {
-      return res.status(401).send({ error: "Unauthorized"});
+      return res.status(401).send({ error: "Unauthorized" });
     }
-    
+
     const userData = await authResponse.json();
     req.user = userData; // makandir biha walo db 
     req.headers['x-user-id'] = userData.user.id;
     console.log('auth response : ', userData);
     console.log('userid', req.headers['x-user-id']);
   } catch (err) {
+    console.log(authResponse);
     res.status(401).send({ error: 'Unauthorized: missing/invalid token' });
   }
 }
 
 const authenticateWs = async (request, reply) => {
+  try {
+    const cookieHeader = request.headers.cookie || '';
+    const cookies = Object.fromEntries(
+      cookieHeader.split(';').map(cookie => {
+        const [name, ...rest] = cookie.trim().split('=');
+        return [name, decodeURIComponent(rest.join('='))];
+      })
+    );
+
+    const token = cookies.token;
+
+    if (!token) {
+      return reply.status(401).send({ error: 'Unauthorized: missing token' });
+    }
+
+    const authResponse = await fetch(`${process.env.AUTH_SERVICE_URL}/api/auth/verify`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': `token=${token}`,
+      },
+    });
+
+    if (!authResponse.ok) {
+      return reply.status(401).send({ error: 'Unauthorized: invalid token' });
+    }
+
+    const userData = await authResponse.json();
+
     const url = new URL(request.url, `http://${request.headers.host}`);
-    const token = url.searchParams.get('token');
+    url.searchParams.set('userId', userData.user.id);
+    request.raw.url = url.pathname + url.search;
 
-    if (!token) return reply.status(401).send({ error: 'Unauthorized: missing token' });
-  
-    try {
-      const authResponse = await fetch(`${process.env.AUTH_SERVICE_URL}/api/auth/verify`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({token})
-      });
-      
-      if (!authResponse.ok) return reply.status(401).send({ error: 'Unauthorized: invalid token' });
-  
-      const userData = await authResponse.json();
+    console.log('Updated request.raw.url:', request.raw.url);
+  } catch (err) {
+    console.error('WebSocket Auth Error:', err);
+    return reply.status(401).send({ error: 'Unauthorized: authentication failed' });
+  }
+};
 
-      url.searchParams.delete('token');
-      url.searchParams.set('userId', userData.userId);
-
-      console.log('befor request.raw.url', request.raw.url);
-
-      request.raw.url = url.pathname + url.search;
-      console.log('request.raw.url', request.raw.url);
-      } catch (err) {
-      return reply.status(401).send({ error: 'Unauthorized: authentication failed' });
-      }
-}
 
 app.addHook('preHandler', async (request, reply) => {
   const publicRoutes = ['/api/auth/', '/health', '/metrics'];
-  
+
   if (publicRoutes.some(route => request.url.startsWith(route))) return;
 
   if (request.url.startsWith('/ws/')) {
@@ -107,12 +126,12 @@ const createProxyWithHeaders = (upstream, prefix, rewritePrefix = prefix) => ({
     rewriteRequestHeaders: (originalReq, headers) => ({
       ...headers,
       'x-user-id': originalReq.headers['x-user-id'],
+      'cookie': originalReq.headers['cookie']
     })
   }
 });
 
-
-app.register(proxy,{
+app.register(proxy, {
   upstream: process.env.AUTH_SERVICE_URL || 'http://auth-service:3001',
   prefix: '/api/auth',
   http2: false,
@@ -123,7 +142,6 @@ app.register(proxy, createProxyWithHeaders(
   process.env.USER_MANAGEMENT_SERVICE_URL || 'http://user-service:3002',
   '/api/user-management'
 ))
-
 
 app.register(proxy, createProxyWithHeaders(
   process.env.CHAT_SERVICE_URL || 'http://chat-service:3004',
@@ -143,7 +161,7 @@ app.get('/health', () => {
   return { message: 'healthy' };
 });
 
-app.listen({ port: 3000, host:'0.0.0.0' }, (err, address) => {
+app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     app.log.error(err);
     process.exit(1);

@@ -380,20 +380,13 @@ async function authRoutes(fastify, options) {
     }
   );
 
-fastify.post(
+fastify.get(
   "/verify",
   {
     schema: {
       tags: ["Authentication"],
-      summary: "Verify JWT Token",
-      description: "Verify the user token with JWT",
-      body: {
-        type: "object",
-        required: ["token"],
-        properties: {
-          token: { type: "string" },
-        },
-      },
+      summary: "Verify JWT Token from Cookie",
+      description: "Verifies the JWT token from cookies and returns user info",
       response: {
         200: {
           type: "object",
@@ -419,10 +412,14 @@ fastify.post(
   },
   async (req, res) => {
     try {
-      const { token } = req.body;
+      const token = req.cookies?.token;
+
+      if (!token) {
+        return res.status(401).send({ message: "Token not found in cookies" });
+      }
 
       const decoded = fastify.jwt.verify(token);
-      console.log('decoded : ', decoded);
+      console.log("decoded:", decoded);
 
       return res.send({
         message: "Token is valid",
@@ -436,6 +433,7 @@ fastify.post(
     }
   }
 );
+
 }
 
 export default authRoutes;
