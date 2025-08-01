@@ -186,5 +186,75 @@ export const userSchemas = {
                 required: ['error']
             }
         }
+    },
+
+    myProfile: {
+        params: {
+            type: 'object',
+            properties: {},
+            additionalProperties: false
+        },
+        headers: {
+            type: 'object',
+            required: ['x-user-id'],
+            properties: {
+                'x-user-id': { type: 'string', pattern: '^[1-9]\\d*$' }
+            },
+            additionalProperties: true
+        },
+        response: {
+            200: {
+                type: 'object',
+                properties: {
+                    profile: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'integer' },
+                            displayName: { type: 'string' },
+                            bio: { type: 'string' },
+                            avatar: { type: 'string' }
+                            // add other userProfile fields as needed
+                        },
+                        required: ['id', 'displayName', 'bio', 'avatar']
+                    },
+                    gameHistory: {
+                        type: 'array',
+                        maxItems: 10,
+                        items: {
+                            type: 'object',
+                            properties: {
+                                id: { type: 'integer' },
+                                userId: { type: 'integer' },
+                                playedAt: { type: 'string', format: 'date-time' }
+                                // add other gameHistory fields as needed
+                            },
+                            required: ['id', 'userId', 'playedAt']
+                        }
+                    }
+                },
+                required: ['profile', 'gameHistory']
+            },
+            400: {
+                type: 'object',
+                properties: {
+                    error: { type: 'string', enum: ['Invalid user ID'] }
+                },
+                required: ['error']
+            },
+            404: {
+                type: 'object',
+                properties: {
+                    error: { type: 'string', enum: ['User profile not found'] }
+                },
+                required: ['error']
+            },
+            500: {
+                type: 'object',
+                properties: {
+                    error: { type: 'string', enum: ['Failed to fetch user profile and game history'] }
+                },
+                required: ['error']
+            }
+        }
     }
 };

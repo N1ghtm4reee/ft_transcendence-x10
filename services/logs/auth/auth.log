@@ -1797,5 +1797,22 @@
 {"level":30,"time":1754068493462,"pid":118,"hostname":"42c897c413d7","reqId":"req-2","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.21.0.6","remotePort":58676},"msg":"incoming request"}
 {"level":30,"time":1754068493463,"pid":118,"hostname":"42c897c413d7","reqId":"req-2","ip":"172.21.0.6","msg":"new request to auth-service"}
 {"level":30,"time":1754068493464,"pid":118,"hostname":"42c897c413d7","reqId":"req-2","res":{"statusCode":200},"responseTime":0.8403390012681484,"msg":"request completed"}
+<<<<<<< HEAD
 {"level":30,"time":1754069594842,"pid":259,"hostname":"8c58fcd627ea","msg":"Server listening at http://127.0.0.1:3001"}
 {"level":30,"time":1754069594843,"pid":259,"hostname":"8c58fcd627ea","msg":"Server listening at http://172.18.0.4:3001"}
+=======
+{"level":30,"time":1754069909788,"pid":118,"hostname":"26e3a118aa73","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754069909788,"pid":118,"hostname":"26e3a118aa73","msg":"Server listening at http://172.21.0.4:3001"}
+{"level":30,"time":1754070024822,"pid":118,"hostname":"600e179e9f96","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070024822,"pid":118,"hostname":"600e179e9f96","msg":"Server listening at http://172.21.0.4:3001"}
+{"level":30,"time":1754070156455,"pid":118,"hostname":"1a551d258627","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070156455,"pid":118,"hostname":"1a551d258627","msg":"Server listening at http://172.21.0.3:3001"}
+{"level":30,"time":1754070298943,"pid":118,"hostname":"16d140143879","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070298944,"pid":118,"hostname":"16d140143879","msg":"Server listening at http://172.21.0.4:3001"}
+{"level":30,"time":1754070401677,"pid":118,"hostname":"cf9e4a26f7c3","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070401678,"pid":118,"hostname":"cf9e4a26f7c3","msg":"Server listening at http://172.21.0.4:3001"}
+{"level":30,"time":1754070531853,"pid":118,"hostname":"dbf4beb28f01","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070531853,"pid":118,"hostname":"dbf4beb28f01","msg":"Server listening at http://172.21.0.4:3001"}
+{"level":30,"time":1754070692230,"pid":118,"hostname":"e1fe6d8fd16b","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754070692230,"pid":118,"hostname":"e1fe6d8fd16b","msg":"Server listening at http://172.21.0.4:3001"}
+>>>>>>> 139f0da (added schema for /me)
