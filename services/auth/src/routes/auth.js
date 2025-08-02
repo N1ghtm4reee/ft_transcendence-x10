@@ -72,16 +72,6 @@ async function authRoutes(fastify, options) {
 
         try {
           await createNewProfile(user);
-          const stats = await fastify.prisma.gameStats.create({
-            data: {
-              userId: user.id,
-              totalGames: 0,
-              wins: 0,
-              losses: 0,
-            },
-          });
-          if (!stats)
-              console.error("failed stats");
         } catch (err) {
           console.error("Error calling user service", err);
         }
