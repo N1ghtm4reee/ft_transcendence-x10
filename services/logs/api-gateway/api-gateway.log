@@ -2179,3 +2179,17 @@
 {"level":30,"time":1754159676723,"pid":18,"hostname":"533ba981a658","reqId":"req-1","source":"/api/user-management/me","msg":"fetching from remote server"}
 {"level":30,"time":1754159676741,"pid":18,"hostname":"533ba981a658","reqId":"req-1","msg":"response received"}
 {"level":30,"time":1754159676749,"pid":18,"hostname":"533ba981a658","reqId":"req-1","res":{"statusCode":200},"responseTime":76.5109990015626,"msg":"request completed"}
+{"level":30,"time":1754160133430,"pid":18,"hostname":"12d167bf71e0","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160133430,"pid":18,"hostname":"12d167bf71e0","msg":"Server listening at http://172.19.0.6:4000"}
+{"level":30,"time":1754160133430,"pid":18,"hostname":"12d167bf71e0","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160156090,"pid":18,"hostname":"350815b48dad","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160156091,"pid":18,"hostname":"350815b48dad","msg":"Server listening at http://172.19.0.6:4000"}
+{"level":30,"time":1754160156091,"pid":18,"hostname":"350815b48dad","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160346622,"pid":18,"hostname":"661a9b928a9e","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160346622,"pid":18,"hostname":"661a9b928a9e","msg":"Server listening at http://172.19.0.6:4000"}
+{"level":30,"time":1754160346623,"pid":18,"hostname":"661a9b928a9e","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1754160409854,"pid":18,"hostname":"661a9b928a9e","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"127.0.0.1:4000","remoteAddress":"172.19.0.1","remotePort":44820},"msg":"incoming request"}
+{"level":30,"time":1754160409862,"pid":18,"hostname":"661a9b928a9e","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1754160409966,"pid":18,"hostname":"661a9b928a9e","reqId":"req-1","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1754160409990,"pid":18,"hostname":"661a9b928a9e","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1754160410001,"pid":18,"hostname":"661a9b928a9e","reqId":"req-1","res":{"statusCode":200},"responseTime":142.34744399785995,"msg":"request completed"}

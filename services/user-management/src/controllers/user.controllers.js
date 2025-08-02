@@ -38,11 +38,20 @@ export const userController = {
 
     // internal
     createProfile: async function (request, reply) {
-        // no need to validate, i control the creation of user profiles
         const { id, displayName, avatar, bio } = request.body;
 
         try {
             await prisma.userProfile.create({ data: { id, displayName, avatar, bio } });
+            await prisma.gameStats.create({
+                data: {
+                    id: id,
+                    userId: id,
+                    totalGames: 0,
+                    wins: 0,
+                    losses: 0,
+                }
+            });
+
             return reply.status(201).send("User profile created successfully");
         } catch (error) {
             if (error.code === 'P2002') {
@@ -118,52 +127,52 @@ export const userController = {
         }
     },
 
-myProfile: async function (request, reply) {
-    const idHeader = request.headers['x-user-id'];
-    const id = parseInt(idHeader, 10);
-    console.log('Parsed ID:', id);
+    myProfile: async function (request, reply) {
+        const idHeader = request.headers['x-user-id'];
+        const id = parseInt(idHeader, 10);
+        console.log('Parsed ID:', id);
 
-    if (isNaN(id)) {
-        return reply.status(400).send({ error: 'Invalid user ID' });
-    }
-
-    try {
-        // Get user profile
-        const user = await prisma.userProfile.findUnique({
-            where: { id: id },
-        });
-
-        if (!user) {
-            return reply.status(404).send({ error: 'User profile not found' });
+        if (isNaN(id)) {
+            return reply.status(400).send({ error: 'Invalid user ID' });
         }
 
-        // Get last 10 games
-        const games = await prisma.gameHistory.findMany({
-            where: {
-                userId: id
-            },
-            orderBy: {
-                playedAt: 'desc'
-            },
-            take: 10
-        });
+        try {
+            // Get user profile
+            const user = await prisma.userProfile.findUnique({
+                where: { id: id },
+            });
 
-        // Get profile stats
-        const stats = await prisma.gameStats.findUnique({
-            where: {id : id}
-        });
+            if (!user) {
+                return reply.status(404).send({ error: 'User profile not found' });
+            }
 
-        console.log('stats: ', stats);
+            // Get last 10 games
+            const games = await prisma.gameHistory.findMany({
+                where: {
+                    userId: id
+                },
+                orderBy: {
+                    playedAt: 'desc'
+                },
+                take: 10
+            });
 
-        return reply.send({
-            profile: user,
-            gameHistory: games,
-            gameStats: stats
-        });
-    } catch (error) {
-        console.error('Prisma error:', error);
-        return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
+            // Get profile stats
+            const stats = await prisma.gameStats.findUnique({
+                where: { id: id }
+            });
+
+            console.log('stats: ', stats);
+
+            return reply.send({
+                profile: user,
+                gameHistory: games,
+                gameStats: stats
+            });
+        } catch (error) {
+            console.error('Prisma error:', error);
+            return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
+        }
     }
-}
 
 }
