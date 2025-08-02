@@ -148,6 +148,13 @@ myProfile: async function (request, reply) {
             take: 10
         });
 
+        // Get profile stats
+        const stats = {
+            gamesPlayed : user.totalGames,
+            wins : user.wins,
+            losses: user.losses
+        };
+
         return reply.send({
             profile: user,
             gameHistory: games
