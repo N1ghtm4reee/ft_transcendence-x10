@@ -66,17 +66,17 @@ model BlockedUser {
 }
 
 model GameStats {
-  id           Int      @id @default(autoincrement())
-  userId       Int      @unique @map("user_id")
-  totalGames   Int      @default(0)
-  wins         Int      @default(0)
-  losses       Int      @default(0)
+  id         Int      @id
+  userId     Int      @unique @map("user_id")
+  totalGames Int      @default(0)
+  wins       Int      @default(0)
+  losses     Int      @default(0)
 
-  // Relations
-  user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("game_stats")
 }
+
 
 model GameHistory {
   id           Int      @id @default(autoincrement())

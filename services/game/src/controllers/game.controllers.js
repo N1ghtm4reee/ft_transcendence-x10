@@ -97,6 +97,7 @@ export const gameController = {
             losses: result1 === 'loss' ? { increment: 1 } : undefined,
           },
           create: {
+            id: player1Id,
             userId: player1Id,
             totalGames: 1,
             wins: result1 === 'win' ? 1 : 0,
@@ -111,6 +112,7 @@ export const gameController = {
             losses: result2 === 'loss' ? { increment: 1 } : undefined,
           },
           create: {
+            id: player2Id,
             userId: player2Id,
             totalGames: 1,
             wins: result2 === 'win' ? 1 : 0,

@@ -26,6 +26,9 @@ async function createNewProfile(userData) {
   }
 }
 
+async function initGameStats(userData){
+  
+}
 
 async function authRoutes(fastify, options) {
   fastify.post(
@@ -48,6 +51,7 @@ async function authRoutes(fastify, options) {
       }
 
       try {
+        // need to add email or username 
         const existingUser = await fastify.prisma.user.findUnique({
           where: { email },
         });
@@ -68,6 +72,16 @@ async function authRoutes(fastify, options) {
 
         try {
           await createNewProfile(user);
+          const stats = await fastify.prisma.gameStats.create({
+            data: {
+              userId: user.id,
+              totalGames: 0,
+              wins: 0,
+              losses: 0,
+            },
+          });
+          if (!stats)
+              console.error("failed stats");
         } catch (err) {
           console.error("Error calling user service", err);
         }
