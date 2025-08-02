@@ -148,9 +148,17 @@ myProfile: async function (request, reply) {
             take: 10
         });
 
+        // Get profile stats
+        const stats = await prisma.gameStats.findUnique({
+            where: {id : id}
+        });
+
+        console.log('stats: ', stats);
+
         return reply.send({
             profile: user,
-            gameHistory: games
+            gameHistory: games,
+            gameStats: stats
         });
     } catch (error) {
         console.error('Prisma error:', error);

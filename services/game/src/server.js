@@ -152,6 +152,9 @@ async function updateBall(session, gameId) {
 
   if (session.score.player1 >= 5 || session.score.player2 >= 5) {
     pauseGame(gameId);
+    // fix
+    stopGameLoop(gameId);
+    sessions.delete(gameId);
 
     try {
       const cleanSession = {

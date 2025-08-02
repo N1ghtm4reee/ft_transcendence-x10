@@ -225,14 +225,29 @@ export const userSchemas = {
                             properties: {
                                 id: { type: 'integer' },
                                 userId: { type: 'integer' },
-                                playedAt: { type: 'string', format: 'date-time' }
+                                playedAt: { type: 'string', format: 'date-time' },
+                                result: {type: 'string'},
+                                playerScore: {type: 'integer'},
+                                opponentScore: {type: 'integer'}
+                                // gameType ?
                                 // add other gameHistory fields as needed
                             },
-                            required: ['id', 'userId', 'playedAt']
+                            required: ['id', 'userId', 'playedAt', 'result', 'playerScore', 'opponentScore']
                         }
+                    },
+                    gameStats: {
+                        type: 'object',
+                        properties: {
+                            id: { type: 'integer' },
+                            userId: { type: 'integer' },
+                            totalGames: { type: 'integer' },
+                            wins: { type: 'integer' },
+                            losses: { type: 'integer' }
+                        },
+                        required: ['id', 'userId', 'totalGames', 'wins', 'losses']
                     }
                 },
-                required: ['profile', 'gameHistory']
+                required: ['profile', 'gameHistory', 'gameStats']
             },
             400: {
                 type: 'object',

@@ -16,8 +16,8 @@ export const gameController = {
       console.log('error finding one of the players');
     }
 
-    console.log('player1.userId: ',player1.id);
-    console.log('player1.userId: ',player2.id);
+    console.log('player1.userId: ', player1.id);
+    console.log('player1.userId: ', player2.id);
 
     const player1Id = player1.id;
     const player2Id = player2.id;
@@ -86,6 +86,35 @@ export const gameController = {
             playerScore: session.score.player2,
             opponentScore: session.score.player1,
             duration: duration
+          }
+        }),
+        // should update for each user if user won or lost the game
+        prisma.GameStats.upsert({
+          where: { userId: player1Id },
+          update: {
+            totalGames: { increment: 1 },
+            wins: result1 === 'win' ? { increment: 1 } : undefined,
+            losses: result1 === 'loss' ? { increment: 1 } : undefined,
+          },
+          create: {
+            userId: player1Id,
+            totalGames: 1,
+            wins: result1 === 'win' ? 1 : 0,
+            losses: result1 === 'loss' ? 1 : 0,
+          }
+        }),
+        prisma.gameStats.upsert({
+          where: { userId: player2Id },
+          update: {
+            totalGames: { increment: 1 },
+            wins: result2 === 'win' ? { increment: 1 } : undefined,
+            losses: result2 === 'loss' ? { increment: 1 } : undefined,
+          },
+          create: {
+            userId: player2Id,
+            totalGames: 1,
+            wins: result2 === 'win' ? 1 : 0,
+            losses: result2 === 'loss' ? 1 : 0,
           }
         })
       ]);
