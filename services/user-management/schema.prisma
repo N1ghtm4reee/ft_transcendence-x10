@@ -31,6 +31,7 @@ model UserProfile {
   blockedUsers          BlockedUser[] @relation("BlockerUser")
   blockedByUsers        BlockedUser[] @relation("BlockedUser")
   GameStats             GameStats?
+  achievements          Achievements[] @relation("UserAchievement")
 
   @@map("user_profiles")
 }
@@ -94,4 +95,15 @@ model GameHistory {
   user UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("game_history")
+}
+
+model Achievements {
+  id           Int @id @default(autoincrement())
+  title        String  @unique @map("achievement_name")
+  description  String  @map("achievement_description")
+  icon         String  @map("achievement_icon")
+
+
+  users UserProfile[] @relation("UserAchievement")
+  @@map("achievements")
 }

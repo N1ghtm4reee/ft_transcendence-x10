@@ -21,23 +21,6 @@ export const gameController = {
 
     const player1Id = player1.id;
     const player2Id = player2.id;
-    // await prisma.userProfile.upsert({
-    //   where: { id: player1Id },
-    //   update: {},
-    //   create: {
-    //     id: player1Id,
-    //     displayName: `Player ${player1Id}`
-    //   }
-    // });
-
-    // await prisma.userProfile.upsert({
-    //   where: { id: player2Id },
-    //   update: {},
-    //   create: {
-    //     id: player2Id,
-    //     displayName: `Player ${player2Id}`
-    //   }
-    // });
 
     let result1 = 'draw';
     let result2 = 'draw';
@@ -130,5 +113,64 @@ export const gameController = {
 
 
     return reply.code(200).send({ message: "Game history added successfully." });
+  },
+  addAchievements: async function (request, reply) {
+  try {
+    // const session = request.body.session; // Assuming session data is sent in the body
+    const winner = request.body.winner;
+    if (!winner) {
+      return reply.code(400).send({ error: "Invalid session data." });
+    }
+
+    const winnerProfile = await prisma.userProfile.findFirst({
+      where: { displayName: winner },
+    });
+
+    if (!winnerProfile) {
+      console.log('Error: winnerProfile not found');
+      return reply.code(404).send({ error: "winnerProfile not found." });
+    }
+
+    const winnerId = winnerProfile.id;
+
+    console.log('winnerId:', winnerId);
+
+    const stats = await prisma.gameStats.findUnique({
+      where: { userId: winnerId }
+    });
+
+    if (stats && stats.wins > 0) {
+      const hasAchievement = await prisma.userProfile.findUnique({
+        where: { id: winnerId },
+        select: {
+          achievements: {
+            where: { id: 1 }
+          }
+        }
+      });
+
+      if (!hasAchievement.achievements.length) {
+        await prisma.userProfile.update({
+          where: { id: winnerId },
+          data: {
+            achievements: {
+              connect: { id: 1 } // Assuming achievement ID 1 is "First Win"
+            }
+          }
+        });
+
+        console.log('Added First Win achievement to player1');
+      } else {
+        console.log('Player1 already has the First Win achievement');
+      }
+    }
+
+    return reply.send({ message: "Achievement check completed." });
+
+  } catch (error) {
+    console.error('Error in addAchievements:', error);
+    return reply.code(500).send({ error: "Internal server error" });
   }
+}
+
 };

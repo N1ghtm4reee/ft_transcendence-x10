@@ -30,6 +30,16 @@ export default async function profileRoutes(app) {
     schema: userSchemas.myProfile,
     handler: userController.myProfile 
   })
+
+  app.get('/allachievements', {
+    // schema: userSchemas.allAchievements,
+    handler: userController.allAchievements 
+  })
+
+  app.get('/achievements', {
+    // schema: userSchemas.getUserAchievements,
+    handler: userController.getUserAchievements 
+  })
   // implement later
   // app.patch('/profiles/avatar', userController.updateAvatar);
 

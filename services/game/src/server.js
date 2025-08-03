@@ -151,6 +151,7 @@ async function updateBall(session, gameId) {
   }
 
   if (session.score.player1 >= 5 || session.score.player2 >= 5) {
+    const winner = (session.score.player1 >= 5) ? session.player1username : session.player2username;
     pauseGame(gameId);
     // fix
     stopGameLoop(gameId);
@@ -181,6 +182,27 @@ async function updateBall(session, gameId) {
         console.log('Game updated successfully');
       }
     } catch (error) {
+      console.error('Error updating game:', error);
+    }
+    // update achievements
+    try{
+      const response = await fetch('http://localhost:3006/api/game/achievements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          winner: winner
+        })
+      });
+
+      if (!response.ok) {
+        console.error('Failed to update game:', await response.text());
+      } else {
+        console.log('Game updated successfully');
+      }
+    } catch(error)
+    {
       console.error('Error updating game:', error);
     }
   }

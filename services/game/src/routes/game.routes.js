@@ -9,4 +9,9 @@ export default async function profileRoutes(app) {
     handler: gameController.addGameHistory
   });
 
+  app.post('/achievements', {
+    // schema: gameSchemas.achievement
+    handler: gameController.addAchievements
+  })
+
 }

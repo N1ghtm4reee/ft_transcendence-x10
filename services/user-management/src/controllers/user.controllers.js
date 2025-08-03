@@ -173,6 +173,50 @@ export const userController = {
             console.error('Prisma error:', error);
             return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
         }
+    },
+    allAchievements: async function (request, response) {
+        try {
+            // get all achievements from database
+            const allAchievements = await prisma.achievements.findMany();
+
+            return response.send({
+                achievements: allAchievements
+            })
+        } catch (error) {
+            console.error('Prisma error:', error);
+            return reply.status(500).send({ error: 'Failed to fetch achievements' });
+        }
+    },
+    getUserAchievements: async function (request, response) {
+        const idHeader = request.headers['x-user-id'];
+        const id = parseInt(idHeader, 10);
+        console.log('Parsed ID:', id);
+
+        try {
+            const userAchievements = await prisma.userProfile.findUnique({
+                where: { id: id },
+                include: {
+                    achievements: {
+                        select: { id: true } // Only select the ID
+                    }
+                }
+            });
+
+            if (!userAchievements) {
+                return response.status(404).send({ error: 'User not found' });
+            }
+
+            const achievementIds = userAchievements.achievements.map(a => a.id);
+
+            return response.send({
+                achievementIds: achievementIds
+            });
+
+        } catch (error) {
+            console.error('Prisma error:', error);
+            return response.status(500).send({ error: 'Failed to fetch achievements' });
+        }
     }
+
 
 }
