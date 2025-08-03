@@ -29,6 +29,7 @@ app.addHook('onRequest', async (request, reply) => {
     request.log.info({ ip: request.ip }, 'api-gateway received request');
   }
 });
+
 await app.register(cors, {
   origin: 'http://localhost:4000',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -140,9 +141,8 @@ const createProxyWithHeaders = (upstream, prefix, rewritePrefix = prefix) => ({
 app.register(proxy, {
   upstream: process.env.AUTH_SERVICE_URL || 'http://auth-service:3001',
   prefix: '/api/auth',
-  http2: false,
-  rewritePrefix: '/api/auth',
-})
+  rewritePrefix: '',
+});
 
 app.register(proxy, createProxyWithHeaders(
   process.env.USER_MANAGEMENT_SERVICE_URL || 'http://user-service:3002',
@@ -153,7 +153,6 @@ app.register(proxy, createProxyWithHeaders(
   process.env.CHAT_SERVICE_URL || 'http://chat-service:3004',
   '/api/chat'
 ));
-
 
 app.register(proxy, {
   wsUpstream: process.env.CHAT_SERVICE_URL || 'ws://chat-service:3004',
