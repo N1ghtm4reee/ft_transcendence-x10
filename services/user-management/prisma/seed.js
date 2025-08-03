@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 async function main() {
   const achievements = [
   { title: 'First Win', description: 'Win your first game', icon: '🥇' },
-  { title: 'Master', description: 'Win 10 games', icon: '/icons/master.png' },
-  { title: 'Undefeated', description: 'Win 5 games in a row', icon: '/icons/undefeated.png' },
+  { title: 'Master', description: 'Win 10 games', icon: '👑' },
+  { title: 'Undefeated', description: 'Win 5 games in a row', icon: '🔥' },
 ];
 
 for (const achievement of achievements) {
