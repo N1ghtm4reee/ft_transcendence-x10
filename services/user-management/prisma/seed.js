@@ -17,7 +17,7 @@ for (const achievement of achievements) {
   });
 }
 
-  console.log(':white_check_mark: Achievements seeded');
+  console.log('✅ Achievements seeded');
 }
 
 main()
