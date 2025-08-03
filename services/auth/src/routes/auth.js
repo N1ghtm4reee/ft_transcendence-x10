@@ -7,7 +7,7 @@ async function createNewProfile(userData) {
   const userProfile = {
     id: userData.id,
     displayName: userData.name,
-    avatar: userData.avatar || "/default-avatar.png",
+    avatar: userData.avatar || "/app/assets/default.png",
     bio: "hey there! want to play a game?",
   };
 
