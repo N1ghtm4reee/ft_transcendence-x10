@@ -163,11 +163,25 @@ export const userController = {
             });
 
             console.log('stats: ', stats);
+            // get user achievement
+            // get profile achievements
+            const userAchievements = await prisma.userProfile.findUnique({
+                where: { id: id },
+                include: {
+                    achievements: {
+                        select: { id: true }
+                    }
+                }
+            });
 
+            const achievementIds = userAchievements ? userAchievements.achievements.map(a => a.id) : [];
+
+            console.log('userAchievements: ', userAchievements);
             return reply.send({
                 profile: user,
                 gameHistory: games,
-                gameStats: stats
+                gameStats: stats,
+                achievements: achievementIds
             });
         } catch (error) {
             console.error('Prisma error:', error);
@@ -197,7 +211,7 @@ export const userController = {
                 where: { id: id },
                 include: {
                     achievements: {
-                        select: { id: true } // Only select the ID
+                        select: { id: true }
                     }
                 }
             });
