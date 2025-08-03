@@ -3,7 +3,7 @@ import proxy from '@fastify/http-proxy';
 import dotenv from 'dotenv';
 import fastifyMetrics from 'fastify-metrics';
 import cookie from '@fastify/cookie';
-
+import cors from '@fastify/cors';
 dotenv.config();
 
 const app = fastify({
@@ -28,6 +28,12 @@ app.addHook('onRequest', async (request, reply) => {
   if (request.url.startsWith('/')) {
     request.log.info({ ip: request.ip }, 'api-gateway received request');
   }
+});
+await app.register(cors, {
+  origin: 'http://localhost:4000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 });
 
 const authenticateUser = async (req, res) => {
@@ -161,7 +167,7 @@ app.get('/health', () => {
   return { message: 'healthy' };
 });
 
-app.listen({ port: 4000, host: '0.0.0.0' }, (err, address) => {
+app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     app.log.error(err);
     process.exit(1);
