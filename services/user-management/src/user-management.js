@@ -27,13 +27,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 await app.register(fastifyStatic, {
-  root: path.join(__dirname, "assets"), // Fixed typo: "asserts" -> "assets"
-  prefix: "/assets/", // Updated to match folder name
+  root: path.join(__dirname, "assets"),
+  prefix: "/assets/",
 });
 
-// Register CORS plugin (uncommented and fixed)
 await app.register(cors, {
-  origin: '*',
+  origin: 'http://localhost:4000/',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
