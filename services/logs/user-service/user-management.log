@@ -2509,3 +2509,6 @@
 {"level":30,"time":1754297457656,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-c","ip":"172.19.0.1","msg":"new request to user-management"}
 {"level":30,"time":1754297457656,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-c","msg":"Route GET:/favicon.ico not found"}
 {"level":30,"time":1754297457658,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-c","res":{"statusCode":404},"responseTime":1.6485890001058578,"msg":"request completed"}
+{"level":30,"time":1754298584641,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-d","req":{"method":"POST","url":"/api/user-management/profiles","host":"user-service:3002","remoteAddress":"172.19.0.3","remotePort":55080},"msg":"incoming request"}
+{"level":30,"time":1754298584641,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-d","ip":"172.19.0.3","msg":"new request to user-management"}
+{"level":30,"time":1754298584753,"pid":185,"hostname":"1a42ea46c75b","reqId":"req-d","res":{"statusCode":201},"responseTime":111.56202200055122,"msg":"request completed"}
