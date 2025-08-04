@@ -196,6 +196,141 @@ export const userController = {
         }
     },
 
+    // myProfile: async function (request, reply) {
+    //     const idHeader = request.headers['x-user-id'];
+    //     const id = parseInt(idHeader, 10);
+    //     console.log('Parsed ID:', id);
+
+    //     if (isNaN(id)) {
+    //         return reply.status(400).send({ error: 'Invalid user ID' });
+    //     }
+
+    //     try {
+    //         // Get user profile
+    //         const user = await prisma.userProfile.findUnique({
+    //             where: { id: id },
+    //             include: {
+    //                 sentFriendRequests: true,
+    //                 receivedFriendRequests: true,
+    //                 blockedUsers: true,
+    //                 blockedByUsers: true,
+    //             },
+    //         });
+
+    //         if (!user) {
+    //             return reply.status(404).send({ error: 'User profile not found' });
+    //         }
+
+    //         // Get last 10 games
+    //         const games = await prisma.gameHistory.findMany({
+    //             where: {
+    //                 userId: id
+    //             },
+    //             orderBy: {
+    //                 playedAt: 'desc'
+    //             },
+    //             take: 10
+    //         });
+    //         // Get profile stats
+    //         const stats = await prisma.gameStats.findUnique({
+    //             where: { id: id }
+    //         });
+
+    //         console.log('stats: ', stats);
+    //         // get user achievement
+    //         // get profile achievements
+    //         const userAchievements = await prisma.userProfile.findUnique({
+    //             where: { id: id },
+    //             include: {
+    //                 achievements: {
+    //                     select: { id: true }
+    //                 }
+    //             }
+    //         });
+
+    //         // add friends array
+    //         const friendships = await prisma.friendship.findMany({
+    //             where: {
+    //                 status: 'accepted',
+    //                 OR: [
+    //                     { requesterId: id },
+    //                     { receiverId: id }
+    //                 ]
+    //             },
+    //             include: {
+    //                 requester: {
+    //                     select: {
+    //                         id: true,
+    //                         displayName: true,
+    //                         avatar: true,
+    //                         status: "online",
+    //                         lastActive: Date.now()
+    //                         // add other fields like status or lastActive if needed
+    //                     }
+    //                 },
+    //                 receiver: {
+    //                     select: {
+    //                         id: true,
+    //                         displayName: true,
+    //                         avatar: true,
+    //                         status: "online",
+    //                         lastActive: Date.now()
+    //                     }
+    //                 }
+    //             }
+    //         });
+
+    //         // const receivedRequests = await prisma.friendship.findMany({
+    //         //     where: {
+    //         //         receiverId: id,
+    //         //         status: 'pending'
+    //         //     },
+    //         //     include: {
+    //         //         requester: {
+    //         //             select: {
+    //         //                 id: true,
+    //         //                 displayName: true,
+    //         //                 avatar: true
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // });
+
+    //         // const sentRequests = await prisma.friendship.findMany({
+    //         //     where: {
+    //         //         requesterId: id,
+    //         //         status: 'pending'
+    //         //     },
+    //         //     include: {
+    //         //         receiver: {
+    //         //             select: {
+    //         //                 id: true,
+    //         //                 displayName: true,
+    //         //                 avatar: true
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // });
+
+    //         const achievementIds = userAchievements ? userAchievements.achievements.map(a => a.id) : [];
+
+    //         console.log('userAchievements: ', userAchievements);
+    //         return reply.send({
+    //             profile: user,
+    //             gameHistory: games,
+    //             gameStats: stats,
+    //             achievements: achievementIds,
+    //             friends: friendships.map(friendship =>
+    //                 friendship.requesterId === id ? friendship.receiver : friendship.requester
+    //             )
+    //         });
+
+
+    //     } catch (error) {
+    //         console.error('Prisma error:', error);
+    //         return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
+    //     }
+    // }
     myProfile: async function (request, reply) {
         const idHeader = request.headers['x-user-id'];
         const id = parseInt(idHeader, 10);
@@ -206,127 +341,155 @@ export const userController = {
         }
 
         try {
-            // Get user profile
+            // 1. Get user profile
             const user = await prisma.userProfile.findUnique({
-                where: { id: id },
-                include: {
-                    sentFriendRequests: true,
-                    receivedFriendRequests: true,
-                    blockedUsers: true,
-                    blockedByUsers: true,
-                },
+                where: { id },
+                select: {
+                    id: true,
+                    displayName: true,
+                    bio: true,
+                    avatar: true,
+                }
             });
 
             if (!user) {
                 return reply.status(404).send({ error: 'User profile not found' });
             }
 
-            // Get last 10 games
-            const games = await prisma.gameHistory.findMany({
-                where: {
-                    userId: id
-                },
-                orderBy: {
-                    playedAt: 'desc'
-                },
-                take: 10
-            });
-            // Get profile stats
-            const stats = await prisma.gameStats.findUnique({
-                where: { id: id }
+            // 2. Get game history (last 10)
+            const gamesRaw = await prisma.gameHistory.findMany({
+                where: { userId: id },
+                orderBy: { playedAt: 'desc' },
+                take: 10,
             });
 
-            console.log('stats: ', stats);
-            // get user achievement
-            // get profile achievements
+            const gameHistory = gamesRaw.map(game => ({
+                id: game.id,
+                playedAt: game.playedAt.toISOString(),
+                result: game.result,
+                playerScore: game.playerScore,
+                opponentScore: game.opponentScore
+            }));
+
+            // 3. Get game stats
+            const stats = await prisma.gameStats.findUnique({
+                where: { userId: id }
+            });
+
+            const gameStats = {
+                totalGames: stats.totalGames,
+                wins: stats.wins,
+                losses: stats.losses,
+                tournaments: stats.tournaments,
+                tournamentsWins: stats.tournamentsWins,
+                bestStreak: stats.bestStreak,
+                currentStreak: stats.currentStreak
+            };
+
+            // 4. Get achievements
             const userAchievements = await prisma.userProfile.findUnique({
-                where: { id: id },
+                where: { id },
                 include: {
-                    achievements: {
-                        select: { id: true }
-                    }
+                    achievements: true
                 }
             });
 
-            // add friends array
+            const achievements = userAchievements?.achievements.map(a => ({
+                id: a.id,
+                title: a.title,
+                description: a.description,
+                icon: a.icon
+            })) || [];
+
+            // 5. Get accepted friendships
             const friendships = await prisma.friendship.findMany({
                 where: {
                     status: 'accepted',
-                    OR: [
-                        { requesterId: id },
-                        { receiverId: id }
-                    ]
+                    OR: [{ requesterId: id }, { receiverId: id }]
                 },
                 include: {
                     requester: {
-                        select: {
-                            id: true,
-                            displayName: true,
-                            avatar: true,
-                            // add other fields like status or lastActive if needed
-                        }
+                        select: { id: true, displayName: true, avatar: true }
                     },
                     receiver: {
-                        select: {
-                            id: true,
-                            displayName: true,
-                            avatar: true,
-                        }
+                        select: { id: true, displayName: true, avatar: true }
                     }
                 }
             });
 
-            // const receivedRequests = await prisma.friendship.findMany({
-            //     where: {
-            //         receiverId: id,
-            //         status: 'pending'
-            //     },
-            //     include: {
-            //         requester: {
-            //             select: {
-            //                 id: true,
-            //                 displayName: true,
-            //                 avatar: true
-            //             }
-            //         }
-            //     }
-            // });
+            const now = new Date();
 
-            // const sentRequests = await prisma.friendship.findMany({
-            //     where: {
-            //         requesterId: id,
-            //         status: 'pending'
-            //     },
-            //     include: {
-            //         receiver: {
-            //             select: {
-            //                 id: true,
-            //                 displayName: true,
-            //                 avatar: true
-            //             }
-            //         }
-            //     }
-            // });
+            const friends = friendships.map(friendship => {
+                const friend = (friendship.requesterId === id)
+                    ? friendship.receiver
+                    : friendship.requester;
 
-            const achievementIds = userAchievements ? userAchievements.achievements.map(a => a.id) : [];
-
-            console.log('userAchievements: ', userAchievements);
-            return reply.send({
-                profile: user,
-                gameHistory: games,
-                gameStats: stats,
-                achievements: achievementIds,
-                friends: friendships.map(friendship =>
-                    friendship.requesterId === id ? friendship.receiver : friendship.requester
-                )
+                return {
+                    id: friend.id,
+                    displayName: friend.displayName,
+                    avatar: friend.avatar,
+                    status: 'online',       // Replace with real logic later
+                    lastActive: now         // Replace with real field if available
+                };
             });
 
+            // 6. Get friend requests (pending)
+            const receivedRequestsRaw = await prisma.friendship.findMany({
+                where: { receiverId: id, status: 'pending' },
+                include: {
+                    requester: {
+                        select: { id: true, displayName: true, avatar: true }
+                    }
+                }
+            });
 
-        } catch (error) {
-            console.error('Prisma error:', error);
-            return reply.status(500).send({ error: 'Failed to fetch user profile and game history' });
+            const sentRequestsRaw = await prisma.friendship.findMany({
+                where: { requesterId: id, status: 'pending' },
+                include: {
+                    receiver: {
+                        select: { id: true, displayName: true, avatar: true }
+                    }
+                }
+            });
+
+            const friendRequests = {
+                received: receivedRequestsRaw.map(req => ({
+                    user: {
+                        id: req.requester.id,
+                        displayName: req.requester.displayName,
+                        avatar: req.requester.avatar,
+                        status: 'offline',
+                        lastActive: now
+                    },
+                    createdAt: req.createdAt
+                })),
+                sent: sentRequestsRaw.map(req => ({
+                    user: {
+                        id: req.receiver.id,
+                        displayName: req.receiver.displayName,
+                        avatar: req.receiver.avatar,
+                        status: 'offline',
+                        lastActive: now
+                    },
+                    createdAt: req.createdAt
+                }))
+            };
+
+            return reply.send({
+                profile: user,
+                gameHistory,
+                gameStats,
+                achievements,
+                friends,
+                friendRequests
+            });
+
+        } catch (err) {
+            console.error('Error in myProfile:', err);
+            return reply.status(500).send({ error: 'Internal server error' });
         }
-    },
+    }
+    ,
     allAchievements: async function (request, response) {
         try {
             // get all achievements from database
