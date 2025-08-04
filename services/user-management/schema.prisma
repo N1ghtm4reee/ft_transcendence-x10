@@ -18,7 +18,7 @@ enum FriendshipStatus {
 model UserProfile {
   id       Int    @id // Same ID as auth service user
  
-  displayName String? @map("display_name")
+  displayName String     @unique @map("display_name")
   avatar      String?
   bio         String?
 
@@ -72,6 +72,10 @@ model GameStats {
   totalGames Int      @default(0)
   wins       Int      @default(0)
   losses     Int      @default(0)
+  tournaments Int     @default(0)
+  tournamentsWins Int @default(0)
+  bestStreak Int @default(0)
+  currentStreak Int @default(0)
 
   user       UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
 

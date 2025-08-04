@@ -24,14 +24,83 @@ export const userController = {
     },
 
     getProfile: async function (request, reply) {
-        const id = request.params.id;
+        // convert username to userId
+
+        // const user = await prisma.userProfile.findFirst({
+        //     where: { displayName: userName },
+        // });
+
+
         try {
-            const user = await prisma.userProfile.findUnique({ where: { id: id } });
+            // get username from params
+            const userName = request.params.id;
+            console.log('userName: ', userName);
+            // get the requester userId from headers to get h2h vs you
+            const requesterId = parseInt(request.headers['x-user-id']);
+
+            // get user profile (name, bio, avatar)
+            const user = await prisma.userProfile.findUnique({
+                where: {
+                    displayName: userName,
+                },
+            });
+
             if (!user) {
+                console.log('user not found');
                 return reply.status(404).send({ error: 'User profile not found' });
             }
-            return reply.send(user);
+            console.log('user: ', user);
+            // get user game history h2h
+            const gamesH2h = await prisma.gameHistory.findMany({
+                where: {
+                    userId: user.id,
+                    opponentId: requesterId
+                },
+                orderBy: {
+                    playedAt: 'desc'
+                }
+            });
+            console.log('gamesH2h: ', gamesH2h);
+            // get user overall game history
+            const games = await prisma.gameHistory.findMany({
+                where: {
+                    userId: user.id
+                },
+                orderBy: {
+                    playedAt: 'desc'
+                },
+                take: 10
+            });
+            console.log('games: ', games);
+            // ?
+            // if (games.length === 0)
+            //     return reply.send('No games played')
+            // get user achievements
+            const userAchievements = await prisma.userProfile.findUnique({
+                where: { id: user.id },
+                include: {
+                    achievements: {
+                        select: { id: true }
+                    }
+                }
+            });
+            console.log('achievements: ', userAchievements.achievements);
+            // get game stats (streak and tournament wins) included
+            const stats = await prisma.gameStats.findUnique({
+                where: { id: user.id }
+            });
+            console.log('stats: ', stats);
+            // get h2h vs you
+            // console.log('game')
+            return reply.send({
+                user,
+                games,
+                gamesH2h,
+                achievements: userAchievements.achievements,
+                stats,
+            });
         } catch (error) {
+            console.log('error: ', error);
             return reply.status(500).send({ error: 'Failed to fetch user profile' });
         }
     },
@@ -156,7 +225,6 @@ export const userController = {
                 },
                 take: 10
             });
-
             // Get profile stats
             const stats = await prisma.gameStats.findUnique({
                 where: { id: id }

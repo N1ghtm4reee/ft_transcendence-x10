@@ -46,6 +46,31 @@ export const gameController = {
     });
 
     try {
+      // get current stats for both players
+      const [currentStats1, currentStats2] = await Promise.all([
+        prisma.gameStats.findUnique({ where: { userId: player1Id } }),
+        prisma.gameStats.findUnique({ where: { userId: player2Id } })
+      ]);
+
+      let newCurrentStreak1, newBestStreak1;
+      if (result1 === 'win') {
+        newCurrentStreak1 = (currentStats1?.currentStreak || 0) + 1;
+        newBestStreak1 = Math.max(newCurrentStreak1, currentStats1?.bestStreak || 0);
+      } else {
+        newCurrentStreak1 = 0;
+        newBestStreak1 = currentStats1?.bestStreak || 0;
+      }
+
+      // Calculate new streak and best streak for player2
+      let newCurrentStreak2, newBestStreak2;
+      if (result2 === 'win') {
+        newCurrentStreak2 = (currentStats2?.currentStreak || 0) + 1;
+        newBestStreak2 = Math.max(newCurrentStreak2, currentStats2?.bestStreak || 0);
+      } else {
+        newCurrentStreak2 = 0;
+        newBestStreak2 = currentStats2?.bestStreak || 0;
+      }
+
       const results = await prisma.$transaction([
         prisma.gameHistory.create({
           data: {
@@ -78,6 +103,8 @@ export const gameController = {
             totalGames: { increment: 1 },
             wins: result1 === 'win' ? { increment: 1 } : undefined,
             losses: result1 === 'loss' ? { increment: 1 } : undefined,
+            currentStreak: newCurrentStreak1,
+            bestStreak: newBestStreak1,
           },
           create: {
             id: player1Id,
@@ -85,6 +112,10 @@ export const gameController = {
             totalGames: 1,
             wins: result1 === 'win' ? 1 : 0,
             losses: result1 === 'loss' ? 1 : 0,
+            tournaments: 0,
+            tournamentsWins: 0,
+            bestStreak: newBestStreak1,
+            currentStreak: newCurrentStreak1,
           }
         }),
         prisma.gameStats.upsert({
@@ -93,6 +124,8 @@ export const gameController = {
             totalGames: { increment: 1 },
             wins: result2 === 'win' ? { increment: 1 } : undefined,
             losses: result2 === 'loss' ? { increment: 1 } : undefined,
+            bestStreak: newBestStreak2,
+            currentStreak: newCurrentStreak2,
           },
           create: {
             id: player2Id,
@@ -100,6 +133,10 @@ export const gameController = {
             totalGames: 1,
             wins: result2 === 'win' ? 1 : 0,
             losses: result2 === 'loss' ? 1 : 0,
+            tournaments: 0,
+            tournamentsWins: 0,
+            bestStreak: newBestStreak2,
+            currentStreak: newCurrentStreak2,
           }
         })
       ]);
@@ -138,7 +175,7 @@ export const gameController = {
     const stats = await prisma.gameStats.findUnique({
       where: { userId: winnerId }
     });
-
+    // add first win achievement
     if (stats && stats.wins > 0) {
       const hasAchievement = await prisma.userProfile.findUnique({
         where: { id: winnerId },
@@ -154,7 +191,7 @@ export const gameController = {
           where: { id: winnerId },
           data: {
             achievements: {
-              connect: { id: 1 } // Assuming achievement ID 1 is "First Win"
+              connect: { id: 1 }
             }
           }
         });
