@@ -2,8 +2,8 @@ import {friendshipControllers} from '../controllers/friendship.controllers.js';
 import {friendshipSchemas} from '../schemas/friendship.schema.js';
 
 export async function friendshipRoutes(app) {
-    app.post('/friendships/', {
-        schema: friendshipSchemas.sendFriendRequest,
+    app.post('/friendships', {
+        // schema: friendshipSchemas.sendFriendRequest,
         handler:friendshipControllers.sendFriendRequest
     })
     

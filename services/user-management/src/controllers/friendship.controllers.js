@@ -4,8 +4,9 @@ import { userUtils, friendshipUtils , blockUtils} from '../utils/user.utils.js';
 export const friendshipControllers = {
     sendFriendRequest: async (req, res) => {
 
-        const requesterId = req.headers['x-user-id'];        
-        const receiverId = req.body.receiverId;
+        const requesterId = parseInt(req.headers['x-user-id'], 10);        
+        const receiverId = parseInt(req.body.receiverId, 10);
+        console.log('requesterId : ', requesterId, ' receiverId : ', receiverId, ' body : ', req.body);
 
         if (requesterId == receiverId) {
             return res.status(400)
@@ -24,6 +25,7 @@ export const friendshipControllers = {
             if (await friendshipUtils.exists(requesterId, receiverId)) {
                 return res.status(400).send({ error: 'Friendship already exists' });
             }
+
             const blockExists = await blockUtils.exists(requesterId, receiverId);
             if (blockExists) {
                 return res.status(400).send(
@@ -49,8 +51,8 @@ export const friendshipControllers = {
         }
     },
     proccessRequest: async (req, res) => {
-        const requestid = req.params.id;
-        const proccesserId = req.headers['x-user-id'];
+        const requestid = parseInt(req.params.id);
+        const proccesserId = parseInt(req.headers['x-user-id']);
         const action =  req.body.action;
 
         try {
@@ -134,7 +136,7 @@ export const friendshipControllers = {
     },
 
     removeFriend: async (req, res) => {
-        const friendshipId  = req.params.id;
+        const friendshipId  = parseInt(req.params.id, 10);
         // change this 
         try {
             const friendship = await prisma.friendship.findUnique({
@@ -158,7 +160,7 @@ export const friendshipControllers = {
     },
 
     getFriendRequests: async (req, res) => {
-        const userId = req.headers['x-user-id'];
+        const userId = parseInt(req.headers['x-user-id'], 10);
 
         const status = req.query.status || 'pending'; // todo: return friendrequests by status later
         try {

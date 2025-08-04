@@ -27,7 +27,7 @@ export default async function profileRoutes(app) {
   })
 
   app.get('/me', {
-    schema: userSchemas.myProfile,
+    // schema: userSchemas.myProfile,
     handler: userController.myProfile 
   })
 
