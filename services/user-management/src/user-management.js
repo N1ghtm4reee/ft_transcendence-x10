@@ -8,7 +8,10 @@ import { blocksRoutes } from './routes/blocks.routes.js';
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
 import fastifyMetrics from 'fastify-metrics';
-
+import fastifyStatic from '@fastify/static';
+import cors from '@fastify/cors';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 const app = fastify({
   logger: {
@@ -18,6 +21,22 @@ const app = fastify({
       options: { destination: '/app/logs/user-management.log' }
     }
   }
+});
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+await app.register(fastifyStatic, {
+  root: path.join(__dirname, "assets"), // Fixed typo: "asserts" -> "assets"
+  prefix: "/assets/", // Updated to match folder name
+});
+
+// Register CORS plugin (uncommented and fixed)
+await app.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 });
 
 await app.register(swagger, {
@@ -86,3 +105,11 @@ app.listen({ port: process.env.USER_MANAGMENT_PORT || 3002, host: '0.0.0.0'}, (e
   }
   app.log.info(`Server listening at ${address}`);
 });
+
+// try {
+//   await app.listen({ port: 3002, host: '0.0.0.0' });
+//   console.log('Server running at http://127.0.0.1:3002');
+// } catch (err) {
+//   app.log.error(err);
+//   process.exit(1);
+// }
