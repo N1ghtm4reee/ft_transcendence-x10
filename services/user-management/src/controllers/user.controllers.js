@@ -247,6 +247,7 @@ export const userController = {
                     }
                 }
             });
+
             // add friends array
             const friendships = await prisma.friendship.findMany({
                 where: {
@@ -275,42 +276,38 @@ export const userController = {
                 }
             });
 
-            // Optional: Fetch friend requests (received and/or sent)
-            const receivedRequests = await prisma.friendship.findMany({
-                where: {
-                    receiverId: id,
-                    status: 'pending'
-                },
-                include: {
-                    requester: {
-                        select: {
-                            id: true,
-                            displayName: true,
-                            avatar: true
-                        }
-                    }
-                }
-            });
+            // const receivedRequests = await prisma.friendship.findMany({
+            //     where: {
+            //         receiverId: id,
+            //         status: 'pending'
+            //     },
+            //     include: {
+            //         requester: {
+            //             select: {
+            //                 id: true,
+            //                 displayName: true,
+            //                 avatar: true
+            //             }
+            //         }
+            //     }
+            // });
 
-            const sentRequests = await prisma.friendship.findMany({
-                where: {
-                    requesterId: id,
-                    status: 'pending'
-                },
-                include: {
-                    receiver: {
-                        select: {
-                            id: true,
-                            displayName: true,
-                            avatar: true
-                        }
-                    }
-                }
-            });
+            // const sentRequests = await prisma.friendship.findMany({
+            //     where: {
+            //         requesterId: id,
+            //         status: 'pending'
+            //     },
+            //     include: {
+            //         receiver: {
+            //             select: {
+            //                 id: true,
+            //                 displayName: true,
+            //                 avatar: true
+            //             }
+            //         }
+            //     }
+            // });
 
-            // add friend requests received
-
-            // add friend requests sent ?
             const achievementIds = userAchievements ? userAchievements.achievements.map(a => a.id) : [];
 
             console.log('userAchievements: ', userAchievements);
@@ -321,11 +318,7 @@ export const userController = {
                 achievements: achievementIds,
                 friends: friendships.map(friendship =>
                     friendship.requesterId === id ? friendship.receiver : friendship.requester
-                ),
-                friendRequests: {
-                    received: receivedRequests.map(req => req.requester),
-                    sent: sentRequests.map(req => req.receiver)
-                }
+                )
             });
 
 
