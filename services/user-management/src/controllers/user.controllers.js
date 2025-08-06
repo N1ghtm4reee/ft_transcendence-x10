@@ -33,7 +33,7 @@ export const userController = {
 
         try {
             // get username from params
-            const userName = request.params.id;
+            const userName = request.params.username;
             console.log('userName: ', userName);
             // get the requester userId from headers to get h2h vs you
             const requesterId = parseInt(request.headers['x-user-id']);

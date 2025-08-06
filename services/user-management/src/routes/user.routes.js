@@ -11,7 +11,7 @@ export default async function profileRoutes(app) {
 
   app.get('/profiles', userController.getProfiles);
   
-  app.get('/profiles/:id', {
+  app.get('/profiles/:username', {
     // schema: userSchemas.getProfile,
     handler: userController.getProfile
   });

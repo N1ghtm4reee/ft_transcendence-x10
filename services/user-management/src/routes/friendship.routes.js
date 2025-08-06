@@ -21,10 +21,12 @@ export async function friendshipRoutes(app) {
         schema: friendshipSchemas.removeFriend,
         handler: friendshipControllers.removeFriend
     })
+
     // app.get('/friendships/:id', {
     //     schema: friendshipSchemas.getFriend,
     //     handler: friendshipControllers.getFriend
     // })
+
     app.get('/friendships/requests/', {
         schema: friendshipSchemas.getRequests,
         handler: friendshipControllers.getFriendRequests

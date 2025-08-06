@@ -57,10 +57,10 @@ services:
     ports:
       - "3004:3004"
     environment:
-      - DATABASE_PATH=file:./databases/chats.db
+      - DATABASE_PATH=file:/databases/chat.db
       - NOTIFICATION_SERVICE_URL=http://notification-service:3005
     volumes:
-      - ./databases:/app/databases
+      - ./databases/chat.db:/databases/chat.db
       - ./services/logs/chat:/app/logs
     networks:
       - transcendence-network
@@ -79,13 +79,18 @@ services:
       - transcendence-network
 
   # Notification Service
-  # notification-service:
-  #   build: ./services/notification-service
-  #   ports:
-  #     - "3005:3005"
-  #   environment:
-  #   networks:
-  #     - transcendence-network
+  notification-service:
+    container_name: notification-service
+    build: ./services/notification-service
+    ports:
+      - "3005:3005"
+    environment:
+      - DATABASE_PATH=file:/databases/notifications.db
+    volumes:
+      - ./databases/notifications.db:/databases/notifications.db
+      - ./services/logs/notification:/app/logs
+    networks:
+      - transcendence-network
 
 
 

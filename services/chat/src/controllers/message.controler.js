@@ -26,6 +26,7 @@ async function validateChatPermissions(senderId, receiverId) {
         const data = await response.json();
         
         if (!response.ok) {
+            console.log('error validate chat permission');
             return { success: false, status: response.status, data };
         }
 
@@ -37,52 +38,77 @@ async function validateChatPermissions(senderId, receiverId) {
 
 export const chatControllers = {
 
-   sendMessage: async (req, res) => {
+    // send a message to a user before sending we validate friendship exists
+    sendMessage: async (req, res) => {
         try {
-            const senderId = req.headers['x-user-id'];
-            const {content, receiverId} = req.body;
+            const senderId = parseInt(req.headers['x-user-id'], 10);
+            const { content, receiverId } = req.body;
+            const receiverIdInt = parseInt(receiverId, 10);
          
-            const validationResult = await validateChatPermissions(senderId, receiverId);
+            const validationResult = await validateChatPermissions(senderId, receiverIdInt);
             if (!validationResult.success) {
                 return res.status(validationResult.status).send(validationResult.data);
             }
-
+            console.log('friendship exists');
+            // Find existing conversation between these two users
             let conversation = await prisma.conversation.findFirst({
                 where: {
                     AND: [
-                        { members: { every: { userId: { in: [senderId, receiverId] } } } },
                         { members: { some: { userId: senderId } } },
-                        { members: { some: { userId: receiverId } } }
+                        { members: { some: { userId: receiverIdInt } } }
                     ]
                 },
-                select: {id: true}
+                select: { id: true }
             });
 
+            // Create conversation if it doesn't exist
             if (!conversation) {
                 conversation = await prisma.conversation.create({
                     data: {
                         members: {
                             create: [
                                 { userId: senderId },
-                                { userId: receiverId }
+                                { userId: receiverIdInt }
                             ]
                         }
                     },
-                    select: {id: true}
+                    select: { id: true }
                 });
             }
 
+            // Create the message
             const newMessage = await prisma.directMessages.create({
                 data: {
                     senderId: senderId,
-                    receiverId: receiverId,
+                    receiverId: receiverIdInt,
                     content: content,
                     conversationId: conversation.id
                 },
             });
-            newMessage.type = 'new_message';
-            broadcastToUser(senderId, newMessage);
-            broadcastToUser(receiverId, newMessage);
+
+            // Prepare message for broadcast
+            const messageForBroadcast = {
+                ...newMessage,
+                type: 'new_message'
+            };
+
+            // Broadcast to both users
+            broadcastToUser(senderId, messageForBroadcast);
+            broadcastToUser(receiverIdInt, messageForBroadcast);
+
+            // send notification to the receiver
+            const notifResponse = await fetch('http://notification-service:3005/api/notifications/', {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    userId: receiverIdInt,
+                    type: "message",
+                    title: `new message received`,
+                    content: content
+                }),
+            });
+            if (notifResponse.ok)
+                console.log('notification sent to received user ok');
 
             return res.code(201).send('Message sent successfully');
 
@@ -95,19 +121,23 @@ export const chatControllers = {
         }
     },
 
+    // get all latest conversations of a user with multiple users
     getAllConversations: async (req, res) => {
         try {
-            const userId = req.headers['x-user-id'];
+            const userId = parseInt(req.headers['x-user-id'], 10);
+            console.log('getAllConversations userId: ', userId);
+            
             const conversations = await prisma.conversation.findMany({
                 where: {
                     members: {
                         some: { userId: userId }
                     }
                 },
-
                 select: {
                     id: true,
-                    members: { select: { userId: true,} },
+                    members: { 
+                        select: { userId: true } 
+                    },
                     messages: {
                         orderBy: { createdAt: 'desc' },
                         take: 1,
@@ -120,6 +150,8 @@ export const chatControllers = {
                 }
             });
 
+            console.log("getAllConversations conversations: ", conversations);
+
             return res.send({
                 conversations: conversations.map(conv => ({
                     id: conv.id,
@@ -127,7 +159,6 @@ export const chatControllers = {
                     lastMessage: conv.messages[0] || null
                 }))
             });
-
 
         } catch (error) {
             console.error('Error fetching conversations:', error);
@@ -137,18 +168,14 @@ export const chatControllers = {
         }
     },
 
+    // get the whole conversation with a single user
     getConversation: async (req, res) => {
         try {
-            const requesterId = req.headers['x-user-id'];
-            const participantId = req.params.participantId;
+            const requesterId = parseInt(req.headers['x-user-id'], 10);
+            const participantId = parseInt(req.params.participantId, 10);
             
             const conversation = await prisma.conversation.findFirst({
                 where: {
-                    members: {
-                        every: {
-                            userId: { in: [requesterId, participantId] }
-                        }
-                    },
                     AND: [
                         { members: { some: { userId: requesterId } } },
                         { members: { some: { userId: participantId } } }
@@ -164,8 +191,9 @@ export const chatControllers = {
                 }
             });
 
-            if (!conversation)
+            if (!conversation) {
                 return res.code(404).send({ error: 'Conversation not found' });
+            }
             
             return res.send({
                 conversation: {
@@ -175,6 +203,7 @@ export const chatControllers = {
                         id: msg.id,
                         content: msg.content,
                         senderId: msg.senderId,
+                        receiverId: msg.receiverId,
                         createdAt: msg.createdAt
                     }))
                 }
@@ -187,17 +216,19 @@ export const chatControllers = {
             });
         }
     },
-    // SHOULD BE CALLED SOCKET MANAGER
-    liveChat : async (connection, req) => {
+
+    // WebSocket connection manager
+    liveChat: async (connection, req) => {
         // userId is part of token, so no need to validate 
         const userId = Number(req.query.userId);
 
-        if (!socketConnections.has(userId)) 
+        if (!socketConnections.has(userId)) {
             socketConnections.set(userId, new Set());
-        
+        }
+
         socketConnections.get(userId).add(connection);
         console.log(`User ${userId} connected to live chat`);
-        
+
         connection.on('close', () => {
             const userConnections = socketConnections.get(userId);
             if (userConnections) {
@@ -207,13 +238,6 @@ export const chatControllers = {
                 }
             }
             console.log(`User ${userId} disconnected from live chat`);
-        })
+        });
     },
-
-}
-
-
-
-
-
-
+};

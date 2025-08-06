@@ -87,53 +87,57 @@ export const chatSchemas = {
     }
   },
 
-  getAllConversationsSchema: {
-    tags: ['Messages'],
-    summary: 'Get all conversations for the authenticated user',
-    headers: {
+  getAllConversationsSchema : {
+  tags: ['Messages'],
+  summary: 'Get all conversations for the authenticated user',
+  headers: {
+    type: 'object',
+    required: ['x-user-id'],
+    properties: {
+      'x-user-id': { type: 'number', description: 'User ID from header' }
+    }
+  },
+  response: {
+    200: {
+      description: 'List of conversations with last messages',
       type: 'object',
-      required: ['x-user-id'],
       properties: {
-        'x-user-id': { type: 'number', description: 'User ID from header' }
-      }
-    },
-    response: {
-      200: {
-        description: 'List of conversations with last messages',
-        type: 'object',
-        properties: {
-          conversations: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                id: { type: 'number' },
-                memberIds: {
-                  type: 'array',
-                  items: { type: 'number' }
+        conversations: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              memberIds: {
+                type: 'array',
+                items: { type: 'number' }
+              },
+              lastMessage: {
+                type: ['object', 'null'],
+                properties: {
+                  content: { type: 'string' },
+                  createdAt: { type: 'string', format: 'date-time' },
+                  senderId: { type: 'number' }
                 },
-                lastMessage: {
-                  type: ['object', 'null'],
-                  properties: {
-                    content: { type: 'string' },
-                    createdAt: { type: 'string', format: 'date-time' },
-                    senderId: { type: 'number' }
-                  }
-                }
+                required: ['content', 'createdAt', 'senderId']
               }
-            }
+            },
+            required: ['id', 'memberIds', 'lastMessage']
           }
         }
       },
-      500: {
-        description: 'Server error while fetching conversations',
-        type: 'object',
-        properties: {
-          error: { type: 'string' }
-        }
-      }
+      required: ['conversations']
+    },
+    500: {
+      description: 'Failed to fetch conversations',
+      type: 'object',
+      properties: {
+        error: { type: 'string' }
+      },
+      required: ['error']
     }
-  },
+  }
+},
 
   getConversationSchema: {
     tags: ['Messages'],

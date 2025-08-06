@@ -26,11 +26,11 @@ export const chatRoutes = async (app, options) => {
     });
 
     app.get('/conversations', {
-        schema: chatSchemas.getAllConversationsSchema,
+        // schema: chatSchemas.getAllConversationsSchema,
         handler: chatControllers.getAllConversations
     });
     app.get('/conversations/:participantId', {
-        schema: chatSchemas.getConversationSchema,
+        // schema: chatSchemas.getConversationSchema,
         handler: chatControllers.getConversation
     });
 }
