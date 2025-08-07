@@ -1,6 +1,7 @@
 import prisma from "#root/prisma/prisma.js";
 import { userUtils } from "../utils/user.utils.js";
-
+import fs from "fs";
+import path from "path";
 export const userController = {
     getProfiles: async function (request, reply) {
         const name = request.query.name || '';
@@ -108,7 +109,7 @@ export const userController = {
     // internal
     createProfile: async function (request, reply) {
         const { id, displayName, avatar, bio } = request.body;
-        console.log('called create prodile from user-service : ', request.body);
+
         try {
             await prisma.userProfile.create({ data: { id, displayName, avatar, bio } });
             await prisma.gameStats.create({
@@ -134,35 +135,41 @@ export const userController = {
 
     updateProfile: async function (request, reply) {
         const userId = parseInt(request.headers['x-user-id']);
-        // const userId = 1;
         console.log(userId);
-        let updates = request.body;
-        if (typeof updates === 'string') {
-            updates = JSON.parse(updates);
-        }
-        console.log(updates);
 
-        if (Object.keys(updates).length === 0) {
-            return reply.status(400).send({ error: 'Nothing to change' });
-        }
         try {
+            const data = await request.file();
+            const fields = {};
+            let avatarPath = null;
 
+            if (data && data.fields) {
+                for (const [key, value] of Object.entries(data.fields)) {
+                    if (value && value.value) {
+                        fields[key] = value.value;
+                    }
+                }
+            }
+            if (data && data.file) {
+                console.log(process.cwd());
+                console.log('data: ', data);
+                const uploadDir = path.join(process.cwd(), "src", 'assets');
+                const fileExtension = path.extname(data.filename);
+                const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
+                avatarPath = path.join(uploadDir, filename);
+                const buffer = await data.toBuffer();
+                fs.writeFileSync(avatarPath, buffer);
+                fields.avatar = `assets/${filename}`;
+            }
+            
             const updatedUser = await prisma.userProfile.update({
                 where: { id: userId },
-                data: updates,
-                // select: {
-                //     id: true,
-                //     displayName: true,
-                //     bio: true,
-                //     avatar: true,
-                //     updatedAt: true
-                // }
+                data: fields,
             });
+
             return reply.send({
                 message: 'User profile updated successfully',
-                // user: updatedUser,
-                // updatedFields: Object.keys(updates)
             });
+
         } catch (error) {
             console.error("Update error:", error);
             return reply.status(500).send({ error: 'Failed to update user info' });
@@ -532,6 +539,4 @@ export const userController = {
             return response.status(500).send({ error: 'Failed to fetch achievements' });
         }
     }
-
-
 }
