@@ -3713,3 +3713,6 @@
 {"level":30,"time":1754554243843,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-e","ip":"172.19.0.1","msg":"new request to user-management"}
 {"level":30,"time":1754554243843,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-e","msg":"Route GET:/ws/notifications/live?userId=3 not found"}
 {"level":30,"time":1754554243844,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-e","res":{"statusCode":404},"responseTime":1.5852110087871552,"msg":"request completed"}
+{"level":30,"time":1754559211303,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-f","req":{"method":"POST","url":"/api/user-management/profiles","host":"user-service:3002","remoteAddress":"172.19.0.4","remotePort":55572},"msg":"incoming request"}
+{"level":30,"time":1754559211329,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-f","ip":"172.19.0.4","msg":"new request to user-management"}
+{"level":30,"time":1754559211567,"pid":185,"hostname":"cb6a5c9d39cb","reqId":"req-f","res":{"statusCode":201},"responseTime":244.10030901432037,"msg":"request completed"}
