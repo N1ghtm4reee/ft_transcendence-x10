@@ -133,14 +133,75 @@ export const userController = {
         }
     },
 
+    // updateProfile: async function (request, reply) {
+    //     const userId = parseInt(request.headers['x-user-id']);
+    //     console.log(userId);
+
+    //     try {
+    //         const data = await request.file();
+    //         const fields = {};
+    //         let avatarPath = null;
+
+    //         const userProfile = await prisma.userProfile.findUnique({where : {id : userId}});
+    //         const oldAvatar = userProfile.avatar;
+
+    //         if (data && data.fields) {
+    //             for (const [key, value] of Object.entries(data.fields)) {
+    //                 if (value && value.value) {
+    //                     fields[key] = value.value;
+    //                 }
+    //             }
+    //         }
+    //         if (data && data.file) {
+    //             console.log(process.cwd());
+    //             console.log('data: ', data);
+    //             const uploadDir = path.join(process.cwd(), "src", 'assets');
+    //             const fileExtension = path.extname(data.filename);
+    //             const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
+    //             avatarPath = path.join(uploadDir, filename);
+    //             const buffer = await data.toBuffer();
+    //             fs.writeFileSync(avatarPath, buffer);
+    //             fields.avatar = `assets/${filename}`;
+    //             if (oldAvatar != 'assets/default.png')
+    //                 delete `../${oldAvatar}`; 
+    //         }
+
+    //         const updatedUser = await prisma.userProfile.update({
+    //             where: { id: userId },
+    //             data: fields,
+    //         });
+
+    //         return reply.send({
+    //             avatarUrl: fields.avatar,
+    //             message: 'User profile updated successfully',
+    //         });
+
+    //     } catch (error) {
+    //         console.error("Update error:", error);
+    //         return reply.status(500).send({ error: 'Failed to update user info' });
+    //     }
+    // },
     updateProfile: async function (request, reply) {
         const userId = parseInt(request.headers['x-user-id']);
-        console.log(userId);
+
+        if (!userId || isNaN(userId))
+            return reply.status(400).send({ error: 'Invalid user ID' });
+
+        console.log('Updating profile for user:', userId);
 
         try {
             const data = await request.file();
             const fields = {};
             let avatarPath = null;
+
+            const userProfile = await prisma.userProfile.findUnique({
+                where: { id: userId }
+            });
+
+            if (!userProfile)
+                return reply.status(404).send({ error: 'User profile not found' });
+
+            const oldAvatar = userProfile.avatar;
 
             if (data && data.fields) {
                 for (const [key, value] of Object.entries(data.fields)) {
@@ -149,31 +210,88 @@ export const userController = {
                     }
                 }
             }
+
             if (data && data.file) {
-                console.log(process.cwd());
-                console.log('data: ', data);
-                const uploadDir = path.join(process.cwd(), "src", 'assets');
-                const fileExtension = path.extname(data.filename);
+                console.log('Processing file upload for user:', userId);
+
+                const uploadDir = path.join(process.cwd(), "src", "assets");
+
+                if (!fs.existsSync(uploadDir))
+                    fs.mkdirSync(uploadDir, { recursive: true });
+
+                const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                const fileExtension = path.extname(data.filename).toLowerCase();
+
+                if (!allowedExtensions.includes(fileExtension)) {
+                    return reply.status(400).send({
+                        error: 'Invalid file type. Allowed: ' + allowedExtensions.join(', ')
+                    });
+                }
+
                 const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
                 avatarPath = path.join(uploadDir, filename);
+
                 const buffer = await data.toBuffer();
+
+                // const maxSize = 5 * 1024 * 1024; // 5MB
+                // if (buffer.length > maxSize) {
+                //     return reply.status(400).send({
+                //         error: 'File too large. Maximum size is 5MB'
+                //     });
+                // }
+
                 fs.writeFileSync(avatarPath, buffer);
                 fields.avatar = `assets/${filename}`;
+
+                if (oldAvatar && oldAvatar !== 'assets/default.png') {
+                    const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
+                    try {
+                        if (fs.existsSync(oldAvatarPath)) {
+                            fs.unlinkSync(oldAvatarPath);
+                            console.log('Deleted old avatar:', oldAvatarPath);
+                        }
+                    } catch (deleteError) {
+                        console.error('Error deleting old avatar:', deleteError);
+                    }
+                }
             }
-            
+
             const updatedUser = await prisma.userProfile.update({
                 where: { id: userId },
                 data: fields,
             });
 
             return reply.send({
-                avatarUrl: fields.avatar,
+                success: true,
+                avatarUrl: fields.avatar || userProfile.avatar,
+                user: updatedUser,
                 message: 'User profile updated successfully',
             });
 
         } catch (error) {
             console.error("Update error:", error);
-            return reply.status(500).send({ error: 'Failed to update user info' });
+
+            if (avatarPath && fs.existsSync(avatarPath)) {
+                try {
+                    fs.unlinkSync(avatarPath);
+                    console.log('Cleaned up failed upload:', avatarPath);
+                } catch (cleanupError) {
+                    console.error('Error cleaning up file:', cleanupError);
+                }
+            }
+
+            if (error.code === 'P2002') {
+                return reply.status(409).send({ error: 'Duplicate entry' });
+            }
+
+            if (error.code === 'P2025') {
+                return reply.status(404).send({ error: 'User not found' });
+            }
+
+            return reply.status(500).send({
+                error: 'Failed to update user profile',
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
         }
     },
 
