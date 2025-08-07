@@ -72,6 +72,8 @@ async function authRoutes(fastify, options) {
 
         try {
           await createNewProfile(user);
+          // add user to notifications map to update his status to online
+          // await 
         } catch (err) {
           console.error("Error calling user service", err);
         }

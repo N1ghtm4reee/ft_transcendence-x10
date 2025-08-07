@@ -132,7 +132,6 @@ export const userController = {
         }
     },
 
-
     updateProfile: async function (request, reply) {
         const userId = parseInt(request.headers['x-user-id']);
         // const userId = 1;

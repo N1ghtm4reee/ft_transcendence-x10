@@ -394,7 +394,9 @@ export const notificationControllers = {
   },
   // 
   liveNotifications: async (connection, req) => {
+    console.log('Client connected');
     const userId = parseInt(req.query.userId);
+    console.log('userId : ', userId);
 
     if (!userId) {
       console.error("No userId provided in WebSocket connection");
@@ -404,6 +406,7 @@ export const notificationControllers = {
 
     if (!socketConnections.has(userId)) {
       socketConnections.set(userId, new Set());
+      console.log('added to sockets connected');
     }
 
     socketConnections.get(userId).add(connection.socket);

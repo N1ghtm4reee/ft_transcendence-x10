@@ -5171,3 +5171,34 @@
 {"level":30,"time":1754477125765,"pid":18,"hostname":"0830f72c3515","reqId":"req-1c","source":"/api/user-management/profiles","msg":"fetching from remote server"}
 {"level":30,"time":1754477125847,"pid":18,"hostname":"0830f72c3515","reqId":"req-1c","msg":"response received"}
 {"level":30,"time":1754477125848,"pid":18,"hostname":"0830f72c3515","reqId":"req-1c","res":{"statusCode":200},"responseTime":86.69095100462437,"msg":"request completed"}
+{"level":30,"time":1754500791557,"pid":18,"hostname":"2458b0a01bcd","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754500791558,"pid":18,"hostname":"2458b0a01bcd","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754500791558,"pid":18,"hostname":"2458b0a01bcd","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501027703,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":43654},"msg":"incoming request"}
+{"level":30,"time":1754501027704,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":50,"time":1754501032724,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":43654},"res":{"statusCode":500},"err":{"type":"ReferenceError","message":"authResponse is not defined","stack":"ReferenceError: authResponse is not defined\n    at authenticateUser (file:///src/api-gateway.js:67:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.<anonymous> (file:///src/api-gateway.js:122:5)"},"msg":"authResponse is not defined"}
+{"level":30,"time":1754501032732,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-1","res":{"statusCode":500},"responseTime":5028.5051600039005,"msg":"request completed"}
+{"level":30,"time":1754501035554,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-2","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":43654},"msg":"incoming request"}
+{"level":30,"time":1754501035555,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-2","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":50,"time":1754501040563,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-2","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":43654},"res":{"statusCode":500},"err":{"type":"ReferenceError","message":"authResponse is not defined","stack":"ReferenceError: authResponse is not defined\n    at authenticateUser (file:///src/api-gateway.js:67:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.<anonymous> (file:///src/api-gateway.js:122:5)"},"msg":"authResponse is not defined"}
+{"level":30,"time":1754501040564,"pid":18,"hostname":"2458b0a01bcd","reqId":"req-2","res":{"statusCode":500},"responseTime":5009.096784994006,"msg":"request completed"}
+{"level":30,"time":1754501135945,"pid":18,"hostname":"db1e6800cc65","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501135946,"pid":18,"hostname":"db1e6800cc65","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754501135946,"pid":18,"hostname":"db1e6800cc65","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501210156,"pid":18,"hostname":"db1e6800cc65","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":54962},"msg":"incoming request"}
+{"level":30,"time":1754501210156,"pid":18,"hostname":"db1e6800cc65","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":50,"time":1754501215175,"pid":18,"hostname":"db1e6800cc65","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":54962},"res":{"statusCode":500},"err":{"type":"ReferenceError","message":"authResponse is not defined","stack":"ReferenceError: authResponse is not defined\n    at authenticateUser (file:///src/api-gateway.js:67:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.<anonymous> (file:///src/api-gateway.js:122:5)"},"msg":"authResponse is not defined"}
+{"level":30,"time":1754501215182,"pid":18,"hostname":"db1e6800cc65","reqId":"req-1","res":{"statusCode":500},"responseTime":5025.861160993576,"msg":"request completed"}
+{"level":30,"time":1754501559783,"pid":18,"hostname":"5a4ff551fa65","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501559783,"pid":18,"hostname":"5a4ff551fa65","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754501559783,"pid":18,"hostname":"5a4ff551fa65","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501792311,"pid":18,"hostname":"2dbed715aa55","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754501792311,"pid":18,"hostname":"2dbed715aa55","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754501792311,"pid":18,"hostname":"2dbed715aa55","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754502052725,"pid":18,"hostname":"7f2fbf0dc3ee","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754502052725,"pid":18,"hostname":"7f2fbf0dc3ee","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754502052726,"pid":18,"hostname":"7f2fbf0dc3ee","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754502076160,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":46666},"msg":"incoming request"}
+{"level":30,"time":1754502076161,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":50,"time":1754502081176,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":46666},"res":{"statusCode":500},"err":{"type":"ReferenceError","message":"authResponse is not defined","stack":"ReferenceError: authResponse is not defined\n    at authenticateUser (file:///src/api-gateway.js:67:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.<anonymous> (file:///src/api-gateway.js:122:5)"},"msg":"authResponse is not defined"}
+{"level":30,"time":1754502081179,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","res":{"statusCode":500},"responseTime":5019.072195008397,"msg":"request completed"}
