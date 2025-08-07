@@ -190,8 +190,7 @@ export const userController = {
         console.log('Updating profile for user:', userId);
 
         try {
-            const data = await request.file();
-            const fields = {};
+            let fields = {};
             let avatarPath = null;
 
             const userProfile = await prisma.userProfile.findUnique({
@@ -200,60 +199,57 @@ export const userController = {
 
             if (!userProfile)
                 return reply.status(404).send({ error: 'User profile not found' });
-
             const oldAvatar = userProfile.avatar;
+            if (request.isMultipart()) {
+                const data = await request.file();
 
-            if (data && data.fields) {
-                for (const [key, value] of Object.entries(data.fields)) {
-                    if (value && value.value) {
-                        fields[key] = value.value;
-                    }
-                }
-            }
-
-            if (data && data.file) {
-                console.log('Processing file upload for user:', userId);
-
-                const uploadDir = path.join(process.cwd(), "src", "assets");
-
-                if (!fs.existsSync(uploadDir))
-                    fs.mkdirSync(uploadDir, { recursive: true });
-
-                const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-                const fileExtension = path.extname(data.filename).toLowerCase();
-
-                if (!allowedExtensions.includes(fileExtension)) {
-                    return reply.status(400).send({
-                        error: 'Invalid file type. Allowed: ' + allowedExtensions.join(', ')
-                    });
-                }
-
-                const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
-                avatarPath = path.join(uploadDir, filename);
-
-                const buffer = await data.toBuffer();
-
-                // const maxSize = 5 * 1024 * 1024; // 5MB
-                // if (buffer.length > maxSize) {
-                //     return reply.status(400).send({
-                //         error: 'File too large. Maximum size is 5MB'
-                //     });
-                // }
-
-                fs.writeFileSync(avatarPath, buffer);
-                fields.avatar = `assets/${filename}`;
-
-                if (oldAvatar && oldAvatar !== 'assets/default.png') {
-                    const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
-                    try {
-                        if (fs.existsSync(oldAvatarPath)) {
-                            fs.unlinkSync(oldAvatarPath);
-                            console.log('Deleted old avatar:', oldAvatarPath);
+                if (data && data.fields) {
+                    for (const [key, value] of Object.entries(data.fields)) {
+                        if (value && value.value) {
+                            fields[key] = value.value;
                         }
-                    } catch (deleteError) {
-                        console.error('Error deleting old avatar:', deleteError);
                     }
                 }
+
+                if (data && data.file) {
+                    console.log('Processing file upload for user:', userId);
+
+                    const uploadDir = path.join(process.cwd(), "src", "assets");
+
+                    if (!fs.existsSync(uploadDir))
+                        fs.mkdirSync(uploadDir, { recursive: true });
+
+                    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                    const fileExtension = path.extname(data.filename).toLowerCase();
+
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        return reply.status(400).send({
+                            error: 'Invalid file type. Allowed: ' + allowedExtensions.join(', ')
+                        });
+                    }
+
+                    const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
+                    avatarPath = path.join(uploadDir, filename);
+
+                    const buffer = await data.toBuffer();
+
+                    fs.writeFileSync(avatarPath, buffer);
+                    fields.avatar = `assets/${filename}`;
+
+                    if (oldAvatar && oldAvatar !== 'assets/default.png') {
+                        const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
+                        try {
+                            if (fs.existsSync(oldAvatarPath)) {
+                                fs.unlinkSync(oldAvatarPath);
+                                console.log('Deleted old avatar:', oldAvatarPath);
+                            }
+                        } catch (deleteError) {
+                            console.error('Error deleting old avatar:', deleteError);
+                        }
+                    }
+                }
+            } else {
+                fields = request.body || {};
             }
 
             const updatedUser = await prisma.userProfile.update({
