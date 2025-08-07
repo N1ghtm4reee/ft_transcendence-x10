@@ -167,6 +167,7 @@ export const userController = {
             });
 
             return reply.send({
+                avatarUrl: fields.avatar,
                 message: 'User profile updated successfully',
             });
 
