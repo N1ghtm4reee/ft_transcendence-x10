@@ -5202,3 +5202,26 @@
 {"level":30,"time":1754502076161,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
 {"level":50,"time":1754502081176,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","req":{"method":"PATCH","url":"/api/user-management/profiles","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":46666},"res":{"statusCode":500},"err":{"type":"ReferenceError","message":"authResponse is not defined","stack":"ReferenceError: authResponse is not defined\n    at authenticateUser (file:///src/api-gateway.js:67:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Object.<anonymous> (file:///src/api-gateway.js:122:5)"},"msg":"authResponse is not defined"}
 {"level":30,"time":1754502081179,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-1","res":{"statusCode":500},"responseTime":5019.072195008397,"msg":"request completed"}
+{"level":30,"time":1754559561310,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-2","req":{"method":"POST","url":"/api/auth/signup","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":55960},"msg":"incoming request"}
+{"level":30,"time":1754559561324,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-2","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1754559561371,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-2","source":"/signup","msg":"fetching from remote server"}
+{"level":30,"time":1754559561570,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1754559561589,"pid":18,"hostname":"7f2fbf0dc3ee","reqId":"req-2","res":{"statusCode":201},"responseTime":271.91337199509144,"msg":"request completed"}
+{"level":30,"time":1754559756887,"pid":18,"hostname":"b70ca1c62390","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754559756888,"pid":18,"hostname":"b70ca1c62390","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1754559756888,"pid":18,"hostname":"b70ca1c62390","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1754559853363,"pid":18,"hostname":"b70ca1c62390","reqId":"req-1","req":{"method":"POST","url":"/api/auth/signup","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":59688},"msg":"incoming request"}
+{"level":30,"time":1754559853364,"pid":18,"hostname":"b70ca1c62390","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1754559853366,"pid":18,"hostname":"b70ca1c62390","reqId":"req-1","source":"/signup","msg":"fetching from remote server"}
+{"level":30,"time":1754559853389,"pid":18,"hostname":"b70ca1c62390","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1754559853393,"pid":18,"hostname":"b70ca1c62390","reqId":"req-1","res":{"statusCode":400},"responseTime":29.778050005435944,"msg":"request completed"}
+{"level":30,"time":1754559878730,"pid":18,"hostname":"b70ca1c62390","reqId":"req-2","req":{"method":"POST","url":"/api/auth/signup","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":59688},"msg":"incoming request"}
+{"level":30,"time":1754559878730,"pid":18,"hostname":"b70ca1c62390","reqId":"req-2","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1754559878731,"pid":18,"hostname":"b70ca1c62390","reqId":"req-2","source":"/signup","msg":"fetching from remote server"}
+{"level":30,"time":1754559878952,"pid":18,"hostname":"b70ca1c62390","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1754559878953,"pid":18,"hostname":"b70ca1c62390","reqId":"req-2","res":{"statusCode":201},"responseTime":223.18467999994755,"msg":"request completed"}
+{"level":30,"time":1754560084793,"pid":18,"hostname":"b70ca1c62390","reqId":"req-3","req":{"method":"POST","url":"/api/auth/signup","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":50862},"msg":"incoming request"}
+{"level":30,"time":1754560084793,"pid":18,"hostname":"b70ca1c62390","reqId":"req-3","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1754560084794,"pid":18,"hostname":"b70ca1c62390","reqId":"req-3","source":"/signup","msg":"fetching from remote server"}
+{"level":30,"time":1754560084950,"pid":18,"hostname":"b70ca1c62390","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1754560084950,"pid":18,"hostname":"b70ca1c62390","reqId":"req-3","res":{"statusCode":201},"responseTime":157.23169501125813,"msg":"request completed"}

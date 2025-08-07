@@ -4,13 +4,14 @@ import TwoFactorService from "../services/TwoFactorService.js";
 
 // controller
 async function createNewProfile(userData) {
+  console.log('createNewProfile, createNewProfile');
   const userProfile = {
     id: userData.id,
     displayName: userData.name,
     avatar: userData.avatar || "assets/default.png",
     bio: "hey there! want to play a game?",
   };
-
+  console.log('userProfile : ', userProfile);
   // should be internal service call
   const profileResponse = await fetch(
     "http://user-service:3002/api/user-management/profiles",
@@ -42,6 +43,7 @@ async function authRoutes(fastify, options) {
       },
     },
     async (request, reply) => {
+      console.log('\n\nsignupsignupsignupsignup\n\n');
       const { email, password, name } = request.body;
 
       if (!email || !password || !name) {

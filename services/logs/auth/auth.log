@@ -5124,3 +5124,19 @@
 {"level":30,"time":1754559213333,"pid":129,"hostname":"f99a5875265f","reqId":"req-6","req":{"method":"GET","url":"/user","host":"127.0.0.1:3001","remoteAddress":"172.19.0.1","remotePort":54928},"msg":"incoming request"}
 {"level":30,"time":1754559213333,"pid":129,"hostname":"f99a5875265f","reqId":"req-6","ip":"172.19.0.1","msg":"new request to auth-service"}
 {"level":30,"time":1754559213347,"pid":129,"hostname":"f99a5875265f","reqId":"req-6","res":{"statusCode":200},"responseTime":13.402559995651245,"msg":"request completed"}
+{"level":30,"time":1754559561441,"pid":129,"hostname":"f99a5875265f","reqId":"req-7","req":{"method":"POST","url":"/signup","host":"auth-service:3001","remoteAddress":"172.19.0.7","remotePort":40404},"msg":"incoming request"}
+{"level":30,"time":1754559561441,"pid":129,"hostname":"f99a5875265f","reqId":"req-7","ip":"172.19.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1754559561558,"pid":129,"hostname":"f99a5875265f","reqId":"req-7","res":{"statusCode":201},"responseTime":116.23509500920773,"msg":"request completed"}
+{"level":30,"time":1754559785150,"pid":129,"hostname":"363883f41022","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754559785151,"pid":129,"hostname":"363883f41022","msg":"Server listening at http://172.19.0.3:3001"}
+{"level":30,"time":1754559853376,"pid":129,"hostname":"363883f41022","reqId":"req-1","req":{"method":"POST","url":"/signup","host":"auth-service:3001","remoteAddress":"172.19.0.7","remotePort":47976},"msg":"incoming request"}
+{"level":30,"time":1754559853377,"pid":129,"hostname":"363883f41022","reqId":"req-1","ip":"172.19.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1754559853387,"pid":129,"hostname":"363883f41022","reqId":"req-1","res":{"statusCode":400},"responseTime":10.310794994235039,"msg":"request completed"}
+{"level":30,"time":1754559878733,"pid":129,"hostname":"363883f41022","reqId":"req-2","req":{"method":"POST","url":"/signup","host":"auth-service:3001","remoteAddress":"172.19.0.7","remotePort":47976},"msg":"incoming request"}
+{"level":30,"time":1754559878733,"pid":129,"hostname":"363883f41022","reqId":"req-2","ip":"172.19.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1754559878952,"pid":129,"hostname":"363883f41022","reqId":"req-2","res":{"statusCode":201},"responseTime":219.0934959948063,"msg":"request completed"}
+{"level":30,"time":1754560082429,"pid":129,"hostname":"85e773a54e27","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1754560082430,"pid":129,"hostname":"85e773a54e27","msg":"Server listening at http://172.19.0.3:3001"}
+{"level":30,"time":1754560084798,"pid":129,"hostname":"85e773a54e27","reqId":"req-1","req":{"method":"POST","url":"/signup","host":"auth-service:3001","remoteAddress":"172.19.0.7","remotePort":56456},"msg":"incoming request"}
+{"level":30,"time":1754560084800,"pid":129,"hostname":"85e773a54e27","reqId":"req-1","ip":"172.19.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1754560084951,"pid":129,"hostname":"85e773a54e27","reqId":"req-1","res":{"statusCode":201},"responseTime":151.14731399714947,"msg":"request completed"}

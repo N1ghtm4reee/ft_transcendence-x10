@@ -108,7 +108,7 @@ export const userController = {
     // internal
     createProfile: async function (request, reply) {
         const { id, displayName, avatar, bio } = request.body;
-
+        console.log('called create prodile from user-service : ', request.body);
         try {
             await prisma.userProfile.create({ data: { id, displayName, avatar, bio } });
             await prisma.gameStats.create({
