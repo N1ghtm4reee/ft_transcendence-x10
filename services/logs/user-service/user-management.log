@@ -11328,3 +11328,61 @@
 {"level":30,"time":1755191156140,"pid":197,"hostname":"e8a3cf6b66bf","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/profile?username=aa","host":"user-service:3002","remoteAddress":"172.18.0.7","remotePort":47548},"msg":"incoming request"}
 {"level":30,"time":1755191156141,"pid":197,"hostname":"e8a3cf6b66bf","reqId":"req-1","ip":"172.18.0.7","msg":"new request to user-management"}
 {"level":30,"time":1755191156265,"pid":197,"hostname":"e8a3cf6b66bf","reqId":"req-1","res":{"statusCode":200},"responseTime":118.89113400131464,"msg":"request completed"}
+{"level":30,"time":1755193766033,"pid":197,"hostname":"104f398cea61","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755193766034,"pid":197,"hostname":"104f398cea61","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755193766034,"pid":197,"hostname":"104f398cea61","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755193892223,"pid":197,"hostname":"104f398cea61","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"user-service:3002","remoteAddress":"172.18.0.7","remotePort":46478},"msg":"incoming request"}
+{"level":30,"time":1755193892226,"pid":197,"hostname":"104f398cea61","reqId":"req-1","ip":"172.18.0.7","msg":"new request to user-management"}
+{"level":30,"time":1755193892234,"pid":197,"hostname":"104f398cea61","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/allachievements","host":"user-service:3002","remoteAddress":"172.18.0.7","remotePort":46492},"msg":"incoming request"}
+{"level":30,"time":1755193892234,"pid":197,"hostname":"104f398cea61","reqId":"req-2","ip":"172.18.0.7","msg":"new request to user-management"}
+{"level":30,"time":1755193892241,"pid":197,"hostname":"104f398cea61","reqId":"req-2","res":{"statusCode":200},"responseTime":5.602113001048565,"msg":"request completed"}
+{"level":30,"time":1755193892254,"pid":197,"hostname":"104f398cea61","reqId":"req-1","res":{"statusCode":200},"responseTime":29.89106100052595,"msg":"request completed"}
+{"level":30,"time":1755193892263,"pid":197,"hostname":"104f398cea61","reqId":"req-3","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":44058},"msg":"incoming request"}
+{"level":30,"time":1755193892263,"pid":197,"hostname":"104f398cea61","reqId":"req-3","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193892263,"pid":197,"hostname":"104f398cea61","reqId":"req-3","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193892264,"pid":197,"hostname":"104f398cea61","reqId":"req-3","res":{"statusCode":404},"responseTime":0.47339899837970734,"msg":"request completed"}
+{"level":30,"time":1755193892287,"pid":197,"hostname":"104f398cea61","reqId":"req-4","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":44072},"msg":"incoming request"}
+{"level":30,"time":1755193892287,"pid":197,"hostname":"104f398cea61","reqId":"req-4","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193892292,"pid":197,"hostname":"104f398cea61","reqId":"req-4","res":{"statusCode":304},"responseTime":4.927446000277996,"msg":"request completed"}
+{"level":30,"time":1755193897268,"pid":197,"hostname":"104f398cea61","reqId":"req-5","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":44086},"msg":"incoming request"}
+{"level":30,"time":1755193897268,"pid":197,"hostname":"104f398cea61","reqId":"req-5","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193897268,"pid":197,"hostname":"104f398cea61","reqId":"req-5","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193897269,"pid":197,"hostname":"104f398cea61","reqId":"req-5","res":{"statusCode":404},"responseTime":0.6892300024628639,"msg":"request completed"}
+{"level":30,"time":1755193902283,"pid":197,"hostname":"104f398cea61","reqId":"req-6","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":42114},"msg":"incoming request"}
+{"level":30,"time":1755193902283,"pid":197,"hostname":"104f398cea61","reqId":"req-6","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193902283,"pid":197,"hostname":"104f398cea61","reqId":"req-6","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193902283,"pid":197,"hostname":"104f398cea61","reqId":"req-6","res":{"statusCode":404},"responseTime":0.6206559985876083,"msg":"request completed"}
+{"level":30,"time":1755193907288,"pid":197,"hostname":"104f398cea61","reqId":"req-7","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":42120},"msg":"incoming request"}
+{"level":30,"time":1755193907288,"pid":197,"hostname":"104f398cea61","reqId":"req-7","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193907288,"pid":197,"hostname":"104f398cea61","reqId":"req-7","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193907288,"pid":197,"hostname":"104f398cea61","reqId":"req-7","res":{"statusCode":404},"responseTime":0.5540930032730103,"msg":"request completed"}
+{"level":30,"time":1755193912293,"pid":197,"hostname":"104f398cea61","reqId":"req-8","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":41552},"msg":"incoming request"}
+{"level":30,"time":1755193912293,"pid":197,"hostname":"104f398cea61","reqId":"req-8","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193912293,"pid":197,"hostname":"104f398cea61","reqId":"req-8","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193912294,"pid":197,"hostname":"104f398cea61","reqId":"req-8","res":{"statusCode":404},"responseTime":0.4995110034942627,"msg":"request completed"}
+{"level":30,"time":1755193913564,"pid":197,"hostname":"104f398cea61","reqId":"req-9","req":{"method":"GET","url":"/api/user-management/profile?username=aa","host":"user-service:3002","remoteAddress":"172.18.0.7","remotePort":46478},"msg":"incoming request"}
+{"level":30,"time":1755193913564,"pid":197,"hostname":"104f398cea61","reqId":"req-9","ip":"172.18.0.7","msg":"new request to user-management"}
+{"level":30,"time":1755193913618,"pid":197,"hostname":"104f398cea61","reqId":"req-9","res":{"statusCode":200},"responseTime":53.63028399646282,"msg":"request completed"}
+{"level":30,"time":1755193917299,"pid":197,"hostname":"104f398cea61","reqId":"req-a","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":41562},"msg":"incoming request"}
+{"level":30,"time":1755193917299,"pid":197,"hostname":"104f398cea61","reqId":"req-a","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193917299,"pid":197,"hostname":"104f398cea61","reqId":"req-a","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193917299,"pid":197,"hostname":"104f398cea61","reqId":"req-a","res":{"statusCode":404},"responseTime":0.44086700677871704,"msg":"request completed"}
+{"level":30,"time":1755193922312,"pid":197,"hostname":"104f398cea61","reqId":"req-b","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":56640},"msg":"incoming request"}
+{"level":30,"time":1755193922312,"pid":197,"hostname":"104f398cea61","reqId":"req-b","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193922312,"pid":197,"hostname":"104f398cea61","reqId":"req-b","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193922312,"pid":197,"hostname":"104f398cea61","reqId":"req-b","res":{"statusCode":404},"responseTime":0.6508160009980202,"msg":"request completed"}
+{"level":30,"time":1755193927338,"pid":197,"hostname":"104f398cea61","reqId":"req-c","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":56650},"msg":"incoming request"}
+{"level":30,"time":1755193927338,"pid":197,"hostname":"104f398cea61","reqId":"req-c","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193927338,"pid":197,"hostname":"104f398cea61","reqId":"req-c","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193927338,"pid":197,"hostname":"104f398cea61","reqId":"req-c","res":{"statusCode":404},"responseTime":0.26964300125837326,"msg":"request completed"}
+{"level":30,"time":1755193932323,"pid":197,"hostname":"104f398cea61","reqId":"req-d","req":{"method":"GET","url":"/api/user-management/profile?username=aa","host":"user-service:3002","remoteAddress":"172.18.0.7","remotePort":46478},"msg":"incoming request"}
+{"level":30,"time":1755193932324,"pid":197,"hostname":"104f398cea61","reqId":"req-d","ip":"172.18.0.7","msg":"new request to user-management"}
+{"level":30,"time":1755193932335,"pid":197,"hostname":"104f398cea61","reqId":"req-d","res":{"statusCode":200},"responseTime":11.570680998265743,"msg":"request completed"}
+{"level":30,"time":1755193932369,"pid":197,"hostname":"104f398cea61","reqId":"req-e","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":59440},"msg":"incoming request"}
+{"level":30,"time":1755193932369,"pid":197,"hostname":"104f398cea61","reqId":"req-e","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193932369,"pid":197,"hostname":"104f398cea61","reqId":"req-e","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193932370,"pid":197,"hostname":"104f398cea61","reqId":"req-e","res":{"statusCode":404},"responseTime":0.44579000025987625,"msg":"request completed"}
+{"level":30,"time":1755193937412,"pid":197,"hostname":"104f398cea61","reqId":"req-f","req":{"method":"GET","url":"/user-updates","host":"localhost:3002","remoteAddress":"172.18.0.1","remotePort":59452},"msg":"incoming request"}
+{"level":30,"time":1755193937412,"pid":197,"hostname":"104f398cea61","reqId":"req-f","ip":"172.18.0.1","msg":"new request to user-management"}
+{"level":30,"time":1755193937413,"pid":197,"hostname":"104f398cea61","reqId":"req-f","msg":"Route GET:/user-updates not found"}
+{"level":30,"time":1755193937413,"pid":197,"hostname":"104f398cea61","reqId":"req-f","res":{"statusCode":404},"responseTime":0.4914899989962578,"msg":"request completed"}

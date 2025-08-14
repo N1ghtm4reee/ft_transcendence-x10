@@ -3,7 +3,7 @@ import { userUtils } from "../utils/user.utils.js";
 import fs from "fs";
 import path from "path";
 
-getOnlineStatus = async (userId) => {
+const getOnlineStatus = async (userId) => {
   try {
     const res = await fetch(
       `http://localhost:3005/api/notifications/user/${user.id}/online`

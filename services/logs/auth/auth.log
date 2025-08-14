@@ -6174,3 +6174,31 @@
 {"level":30,"time":1755191156116,"pid":259,"hostname":"f87f67fa4b02","reqId":"req-1","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":34430},"msg":"incoming request"}
 {"level":30,"time":1755191156117,"pid":259,"hostname":"f87f67fa4b02","reqId":"req-1","ip":"172.18.0.7","msg":"new request to auth-service"}
 {"level":30,"time":1755191156128,"pid":259,"hostname":"f87f67fa4b02","reqId":"req-1","res":{"statusCode":200},"responseTime":10.182860996574163,"msg":"request completed"}
+{"level":30,"time":1755193652711,"pid":137,"hostname":"f87f67fa4b02","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1755193652711,"pid":137,"hostname":"f87f67fa4b02","msg":"Server listening at http://172.18.0.5:3001"}
+{"level":30,"time":1755193768604,"pid":137,"hostname":"f87f67fa4b02","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1755193768604,"pid":137,"hostname":"f87f67fa4b02","msg":"Server listening at http://172.18.0.5:3001"}
+{"level":30,"time":1755193875291,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-1","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":34968},"msg":"incoming request"}
+{"level":30,"time":1755193875293,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-1","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193875301,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-1","res":{"statusCode":401},"responseTime":7.5156240016222,"msg":"request completed"}
+{"level":30,"time":1755193886919,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-2","req":{"method":"GET","url":"/verify","host":"localhost:3001","remoteAddress":"172.18.0.1","remotePort":34642},"msg":"incoming request"}
+{"level":30,"time":1755193886919,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-2","ip":"172.18.0.1","msg":"new request to auth-service"}
+{"level":30,"time":1755193886920,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-2","res":{"statusCode":401},"responseTime":0.39562100172042847,"msg":"request completed"}
+{"level":30,"time":1755193891038,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-3","req":{"method":"POST","url":"/login","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":51622},"msg":"incoming request"}
+{"level":30,"time":1755193891038,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-3","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193891145,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-3","res":{"statusCode":200},"responseTime":106.76692900061607,"msg":"request completed"}
+{"level":30,"time":1755193892199,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-4","req":{"method":"GET","url":"/verify","host":"localhost:3001","remoteAddress":"172.18.0.1","remotePort":34642},"msg":"incoming request"}
+{"level":30,"time":1755193892200,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-4","ip":"172.18.0.1","msg":"new request to auth-service"}
+{"level":30,"time":1755193892203,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-4","res":{"statusCode":200},"responseTime":3.7319260016083717,"msg":"request completed"}
+{"level":30,"time":1755193892204,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-5","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":34968},"msg":"incoming request"}
+{"level":30,"time":1755193892204,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-5","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193892206,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-5","res":{"statusCode":200},"responseTime":1.7125549986958504,"msg":"request completed"}
+{"level":30,"time":1755193892207,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-6","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":38216},"msg":"incoming request"}
+{"level":30,"time":1755193892207,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-6","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193892210,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-6","res":{"statusCode":200},"responseTime":2.6892110034823418,"msg":"request completed"}
+{"level":30,"time":1755193913561,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-7","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":34968},"msg":"incoming request"}
+{"level":30,"time":1755193913561,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-7","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193913562,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-7","res":{"statusCode":200},"responseTime":0.8261240050196648,"msg":"request completed"}
+{"level":30,"time":1755193932321,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-8","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.7","remotePort":34968},"msg":"incoming request"}
+{"level":30,"time":1755193932321,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-8","ip":"172.18.0.7","msg":"new request to auth-service"}
+{"level":30,"time":1755193932322,"pid":137,"hostname":"f87f67fa4b02","reqId":"req-8","res":{"statusCode":200},"responseTime":1.1879989951848984,"msg":"request completed"}
