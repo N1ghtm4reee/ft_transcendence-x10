@@ -6040,3 +6040,39 @@
 {"level":30,"time":1755184344344,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-7","source":"/api/user-management/profiles","msg":"fetching from remote server"}
 {"level":30,"time":1755184344347,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-7","msg":"response received"}
 {"level":30,"time":1755184344348,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-7","res":{"statusCode":200},"responseTime":8.882105998694897,"msg":"request completed"}
+{"level":30,"time":1755184539453,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-8","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":58908},"msg":"incoming request"}
+{"level":30,"time":1755184539454,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-8","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184539458,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-8","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755184539461,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-9","req":{"method":"GET","url":"/api/user-management/allachievements","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":58914},"msg":"incoming request"}
+{"level":30,"time":1755184539461,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-9","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184539466,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-9","source":"/api/user-management/allachievements","msg":"fetching from remote server"}
+{"level":30,"time":1755184539471,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-9","msg":"response received"}
+{"level":30,"time":1755184539472,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-9","res":{"statusCode":200},"responseTime":11.666806001216173,"msg":"request completed"}
+{"level":30,"time":1755184539481,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755184539483,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-8","res":{"statusCode":200},"responseTime":28.96720800176263,"msg":"request completed"}
+{"level":30,"time":1755184543669,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-a","req":{"method":"GET","url":"/api/user-management/profiles?username=aa","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":55366},"msg":"incoming request"}
+{"level":30,"time":1755184543669,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-a","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184543672,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-a","source":"/api/user-management/profiles","msg":"fetching from remote server"}
+{"level":30,"time":1755184543673,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-a","msg":"response received"}
+{"level":30,"time":1755184543674,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-a","res":{"statusCode":200},"responseTime":4.405597001314163,"msg":"request completed"}
+{"level":30,"time":1755184717860,"pid":18,"hostname":"a8eb929b14cc","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755184717860,"pid":18,"hostname":"a8eb929b14cc","msg":"Server listening at http://172.18.0.7:3000"}
+{"level":30,"time":1755184717860,"pid":18,"hostname":"a8eb929b14cc","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755184779033,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/profile?username=aa","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":53962},"msg":"incoming request"}
+{"level":30,"time":1755184779034,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-1","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184779063,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-1","source":"/api/user-management/profile","msg":"fetching from remote server"}
+{"level":30,"time":1755184779068,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755184779073,"pid":18,"hostname":"a8eb929b14cc","reqId":"req-1","res":{"statusCode":404},"responseTime":39.36715700104833,"msg":"request completed"}
+{"level":30,"time":1755184940648,"pid":19,"hostname":"5d3c60e5a847","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755184940648,"pid":19,"hostname":"5d3c60e5a847","msg":"Server listening at http://172.18.0.7:3000"}
+{"level":30,"time":1755184940648,"pid":19,"hostname":"5d3c60e5a847","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755184968607,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/profile?username=aa","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":59410},"msg":"incoming request"}
+{"level":30,"time":1755184968609,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-1","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184968653,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-1","source":"/api/user-management/profile","msg":"fetching from remote server"}
+{"level":30,"time":1755184968657,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755184968661,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-1","res":{"statusCode":404},"responseTime":53.08016599714756,"msg":"request completed"}
+{"level":30,"time":1755184992144,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/profile/?username=aa","host":"localhost:3000","remoteAddress":"172.18.0.1","remotePort":59410},"msg":"incoming request"}
+{"level":30,"time":1755184992145,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-2","ip":"172.18.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755184992149,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-2","source":"/api/user-management/profile/","msg":"fetching from remote server"}
+{"level":30,"time":1755184992163,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755184992164,"pid":19,"hostname":"5d3c60e5a847","reqId":"req-2","res":{"statusCode":200},"responseTime":19.101291999220848,"msg":"request completed"}

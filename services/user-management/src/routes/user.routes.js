@@ -41,7 +41,7 @@ export default async function profileRoutes(app) {
   });
   // implement later
   // app.patch('/profiles/avatar', userController.updateAvatar);
-  app.get("/profiles/", {
+  app.get("/profile", {
     handler: userController.searchProfile,
   });
 }
