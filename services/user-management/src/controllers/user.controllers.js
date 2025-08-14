@@ -2,6 +2,20 @@ import prisma from "#root/prisma/prisma.js";
 import { userUtils } from "../utils/user.utils.js";
 import fs from "fs";
 import path from "path";
+
+getOnlineStatus = async (userId) => {
+  try {
+    const res = await fetch(
+      `http://localhost:3005/api/notifications/user/${user.id}/online`
+    );
+    const data = await res.json();
+    return data.online;
+  } catch (error) {
+    console.error(`Error fetching online status for user ${userId}:`, error);
+    return false;
+  }
+};
+
 export const userController = {
   getProfiles: async function (request, reply) {
     const name = request.query.name || "";
@@ -549,7 +563,7 @@ export const userController = {
           id: friend.id,
           displayName: friend.displayName,
           avatar: friend.avatar,
-          status: "online", // Replace with real logic later
+          status: getOnlineStatus(id) ? "online" : "offline",
           lastActive: now, // Replace with real field if available
         };
       });
@@ -654,7 +668,6 @@ export const userController = {
     }
   },
 
-  // implement later
   searchProfile: async function (request, response) {
     const username = request.query.username;
     if (!username) {
@@ -673,7 +686,52 @@ export const userController = {
         return response.status(404).send({ error: "No users found" });
       }
 
-      return response.send({ users });
+      let onlineUsers = [];
+      try {
+        const notificationServiceUrls = [
+          "http://notification-service:3005",
+          "http://localhost:3005",
+        ];
+
+        for (const user of users) {
+          for (const baseUrl of notificationServiceUrls) {
+            try {
+              const res = await fetch(
+                `${baseUrl}/api/notifications/user/${user.id}/online`
+              );
+              if (res.ok) {
+                const { online } = await res.json();
+                if (online) {
+                  onlineUsers.push({ id: user.id });
+                }
+                break;
+              }
+            } catch (err) {
+              console.error(
+                `Error fetching online status for user ${user.id} from ${baseUrl}:`,
+                err
+              );
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching online users:", error);
+      }
+      const usersWithStatus = users.map((user) => {
+        const isOnline = onlineUsers.some(
+          (onlineUser) => onlineUser.id === user.id
+        );
+        return {
+          id: user.id,
+          displayName: user.display_name,
+          avatar: user.avatar,
+          bio: user.bio,
+          status: isOnline ? "online" : "offline",
+          rank: "0", // Placeholder
+        };
+      });
+
+      return response.send({ users: usersWithStatus });
     } catch (error) {
       console.error("Error searching profiles:", error);
       return response.status(500).send({ error: "Failed to search profiles" });

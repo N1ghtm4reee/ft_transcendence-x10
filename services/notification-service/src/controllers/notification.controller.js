@@ -355,7 +355,7 @@ export const notificationControllers = {
         userId: userId,
         online: isOnline,
         connections: isOnline ? userConnections.size : 0,
-        timestamp: new Date().toISOString(), // dyalach ?
+        timestamp: new Date().toISOString(), // dyalach ? dyal time li tconnecta fih
       });
     } catch (error) {
       console.error("Error checking user online status:", error);
