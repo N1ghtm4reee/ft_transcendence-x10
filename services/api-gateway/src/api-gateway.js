@@ -112,7 +112,7 @@ const authenticateWs = async (request, reply) => {
 
 
 app.addHook('preHandler', async (request, reply) => {
-  const publicRoutes = ['/api/auth/', '/health', '/metrics'];
+  const publicRoutes = ['/api/auth/', '/health', '/metrics', '/assets/'];
 
   if (publicRoutes.some(route => request.url.startsWith(route))) return;
 
@@ -143,6 +143,13 @@ app.register(proxy, {
   prefix: '/api/auth',
   rewritePrefix: '',
 });
+
+app.register(proxy, {
+  upstream: 'http://user-service:3002',
+  prefix: '/assets',
+  rewritePrefix: '',
+});
+
 
 app.register(proxy, createProxyWithHeaders(
   process.env.USER_MANAGEMENT_SERVICE_URL || 'http://user-service:3002',
