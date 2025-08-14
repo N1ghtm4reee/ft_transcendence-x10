@@ -1,3 +1,27 @@
+async function createNewProfile(userData) {
+  console.log("createNewProfile for OAuth user");
+  const userProfile = {
+    id: userData.id,
+    displayName: userData.name,
+    avatar: userData.avatar || "assets/default.png",
+    bio: "hey there! want to play a game?",
+  };
+  console.log("userProfile : ", userProfile);
+  // should be internal service call
+  const profileResponse = await fetch(
+    "http://user-service:3002/api/user-management/profiles",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...userProfile }),
+    }
+  );
+
+  if (!profileResponse.ok) {
+    throw new Error("Failed to create user profile");
+  }
+}
+
 async function oauthRoutes(fastify, options) {
   fastify.get(
     "/auth/google/callback",
@@ -76,6 +100,16 @@ async function oauthRoutes(fastify, options) {
               twoFactorAuth: true,
             },
           });
+
+          try {
+            await createNewProfile(user);
+            console.log(
+              "Profile and game stats created for new Google OAuth user:",
+              user.id
+            );
+          } catch (err) {
+            console.error("Error creating profile for Google OAuth user", err);
+          }
         } else {
           if (user.oauthProvider === "local") {
             user = await fastify.prisma.user.update({
