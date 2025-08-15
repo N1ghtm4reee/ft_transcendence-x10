@@ -3,7 +3,7 @@
 ./promotheus/grafana/data/*
 ./promotheus/promotheus/data/*
 **/node_modules/
-
+*.log
 **/terraform.tfvars
 terraform.tfstate
 **/.terraform
