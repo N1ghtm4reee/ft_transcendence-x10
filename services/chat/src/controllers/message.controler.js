@@ -83,7 +83,11 @@ export const chatControllers = {
         }
         catch(error)
         {
-
+            console.error('Error creating conversation :', error);
+            return res.code(500).send({ 
+                error: 'Failed to create conversation',
+                details: error.message
+            });
         }
     },
     // send a message to a user before sending we validate friendship exists
