@@ -16,7 +16,7 @@ export const chatRoutes = async (app, options) => {
     //         }
     //     },
     //     handler: (request, reply) => {
-    //         reply.send({ message: 'Chat service is up and running!' });
+    //         reply.send({ message: 'Chat scervice is up and running!' });
     //     }
     // });
 

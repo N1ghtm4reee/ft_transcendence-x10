@@ -42,7 +42,7 @@ export const chatControllers = {
     createConversation: async (req, res) => {
         try{
             const senderId = parseInt(req.headers['x-user-id'], 10);
-            const receiverId = req.body;
+            const receiverId = req.body.receiverId;
             const receiverIdInt = parseInt(receiverId, 10);
          
             const validationResult = await validateChatPermissions(senderId, receiverIdInt);
@@ -77,7 +77,7 @@ export const chatControllers = {
             }
             return res.send({
                 conversation : {
-                    id
+                    id: conversation.id
                 }
             });
         }
