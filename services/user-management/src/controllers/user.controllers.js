@@ -737,4 +737,31 @@ export const userController = {
       return response.status(500).send({ error: "Failed to search profiles" });
     }
   },
+  getUserById: async function (request, response) {
+    const userId = parseInt(request.params.userId, 10);
+    if (isNaN(userId)) {
+      return response.status(400).send({ error: "Invalid user ID" });
+    }
+
+    try {
+      const user = await prisma.userProfile.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true,
+          bio: true,
+        },
+      });
+
+      if (!user) {
+        return response.status(404).send({ error: "User not found" });
+      }
+
+      return response.send(user);
+    } catch (error) {
+      console.error("Error fetching user by ID:", error);
+      return response.status(500).send({ error: "Failed to fetch user" });
+    }
+  },
 };

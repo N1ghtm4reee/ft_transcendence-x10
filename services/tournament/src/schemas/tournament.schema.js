@@ -1,17 +1,19 @@
 export const createTournamentSchema = {
   body: {
     type: "object",
-    required: [
-      "name",
-      "status",
-      "startTime",
-      "username",
-    ],
+    required: ["name", "status", "startTime", "username"],
     properties: {
       name: { type: "string" },
       status: { type: "string" },
       startTime: { type: "string", format: "date-time" },
       username: { type: "string" },
+    },
+  },
+  headers: {
+    type: "object",
+    required: ["x-user-id"],
+    properties: {
+      "x-user-id": { type: "string" },
     },
   },
 };

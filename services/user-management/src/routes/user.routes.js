@@ -44,4 +44,9 @@ export default async function profileRoutes(app) {
   app.get("/profile", {
     handler: userController.searchProfile,
   });
+
+  app.get("/users/:userId", {
+    // schema: userSchemas.getUserById,
+    handler: userController.getUserById,
+  });
 }

@@ -11553,3 +11553,30 @@
 {"level":30,"time":1755257130977,"pid":221,"hostname":"b112a4533fde","msg":"Server listening at http://127.0.0.1:3002"}
 {"level":30,"time":1755257130978,"pid":221,"hostname":"b112a4533fde","msg":"Server listening at http://172.19.0.6:3002"}
 {"level":30,"time":1755257130978,"pid":221,"hostname":"b112a4533fde","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755258410469,"pid":197,"hostname":"dd53fa2b1172","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755258410469,"pid":197,"hostname":"dd53fa2b1172","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755258410469,"pid":197,"hostname":"dd53fa2b1172","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755258944384,"pid":197,"hostname":"cfe25c2bd5f0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755258944384,"pid":197,"hostname":"cfe25c2bd5f0","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755258944384,"pid":197,"hostname":"cfe25c2bd5f0","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755262362223,"pid":197,"hostname":"003e19b3d259","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755262362224,"pid":197,"hostname":"003e19b3d259","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755262362224,"pid":197,"hostname":"003e19b3d259","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755263080787,"pid":197,"hostname":"b23e71019ff6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755263080787,"pid":197,"hostname":"b23e71019ff6","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755263080787,"pid":197,"hostname":"b23e71019ff6","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755263680836,"pid":197,"hostname":"f8871ee0598c","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755263680836,"pid":197,"hostname":"f8871ee0598c","msg":"Server listening at http://172.18.0.6:3002"}
+{"level":30,"time":1755263680836,"pid":197,"hostname":"f8871ee0598c","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755263704173,"pid":197,"hostname":"f8871ee0598c","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/users/1","host":"user-service:3002","remoteAddress":"172.18.0.8","remotePort":39122},"msg":"incoming request"}
+{"level":30,"time":1755263704175,"pid":197,"hostname":"f8871ee0598c","reqId":"req-1","ip":"172.18.0.8","msg":"new request to user-management"}
+{"level":30,"time":1755263704281,"pid":197,"hostname":"f8871ee0598c","reqId":"req-1","res":{"statusCode":200},"responseTime":106.47377900034189,"msg":"request completed"}
+{"level":30,"time":1755263715145,"pid":197,"hostname":"f8871ee0598c","reqId":"req-2","req":{"method":"GET","url":"/api/user-management/users/5","host":"user-service:3002","remoteAddress":"172.18.0.8","remotePort":39122},"msg":"incoming request"}
+{"level":30,"time":1755263715145,"pid":197,"hostname":"f8871ee0598c","reqId":"req-2","ip":"172.18.0.8","msg":"new request to user-management"}
+{"level":30,"time":1755263715149,"pid":197,"hostname":"f8871ee0598c","reqId":"req-2","res":{"statusCode":200},"responseTime":2.9365030005574226,"msg":"request completed"}
+{"level":30,"time":1755263744856,"pid":197,"hostname":"f8871ee0598c","reqId":"req-3","req":{"method":"GET","url":"/api/user-management/users/5","host":"user-service:3002","remoteAddress":"172.18.0.8","remotePort":39122},"msg":"incoming request"}
+{"level":30,"time":1755263744856,"pid":197,"hostname":"f8871ee0598c","reqId":"req-3","ip":"172.18.0.8","msg":"new request to user-management"}
+{"level":30,"time":1755263744863,"pid":197,"hostname":"f8871ee0598c","reqId":"req-3","res":{"statusCode":200},"responseTime":4.605180002748966,"msg":"request completed"}
+{"level":30,"time":1755263974209,"pid":197,"hostname":"f8871ee0598c","reqId":"req-4","req":{"method":"GET","url":"/api/user-management/users/1","host":"user-service:3002","remoteAddress":"172.18.0.8","remotePort":56134},"msg":"incoming request"}
+{"level":30,"time":1755263974209,"pid":197,"hostname":"f8871ee0598c","reqId":"req-4","ip":"172.18.0.8","msg":"new request to user-management"}
+{"level":30,"time":1755263974213,"pid":197,"hostname":"f8871ee0598c","reqId":"req-4","res":{"statusCode":200},"responseTime":3.215176999568939,"msg":"request completed"}

@@ -4,19 +4,42 @@ import prisma from "../plugins/prisma.js";
 export const tournamentControllers = {
   createTournament: async (req, res) => {
     const userId = req.headers["x-user-id"];
-    const {
-      name,
-      status,
-      startTime,
-      username,
-    } = req.body;
+    if (!userId) {
+      return res.status(400).send({ error: "Missing user ID" });
+    }
+    try {
+      // Use Docker service name instead of localhost
+      const userServiceUrls = [
+        "http://user-service:3002",
+        "http://localhost:3002",
+      ];
 
-    if (
-      !name ||
-      !status ||
-      !startTime ||
-      !username
-    ) {
+      let userData = null;
+      for (const baseUrl of userServiceUrls) {
+        try {
+          const response = await fetch(
+            `${baseUrl}/api/user-management/users/${userId}`
+          );
+          if (response.ok) {
+            userData = await response.json();
+            break;
+          }
+        } catch (err) {
+          console.log(`Failed to connect to ${baseUrl}:`, err.message);
+          continue;
+        }
+      }
+
+      if (!userData || !userData.id) {
+        return res.status(404).send({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).send({ error: "Internal server error" });
+    }
+    const { name, status, startTime, username } = req.body;
+
+    if (!name || !status || !startTime || !username) {
       return res.status(400).send({ error: "Missing required fields" });
     }
 
@@ -63,6 +86,37 @@ export const tournamentControllers = {
 
   joinTournament: async (req, res) => {
     const userId = req.headers["x-user-id"];
+
+    try {
+      // Use Docker service name instead of localhost
+      const userServiceUrls = [
+        "http://user-service:3002",
+        "http://localhost:3002",
+      ];
+
+      let userData = null;
+      for (const baseUrl of userServiceUrls) {
+        try {
+          const response = await fetch(
+            `${baseUrl}/api/user-management/users/${userId}`
+          );
+          if (response.ok) {
+            userData = await response.json();
+            break;
+          }
+        } catch (err) {
+          console.log(`Failed to connect to ${baseUrl}:`, err.message);
+          continue;
+        }
+      }
+
+      if (!userData || !userData.id) {
+        return res.status(404).send({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).send({ error: "Internal server error" });
+    }
     if (!userId) {
       return res.status(400).send({ error: "Missing user ID" });
     }
@@ -81,8 +135,7 @@ export const tournamentControllers = {
       }
 
       // check if tournament full or not
-      if (tournament.playersCount == 4)
-      {
+      if (tournament.playersCount == 4) {
         return res.status(400).send({
           error: "tournament is full !",
         });
@@ -117,9 +170,11 @@ export const tournamentControllers = {
 
       await prisma.Tournament.update({
         where: { id: tournamentId },
-        data: { playersCount: {
-          increment: 1,
-        }, },
+        data: {
+          playersCount: {
+            increment: 1,
+          },
+        },
       });
 
       res.send({ message: "Player joined tournament successfully" });
@@ -134,7 +189,36 @@ export const tournamentControllers = {
     if (!userId) {
       return res.status(400).send({ error: "Missing user ID" });
     }
+    try {
+      // Use Docker service name instead of localhost
+      const userServiceUrls = [
+        "http://user-service:3002",
+        "http://localhost:3002",
+      ];
 
+      let userData = null;
+      for (const baseUrl of userServiceUrls) {
+        try {
+          const response = await fetch(
+            `${baseUrl}/api/user-management/users/${userId}`
+          );
+          if (response.ok) {
+            userData = await response.json();
+            break;
+          }
+        } catch (err) {
+          console.log(`Failed to connect to ${baseUrl}:`, err.message);
+          continue;
+        }
+      }
+
+      if (!userData || !userData.id) {
+        return res.status(404).send({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).send({ error: "Internal server error" });
+    }
     const { tournamentId } = req.body;
 
     if (!tournamentId) {
@@ -183,6 +267,40 @@ export const tournamentControllers = {
   },
 
   startTournament: async (req, res) => {
+    const userId = req.headers["x-user-id"];
+    if (!userId) {
+      return res.status(400).send({ error: "Missing user ID" });
+    }
+    try {
+      // Use Docker service name instead of localhost
+      const userServiceUrls = [
+        "http://user-service:3002",
+        "http://localhost:3002",
+      ];
+
+      let userData = null;
+      for (const baseUrl of userServiceUrls) {
+        try {
+          const response = await fetch(
+            `${baseUrl}/api/user-management/users/${userId}`
+          );
+          if (response.ok) {
+            userData = await response.json();
+            break;
+          }
+        } catch (err) {
+          console.log(`Failed to connect to ${baseUrl}:`, err.message);
+          continue;
+        }
+      }
+
+      if (!userData || !userData.id) {
+        return res.status(404).send({ error: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).send({ error: "Internal server error" });
+    }
     const { id: tournamentId } = req.params;
 
     try {
@@ -198,6 +316,11 @@ export const tournamentControllers = {
         return res.status(404).send({ error: "Tournament not found" });
       }
 
+      if (tournament.createdBy !== userId) {
+        return res
+          .status(403)
+          .send({ error: "Only tournament creator can start it" });
+      }
       if (
         tournament.status === "started" ||
         tournament.status === "completed" ||
