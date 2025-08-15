@@ -563,7 +563,7 @@ export const userController = {
           id: friend.id,
           displayName: friend.displayName,
           avatar: friend.avatar,
-          status: getOnlineStatus(id) ? "online" : "offline",
+          status: getOnlineStatus(friend.id) ? "online" : "offline",
           lastActive: now, // Replace with real field if available
         };
       });
@@ -596,6 +596,7 @@ export const userController = {
             status: "offline",
             lastActive: now,
           },
+          id : req.id,
           createdAt: req.createdAt,
         })),
         sent: sentRequestsRaw.map((req) => ({
@@ -606,6 +607,7 @@ export const userController = {
             status: "offline",
             lastActive: now,
           },
+          id : req.id,
           createdAt: req.createdAt,
         })),
       };
