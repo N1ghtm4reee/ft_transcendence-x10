@@ -38,6 +38,54 @@ async function validateChatPermissions(senderId, receiverId) {
 
 export const chatControllers = {
 
+
+    createConversation: async (req, res) => {
+        try{
+            const senderId = parseInt(req.headers['x-user-id'], 10);
+            const receiverId = req.body;
+            const receiverIdInt = parseInt(receiverId, 10);
+         
+            const validationResult = await validateChatPermissions(senderId, receiverIdInt);
+            if (!validationResult.success) {
+                return res.status(validationResult.status).send(validationResult.data);
+            }
+            console.log('friendship exists');
+            // Find existing conversation between these two users
+            let conversation = await prisma.conversation.findFirst({
+                where: {
+                    AND: [
+                        { members: { some: { userId: senderId } } },
+                        { members: { some: { userId: receiverIdInt } } }
+                    ]
+                },
+                select: { id: true }
+            });
+
+            // Create conversation if it doesn't exist
+            if (!conversation) {
+                conversation = await prisma.conversation.create({
+                    data: {
+                        members: {
+                            create: [
+                                { userId: senderId },
+                                { userId: receiverIdInt }
+                            ]
+                        }
+                    },
+                    select: { id: true }
+                });
+            }
+            return res.send({
+                conversation : {
+                    id
+                }
+            });
+        }
+        catch(error)
+        {
+
+        }
+    },
     // send a message to a user before sending we validate friendship exists
     sendMessage: async (req, res) => {
         try {

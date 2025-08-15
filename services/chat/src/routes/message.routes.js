@@ -25,6 +25,11 @@ export const chatRoutes = async (app, options) => {
         handler: chatControllers.sendMessage
     });
 
+    app.post('/conversation',  {
+        // schema: chatSchemas.sendMessageSchema,
+        handler: chatControllers.createConversation
+    });
+
     app.get('/conversations', {
         // schema: chatSchemas.getAllConversationsSchema,
         handler: chatControllers.getAllConversations
