@@ -6366,3 +6366,588 @@
 {"level":30,"time":1755263642595,"pid":18,"hostname":"6de40141635f","msg":"Server listening at http://127.0.0.1:3000"}
 {"level":30,"time":1755263642595,"pid":18,"hostname":"6de40141635f","msg":"Server listening at http://172.18.0.7:3000"}
 {"level":30,"time":1755263642595,"pid":18,"hostname":"6de40141635f","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755266786962,"pid":18,"hostname":"7ad9a3681ad9","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755266786963,"pid":18,"hostname":"7ad9a3681ad9","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755266786963,"pid":18,"hostname":"7ad9a3681ad9","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755266790567,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266790569,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266790578,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755266790610,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.5:3001","stack":"Error: connect ECONNREFUSED 172.21.0.5:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.5","port":3001},"msg":"response errored"}
+{"level":50,"time":1755266790617,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.5:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.5:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.5:3001"}
+{"level":30,"time":1755266790637,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-1","res":{"statusCode":500},"responseTime":68.93740199506283,"msg":"request completed"}
+{"level":30,"time":1755266801977,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266801977,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266801978,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","source":"/google/callback","msg":"fetching from remote server"}
+{"level":40,"time":1755266801980,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.5:3001","stack":"Error: connect ECONNREFUSED 172.21.0.5:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.5","port":3001},"msg":"response errored"}
+{"level":50,"time":1755266801981,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.5:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.5:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.5:3001"}
+{"level":30,"time":1755266801981,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-2","res":{"statusCode":500},"responseTime":4.454014003276825,"msg":"request completed"}
+{"level":30,"time":1755266802042,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58198},"msg":"incoming request"}
+{"level":30,"time":1755266802043,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266802046,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-3","res":{"statusCode":401},"responseTime":3.5179210007190704,"msg":"request completed"}
+{"level":30,"time":1755266859291,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266859291,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266859292,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755266859314,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755266859318,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-4","res":{"statusCode":401},"responseTime":27.17501799762249,"msg":"request completed"}
+{"level":30,"time":1755266861101,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-5","req":{"method":"GET","url":"/api/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266861101,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266861101,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-5","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755266861106,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-5","msg":"response received"}
+{"level":30,"time":1755266861108,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-5","res":{"statusCode":404},"responseTime":7.239996001124382,"msg":"request completed"}
+{"level":30,"time":1755266861641,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-6","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58198},"msg":"incoming request"}
+{"level":30,"time":1755266861641,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266861642,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-6","res":{"statusCode":401},"responseTime":0.836096003651619,"msg":"request completed"}
+{"level":30,"time":1755266866873,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-7","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266866873,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266866873,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-7","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755266866876,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755266866878,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-7","res":{"statusCode":401},"responseTime":5.014756999909878,"msg":"request completed"}
+{"level":30,"time":1755266868791,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-8","req":{"method":"GET","url":"/api/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266868791,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-8","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266868791,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-8","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755266868795,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755266868797,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-8","res":{"statusCode":404},"responseTime":5.527667999267578,"msg":"request completed"}
+{"level":30,"time":1755266868912,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-9","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58198},"msg":"incoming request"}
+{"level":30,"time":1755266868913,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-9","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266868914,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-9","res":{"statusCode":401},"responseTime":1.1548520028591156,"msg":"request completed"}
+{"level":30,"time":1755266870617,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-a","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266870617,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-a","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266870618,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-a","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755266870621,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-a","msg":"response received"}
+{"level":30,"time":1755266870622,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-a","res":{"statusCode":401},"responseTime":4.602508001029491,"msg":"request completed"}
+{"level":30,"time":1755266871802,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-b","req":{"method":"GET","url":"/api/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266871802,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-b","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266871802,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-b","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755266871805,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-b","msg":"response received"}
+{"level":30,"time":1755266871807,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-b","res":{"statusCode":404},"responseTime":4.35861599445343,"msg":"request completed"}
+{"level":30,"time":1755266872236,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-c","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58198},"msg":"incoming request"}
+{"level":30,"time":1755266872236,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-c","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266872237,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-c","res":{"statusCode":401},"responseTime":1.3382660001516342,"msg":"request completed"}
+{"level":30,"time":1755266907405,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-d","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266907405,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-d","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266907406,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-d","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755266907409,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-d","msg":"response received"}
+{"level":30,"time":1755266907411,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-d","res":{"statusCode":401},"responseTime":6.220753997564316,"msg":"request completed"}
+{"level":30,"time":1755266908794,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-e","req":{"method":"GET","url":"/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54632},"msg":"incoming request"}
+{"level":30,"time":1755266908794,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-e","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266908796,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-e","res":{"statusCode":401},"responseTime":2.080325998365879,"msg":"request completed"}
+{"level":30,"time":1755266909334,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-f","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58198},"msg":"incoming request"}
+{"level":30,"time":1755266909334,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-f","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755266909335,"pid":18,"hostname":"7ad9a3681ad9","reqId":"req-f","res":{"statusCode":401},"responseTime":1.0920020043849945,"msg":"request completed"}
+{"level":30,"time":1755267000785,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267000786,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755267000787,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267026690,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267026693,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267026696,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267026732,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755267026741,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":49.66208299994469,"msg":"request completed"}
+{"level":30,"time":1755267028509,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267028510,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267028514,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":401},"responseTime":3.958247996866703,"msg":"request completed"}
+{"level":30,"time":1755267028674,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42514},"msg":"incoming request"}
+{"level":30,"time":1755267028675,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267028677,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","res":{"statusCode":401},"responseTime":2.196952998638153,"msg":"request completed"}
+{"level":30,"time":1755267059285,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267059286,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267059286,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267059290,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755267059291,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","res":{"statusCode":401},"responseTime":5.793191000819206,"msg":"request completed"}
+{"level":30,"time":1755267061056,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","req":{"method":"GET","url":"/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267061057,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267061058,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","res":{"statusCode":401},"responseTime":1.7095249965786934,"msg":"request completed"}
+{"level":30,"time":1755267061171,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42514},"msg":"incoming request"}
+{"level":30,"time":1755267061171,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267061172,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","res":{"statusCode":401},"responseTime":1.0994400009512901,"msg":"request completed"}
+{"level":30,"time":1755267127676,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267127676,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267127676,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267127680,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755267127681,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","res":{"statusCode":401},"responseTime":5.4643749967217445,"msg":"request completed"}
+{"level":30,"time":1755267162216,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-8","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267162216,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-8","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267162216,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-8","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267162220,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755267162221,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-8","res":{"statusCode":401},"responseTime":5.218709997832775,"msg":"request completed"}
+{"level":30,"time":1755267178561,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-9","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267178562,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-9","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267178562,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-9","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267178565,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-9","msg":"response received"}
+{"level":30,"time":1755267178566,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-9","res":{"statusCode":401},"responseTime":4.800401002168655,"msg":"request completed"}
+{"level":30,"time":1755267180519,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-a","req":{"method":"GET","url":"/a[i/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267180519,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-a","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267180520,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-a","res":{"statusCode":401},"responseTime":1.1036669984459877,"msg":"request completed"}
+{"level":30,"time":1755267180596,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-b","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":46938},"msg":"incoming request"}
+{"level":30,"time":1755267180596,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-b","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267180597,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-b","res":{"statusCode":401},"responseTime":0.9922790005803108,"msg":"request completed"}
+{"level":30,"time":1755267205013,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-c","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267205014,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-c","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267205014,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-c","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267205017,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-c","msg":"response received"}
+{"level":30,"time":1755267205018,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-c","res":{"statusCode":401},"responseTime":4.695408999919891,"msg":"request completed"}
+{"level":30,"time":1755267205851,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-d","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267205851,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-d","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267205852,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-d","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267205856,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-d","msg":"response received"}
+{"level":30,"time":1755267205857,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-d","res":{"statusCode":200},"responseTime":5.655928000807762,"msg":"request completed"}
+{"level":30,"time":1755267210377,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-e","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267210377,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-e","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267210378,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-e","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267210380,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-e","msg":"response received"}
+{"level":30,"time":1755267210381,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-e","res":{"statusCode":401},"responseTime":4.3508989959955215,"msg":"request completed"}
+{"level":30,"time":1755267210766,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-f","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267210766,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-f","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267210767,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-f","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267210770,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-f","msg":"response received"}
+{"level":30,"time":1755267210771,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-f","res":{"statusCode":200},"responseTime":5.198743999004364,"msg":"request completed"}
+{"level":30,"time":1755267260850,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-g","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267260850,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-g","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267260851,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-g","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267260854,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-g","msg":"response received"}
+{"level":30,"time":1755267260855,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-g","res":{"statusCode":401},"responseTime":5.13009699434042,"msg":"request completed"}
+{"level":30,"time":1755267275427,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-h","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42506},"msg":"incoming request"}
+{"level":30,"time":1755267275427,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-h","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267275427,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-h","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267275431,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-h","msg":"response received"}
+{"level":30,"time":1755267275432,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-h","res":{"statusCode":200},"responseTime":5.185706004500389,"msg":"request completed"}
+{"level":30,"time":1755267384566,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267384567,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755267384567,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267413231,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43370},"msg":"incoming request"}
+{"level":30,"time":1755267413232,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267413234,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267413273,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755267413280,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":48.24396200478077,"msg":"request completed"}
+{"level":30,"time":1755267431366,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43370},"msg":"incoming request"}
+{"level":30,"time":1755267431366,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267431367,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267431371,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755267431372,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":401},"responseTime":5.485443994402885,"msg":"request completed"}
+{"level":30,"time":1755267433091,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43370},"msg":"incoming request"}
+{"level":30,"time":1755267433092,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267433092,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267433102,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755267433104,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","res":{"statusCode":200},"responseTime":11.911077000200748,"msg":"request completed"}
+{"level":30,"time":1755267473987,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43370},"msg":"incoming request"}
+{"level":30,"time":1755267473987,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267473987,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267473990,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755267473991,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","res":{"statusCode":401},"responseTime":4.5171400010585785,"msg":"request completed"}
+{"level":30,"time":1755267476057,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43370},"msg":"incoming request"}
+{"level":30,"time":1755267476058,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267476058,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267476062,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","msg":"response received"}
+{"level":30,"time":1755267476065,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","res":{"statusCode":200},"responseTime":7.091421999037266,"msg":"request completed"}
+{"level":30,"time":1755267522354,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267522355,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755267522355,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267784926,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58986},"msg":"incoming request"}
+{"level":30,"time":1755267784928,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267784931,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267784970,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755267784978,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":51.06997100263834,"msg":"request completed"}
+{"level":30,"time":1755267786145,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/auth/google/callback","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":58986},"msg":"incoming request"}
+{"level":30,"time":1755267786146,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267786146,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/auth/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755267786153,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755267786156,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":200},"responseTime":10.379595004022121,"msg":"request completed"}
+{"level":30,"time":1755267907365,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":51592},"msg":"incoming request"}
+{"level":30,"time":1755267907366,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267907367,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267907373,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755267907375,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","res":{"statusCode":401},"responseTime":9.060675002634525,"msg":"request completed"}
+{"level":30,"time":1755267909043,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":51592},"msg":"incoming request"}
+{"level":30,"time":1755267909043,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267909044,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","source":"/auth/google","msg":"fetching from remote server"}
+{"level":30,"time":1755267909050,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755267909052,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","res":{"statusCode":302},"responseTime":8.404060006141663,"msg":"request completed"}
+{"level":30,"time":1755267924632,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":51592},"msg":"incoming request"}
+{"level":30,"time":1755267924632,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267924632,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267924635,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","msg":"response received"}
+{"level":30,"time":1755267924636,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","res":{"statusCode":401},"responseTime":4.1727819964289665,"msg":"request completed"}
+{"level":30,"time":1755267938880,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":51592},"msg":"incoming request"}
+{"level":30,"time":1755267938880,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267938881,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755267938884,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","msg":"response received"}
+{"level":30,"time":1755267938886,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","res":{"statusCode":401},"responseTime":5.361136004328728,"msg":"request completed"}
+{"level":30,"time":1755267940463,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":51592},"msg":"incoming request"}
+{"level":30,"time":1755267940464,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755267940464,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","source":"/auth/google","msg":"fetching from remote server"}
+{"level":30,"time":1755267940469,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755267940471,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-7","res":{"statusCode":302},"responseTime":7.269743002951145,"msg":"request completed"}
+{"level":30,"time":1755267982149,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755267982150,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755267982150,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268003066,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":59784},"msg":"incoming request"}
+{"level":30,"time":1755268003067,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268003070,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268003120,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755268003127,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":59.609414003789425,"msg":"request completed"}
+{"level":30,"time":1755268004471,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":59784},"msg":"incoming request"}
+{"level":30,"time":1755268004471,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268004472,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/auth/google","msg":"fetching from remote server"}
+{"level":30,"time":1755268004481,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755268004483,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":302},"responseTime":12.135628998279572,"msg":"request completed"}
+{"level":30,"time":1755268057528,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268057529,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755268057529,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268077999,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42196},"msg":"incoming request"}
+{"level":30,"time":1755268078000,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268078001,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268078032,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755268078038,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":38.315691001713276,"msg":"request completed"}
+{"level":30,"time":1755268079873,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42196},"msg":"incoming request"}
+{"level":30,"time":1755268079873,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268079874,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/auth/google","msg":"fetching from remote server"}
+{"level":30,"time":1755268079880,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755268079882,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":302},"responseTime":9.72435600310564,"msg":"request completed"}
+{"level":30,"time":1755268235195,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268235196,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755268235196,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268259774,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"msg":"incoming request"}
+{"level":30,"time":1755268259775,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268259779,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755268259915,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268259917,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268259923,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":503},"responseTime":147.9569719955325,"msg":"request completed"}
+{"level":30,"time":1755268261502,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"msg":"incoming request"}
+{"level":30,"time":1755268261503,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268261503,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/auth/google","msg":"fetching from remote server"}
+{"level":40,"time":1755268261560,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268261560,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268261561,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":503},"responseTime":58.93216899782419,"msg":"request completed"}
+{"level":30,"time":1755268261684,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45450},"msg":"incoming request"}
+{"level":30,"time":1755268261684,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268261686,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","res":{"statusCode":401},"responseTime":2.015576995909214,"msg":"request completed"}
+{"level":30,"time":1755268314860,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"msg":"incoming request"}
+{"level":30,"time":1755268314860,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268314861,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755268314918,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268314918,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268314919,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-4","res":{"statusCode":503},"responseTime":58.35515300184488,"msg":"request completed"}
+{"level":30,"time":1755268316549,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"msg":"incoming request"}
+{"level":30,"time":1755268316549,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268316550,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","source":"/google","msg":"fetching from remote server"}
+{"level":40,"time":1755268316607,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268316608,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45444},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268316608,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-5","res":{"statusCode":503},"responseTime":59.103056997060776,"msg":"request completed"}
+{"level":30,"time":1755268316689,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":45450},"msg":"incoming request"}
+{"level":30,"time":1755268316689,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268316690,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-6","res":{"statusCode":401},"responseTime":0.8678929954767227,"msg":"request completed"}
+{"level":30,"time":1755268390672,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268390673,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755268390673,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268435602,"pid":19,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268435603,"pid":19,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755268435604,"pid":19,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268585172,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268585173,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755268585173,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268715769,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268715770,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755268715770,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268737549,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54500},"msg":"incoming request"}
+{"level":30,"time":1755268737550,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268737553,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755268737685,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268737688,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54500},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268737692,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":503},"responseTime":143.27819300442934,"msg":"request completed"}
+{"level":30,"time":1755268756736,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54500},"msg":"incoming request"}
+{"level":30,"time":1755268756736,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268756737,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/google","msg":"fetching from remote server"}
+{"level":40,"time":1755268756797,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","err":{"type":"Error","message":"getaddrinfo ENOTFOUND auth-service","stack":"Error: getaddrinfo ENOTFOUND auth-service\n    at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26)","errno":-3008,"code":"ENOTFOUND","syscall":"getaddrinfo","hostname":"auth-service"},"msg":"response errored"}
+{"level":50,"time":1755268756798,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":54500},"res":{"statusCode":503},"err":{"type":"FastifyError","message":"Service Unavailable","stack":"FastifyError: Service Unavailable\n    at FastifyError (/node_modules/@fastify/error/index.js:28:14)\n    at /node_modules/@fastify/reply-from/index.js:178:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_SERVICE_UNAVAILABLE","name":"FastifyError","statusCode":503},"msg":"Service Unavailable"}
+{"level":30,"time":1755268756798,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":503},"responseTime":62.06651599705219,"msg":"request completed"}
+{"level":30,"time":1755268756849,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":56770},"msg":"incoming request"}
+{"level":30,"time":1755268756849,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268756852,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-3","res":{"statusCode":401},"responseTime":2.378919005393982,"msg":"request completed"}
+{"level":30,"time":1755268791462,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268791463,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755268791463,"pid":18,"hostname":"3c4cd49a2a16","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268822466,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":41890},"msg":"incoming request"}
+{"level":30,"time":1755268822467,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268822469,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268822504,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755268822510,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-1","res":{"statusCode":401},"responseTime":42.98360300064087,"msg":"request completed"}
+{"level":30,"time":1755268824540,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":41890},"msg":"incoming request"}
+{"level":30,"time":1755268824541,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268824541,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755268824548,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755268824550,"pid":18,"hostname":"3c4cd49a2a16","reqId":"req-2","res":{"statusCode":302},"responseTime":9.210489995777607,"msg":"request completed"}
+{"level":30,"time":1755268932419,"pid":18,"hostname":"4ed72e0b8ef7","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268932420,"pid":18,"hostname":"4ed72e0b8ef7","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755268932420,"pid":18,"hostname":"4ed72e0b8ef7","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755268945670,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268945672,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268945678,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755268945704,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.3:3001","stack":"Error: connect ECONNREFUSED 172.21.0.3:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.3","port":3001},"msg":"response errored"}
+{"level":50,"time":1755268945706,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.3:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.3:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.3:3001"}
+{"level":30,"time":1755268945716,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-1","res":{"statusCode":500},"responseTime":44.777119003236294,"msg":"request completed"}
+{"level":30,"time":1755268953410,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268953411,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268953411,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","source":"/google","msg":"fetching from remote server"}
+{"level":40,"time":1755268953414,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.3:3001","stack":"Error: connect ECONNREFUSED 172.21.0.3:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.3","port":3001},"msg":"response errored"}
+{"level":50,"time":1755268953414,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.3:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.3:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.3:3001"}
+{"level":30,"time":1755268953414,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-2","res":{"statusCode":500},"responseTime":3.6541419997811317,"msg":"request completed"}
+{"level":30,"time":1755268953497,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-3","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":42748},"msg":"incoming request"}
+{"level":30,"time":1755268953498,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268953500,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-3","res":{"statusCode":401},"responseTime":2.9320620000362396,"msg":"request completed"}
+{"level":30,"time":1755268971644,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268971644,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268971645,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268971674,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755268971679,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-4","res":{"statusCode":401},"responseTime":34.941283002495766,"msg":"request completed"}
+{"level":30,"time":1755268978212,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-5","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268978213,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268978213,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-5","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268978218,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-5","msg":"response received"}
+{"level":30,"time":1755268978220,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-5","res":{"statusCode":401},"responseTime":7.850994996726513,"msg":"request completed"}
+{"level":30,"time":1755268980381,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-6","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268980382,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268980382,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-6","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755268980390,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-6","msg":"response received"}
+{"level":30,"time":1755268980391,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-6","res":{"statusCode":302},"responseTime":9.202798001468182,"msg":"request completed"}
+{"level":30,"time":1755268990711,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-7","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268990712,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268990712,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-7","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755268990714,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755268990716,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-7","res":{"statusCode":401},"responseTime":4.604442000389099,"msg":"request completed"}
+{"level":30,"time":1755268993033,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-8","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755268993033,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-8","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755268993033,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-8","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755268993039,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755268993042,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-8","res":{"statusCode":302},"responseTime":8.810927994549274,"msg":"request completed"}
+{"level":30,"time":1755269009806,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-9","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755269009806,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-9","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269009807,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-9","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269009809,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-9","msg":"response received"}
+{"level":30,"time":1755269009810,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-9","res":{"statusCode":401},"responseTime":4.02666199952364,"msg":"request completed"}
+{"level":30,"time":1755269011736,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-a","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53668},"msg":"incoming request"}
+{"level":30,"time":1755269011736,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-a","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269011737,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-a","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269011740,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-a","msg":"response received"}
+{"level":30,"time":1755269011741,"pid":18,"hostname":"4ed72e0b8ef7","reqId":"req-a","res":{"statusCode":302},"responseTime":4.660801999270916,"msg":"request completed"}
+{"level":30,"time":1755269042373,"pid":18,"hostname":"158c2b61f2d4","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269042374,"pid":18,"hostname":"158c2b61f2d4","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755269042375,"pid":18,"hostname":"158c2b61f2d4","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269060146,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":35566},"msg":"incoming request"}
+{"level":30,"time":1755269060148,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269060150,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269060188,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755269060196,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-1","res":{"statusCode":401},"responseTime":49.37507599592209,"msg":"request completed"}
+{"level":30,"time":1755269064335,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":35566},"msg":"incoming request"}
+{"level":30,"time":1755269064336,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269064336,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-2","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269064341,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755269064342,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-2","res":{"statusCode":302},"responseTime":6.726893998682499,"msg":"request completed"}
+{"level":30,"time":1755269071334,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-3","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":35566},"msg":"incoming request"}
+{"level":30,"time":1755269071334,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269071335,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-3","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269071337,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755269071338,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-3","res":{"statusCode":401},"responseTime":3.9262809976935387,"msg":"request completed"}
+{"level":30,"time":1755269076373,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-4","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":35566},"msg":"incoming request"}
+{"level":30,"time":1755269076373,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269076373,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-4","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269076376,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755269076377,"pid":18,"hostname":"158c2b61f2d4","reqId":"req-4","res":{"statusCode":302},"responseTime":3.609724000096321,"msg":"request completed"}
+{"level":30,"time":1755269553545,"pid":19,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269553546,"pid":19,"hostname":"64e26cbeebc1","msg":"Server listening at http://172.21.0.8:3000"}
+{"level":30,"time":1755269553546,"pid":19,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269573020,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43260},"msg":"incoming request"}
+{"level":30,"time":1755269573021,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269573023,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269573059,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755269573064,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-1","res":{"statusCode":401},"responseTime":43.82081200182438,"msg":"request completed"}
+{"level":30,"time":1755269575470,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-2","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43260},"msg":"incoming request"}
+{"level":30,"time":1755269575470,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269575471,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-2","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269575480,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755269575482,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-2","res":{"statusCode":302},"responseTime":11.427884995937347,"msg":"request completed"}
+{"level":30,"time":1755269593881,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-3","req":{"method":"GET","url":"/api/auth/google/callback?state=fEy2Lgihsoqn65VFko3LQA&code=4%2F0AVMBsJjkyXXiPAHY34iul7iCVO2ux-3d8zZSBr1PsnuJXkicZ-_LOl6IpwHs4GgPQlTP2w&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=consent","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43260},"msg":"incoming request"}
+{"level":30,"time":1755269593882,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269593882,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-3","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755269594595,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755269594596,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-3","res":{"statusCode":200},"responseTime":715.271796002984,"msg":"request completed"}
+{"level":30,"time":1755269594829,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-4","req":{"method":"GET","url":"/favicon.ico","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":43260},"msg":"incoming request"}
+{"level":30,"time":1755269594829,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269594848,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-4","msg":"Route GET:/favicon.ico not found"}
+{"level":30,"time":1755269594849,"pid":19,"hostname":"64e26cbeebc1","reqId":"req-4","res":{"statusCode":404},"responseTime":20.217174001038074,"msg":"request completed"}
+{"level":30,"time":1755269787456,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269787457,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755269787457,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269814514,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50958},"msg":"incoming request"}
+{"level":30,"time":1755269814515,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269814517,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269814543,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755269814558,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","res":{"statusCode":200},"responseTime":42.4714390039444,"msg":"request completed"}
+{"level":30,"time":1755269816180,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50958},"msg":"incoming request"}
+{"level":30,"time":1755269816180,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269816181,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269816184,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","msg":"response received"}
+{"level":30,"time":1755269816186,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","res":{"statusCode":200},"responseTime":5.570605002343655,"msg":"request completed"}
+{"level":30,"time":1755269816187,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50968},"msg":"incoming request"}
+{"level":30,"time":1755269816187,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269816199,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","req":{"method":"GET","url":"/api/user-management/allachievements","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269816199,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269816213,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755269816217,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","source":"/api/user-management/allachievements","msg":"fetching from remote server"}
+{"level":30,"time":1755269816257,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755269816258,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","res":{"statusCode":200},"responseTime":59.35156700015068,"msg":"request completed"}
+{"level":30,"time":1755269816275,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755269816276,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","res":{"statusCode":200},"responseTime":88.5502509996295,"msg":"request completed"}
+{"level":30,"time":1755269816363,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50968},"msg":"incoming request"}
+{"level":30,"time":1755269816364,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269816364,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","source":"/assets/default.png","msg":"fetching from remote server"}
+{"level":30,"time":1755269816375,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","msg":"response received"}
+{"level":40,"time":1755269816377,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","err":{"type":"RequestAbortedError","message":"Request aborted","stack":"AbortError: Request aborted\n    at BodyReadable._destroy (/node_modules/@fastify/reply-from/node_modules/undici/lib/api/readable.js:80:13)\n    at _destroy (node:internal/streams/destroy:122:10)\n    at BodyReadable.destroy (node:internal/streams/destroy:84:5)\n    at ServerResponse.<anonymous> (/node_modules/fastify/lib/reply.js:726:17)\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at ServerResponse.bound (node:async_hooks:245:16)\n    at ServerResponse.<anonymous> (node:internal/util:584:20)\n    at onclose (node:internal/streams/end-of-stream:161:25)\n    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)","name":"AbortError","code":"UND_ERR_ABORTED"},"msg":"response terminated with an error with headers already sent"}
+{"level":30,"time":1755269816378,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269816378,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269816379,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","source":"/assets/default.png","msg":"fetching from remote server"}
+{"level":30,"time":1755269816381,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","msg":"response received"}
+{"level":30,"time":1755269816382,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","res":{"statusCode":304},"responseTime":3.4930790066719055,"msg":"request completed"}
+{"level":30,"time":1755269823005,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":36612},"msg":"incoming request"}
+{"level":30,"time":1755269823005,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269823005,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","source":"/assets/default.png","msg":"fetching from remote server"}
+{"level":30,"time":1755269823011,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755269823021,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","res":{"statusCode":200},"responseTime":16.246476002037525,"msg":"request completed"}
+{"level":30,"time":1755269827718,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","req":{"method":"POST","url":"/api/auth/logout","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269827718,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269827719,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","source":"/logout","msg":"fetching from remote server"}
+{"level":30,"time":1755269827724,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755269827727,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","res":{"statusCode":200},"responseTime":9.40106499940157,"msg":"request completed"}
+{"level":30,"time":1755269827755,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269827755,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269827756,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269827759,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","msg":"response received"}
+{"level":30,"time":1755269827760,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","res":{"statusCode":401},"responseTime":4.3262729942798615,"msg":"request completed"}
+{"level":30,"time":1755269829594,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269829595,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269829595,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269829598,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","msg":"response received"}
+{"level":30,"time":1755269829600,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","res":{"statusCode":302},"responseTime":5.022650994360447,"msg":"request completed"}
+{"level":30,"time":1755269839701,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","req":{"method":"GET","url":"/api/auth/google/callback?state=TzIA6JwMazUGyylsp8dBRQ&code=4%2F0AVMBsJgDr2qGUEh-zcbtZfpr1nXlcq-751uMXKab2RcX1uN7jweHaAFteBLSCbCWeCVouA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":50974},"msg":"incoming request"}
+{"level":30,"time":1755269839701,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269839702,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755269840351,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","msg":"response received"}
+{"level":30,"time":1755269840352,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","res":{"statusCode":200},"responseTime":650.9523680061102,"msg":"request completed"}
+{"level":30,"time":1755269870606,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269870606,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://172.21.0.7:3000"}
+{"level":30,"time":1755269870606,"pid":18,"hostname":"64e26cbeebc1","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755269873544,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269873546,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269873550,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755269873570,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.2:3001","stack":"Error: connect ECONNREFUSED 172.21.0.2:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.2","port":3001},"msg":"response errored"}
+{"level":50,"time":1755269873572,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.2:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.2:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.2:3001"}
+{"level":30,"time":1755269873582,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-1","res":{"statusCode":500},"responseTime":36.67892000079155,"msg":"request completed"}
+{"level":30,"time":1755269890641,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269890642,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269890642,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","source":"/verify","msg":"fetching from remote server"}
+{"level":40,"time":1755269890645,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","err":{"type":"Error","message":"connect ECONNREFUSED 172.21.0.2:3001","stack":"Error: connect ECONNREFUSED 172.21.0.2:3001\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16)","errno":-111,"code":"ECONNREFUSED","syscall":"connect","address":"172.21.0.2","port":3001},"msg":"response errored"}
+{"level":50,"time":1755269890645,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"res":{"statusCode":500},"err":{"type":"FastifyError","message":"connect ECONNREFUSED 172.21.0.2:3001","stack":"FastifyError: connect ECONNREFUSED 172.21.0.2:3001\n    at /node_modules/@fastify/reply-from/index.js:188:36\n    at /node_modules/@fastify/reply-from/index.js:289:9\n    at /node_modules/@fastify/reply-from/lib/request.js:171:9\n    at RequestHandler.runInAsyncScope (node:async_hooks:214:14)\n    at /node_modules/@fastify/reply-from/node_modules/undici/lib/api/api-request.js:148:14\n    at node:internal/process/task_queues:151:7\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)","code":"FST_REPLY_FROM_INTERNAL_SERVER_ERROR","name":"FastifyError","statusCode":500},"msg":"connect ECONNREFUSED 172.21.0.2:3001"}
+{"level":30,"time":1755269890646,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-2","res":{"statusCode":500},"responseTime":4.14241000264883,"msg":"request completed"}
+{"level":30,"time":1755269899014,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269899015,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269899015,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269899048,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","msg":"response received"}
+{"level":30,"time":1755269899054,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-3","res":{"statusCode":200},"responseTime":38.71696799993515,"msg":"request completed"}
+{"level":30,"time":1755269899130,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269899131,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269899131,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269899136,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","msg":"response received"}
+{"level":30,"time":1755269899138,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-4","res":{"statusCode":200},"responseTime":7.377734996378422,"msg":"request completed"}
+{"level":30,"time":1755269899139,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269899140,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269899152,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","req":{"method":"GET","url":"/api/user-management/allachievements","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53018},"msg":"incoming request"}
+{"level":30,"time":1755269899152,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269899172,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755269899176,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","source":"/api/user-management/allachievements","msg":"fetching from remote server"}
+{"level":30,"time":1755269899228,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","msg":"response received"}
+{"level":30,"time":1755269899230,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-6","res":{"statusCode":200},"responseTime":77.29894799739122,"msg":"request completed"}
+{"level":30,"time":1755269899252,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","msg":"response received"}
+{"level":30,"time":1755269899254,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-5","res":{"statusCode":200},"responseTime":114.3275619968772,"msg":"request completed"}
+{"level":30,"time":1755269899320,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269899320,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269899321,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","source":"/assets/default.png","msg":"fetching from remote server"}
+{"level":30,"time":1755269899332,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","msg":"response received"}
+{"level":30,"time":1755269899333,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-7","res":{"statusCode":304},"responseTime":12.664177998900414,"msg":"request completed"}
+{"level":30,"time":1755269902167,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","req":{"method":"POST","url":"/api/auth/logout","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269902168,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269902168,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","source":"/logout","msg":"fetching from remote server"}
+{"level":30,"time":1755269902172,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","msg":"response received"}
+{"level":30,"time":1755269902173,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-8","res":{"statusCode":200},"responseTime":4.9980369955301285,"msg":"request completed"}
+{"level":30,"time":1755269902212,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269902212,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269902212,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269902216,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","msg":"response received"}
+{"level":30,"time":1755269902218,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-9","res":{"statusCode":401},"responseTime":5.943369999527931,"msg":"request completed"}
+{"level":30,"time":1755269905405,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269905406,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269905406,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269905411,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","msg":"response received"}
+{"level":30,"time":1755269905413,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-a","res":{"statusCode":302},"responseTime":6.998294994235039,"msg":"request completed"}
+{"level":30,"time":1755269915674,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","req":{"method":"GET","url":"/api/auth/google/callback?state=K6V7oSrrkfTEtjEOiQnSQg&code=4%2F0AVMBsJgnTaHZbcELU9ueC__amiYVF1-Pu3JAWTuQ4QCddPVuCPFvwXYjJTynn33f_B1l5g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=0&prompt=none","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269915674,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269915675,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755269916337,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","msg":"response received"}
+{"level":30,"time":1755269916338,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-b","res":{"statusCode":200},"responseTime":664.428911998868,"msg":"request completed"}
+{"level":30,"time":1755269967096,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-c","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269967096,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-c","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269967097,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-c","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269967101,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-c","msg":"response received"}
+{"level":30,"time":1755269967102,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-c","res":{"statusCode":200},"responseTime":5.657490000128746,"msg":"request completed"}
+{"level":30,"time":1755269967177,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-d","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269967178,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-d","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269967178,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-d","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269967178,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-e","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53018},"msg":"incoming request"}
+{"level":30,"time":1755269967178,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-e","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269967179,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-f","req":{"method":"GET","url":"/api/user-management/allachievements","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269967180,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-f","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269967181,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-d","msg":"response received"}
+{"level":30,"time":1755269967182,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-d","res":{"statusCode":200},"responseTime":4.815867997705936,"msg":"request completed"}
+{"level":30,"time":1755269967186,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-e","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755269967188,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-f","source":"/api/user-management/allachievements","msg":"fetching from remote server"}
+{"level":30,"time":1755269967196,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-f","msg":"response received"}
+{"level":30,"time":1755269967198,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-f","res":{"statusCode":200},"responseTime":18.086916998028755,"msg":"request completed"}
+{"level":30,"time":1755269967212,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-e","msg":"response received"}
+{"level":30,"time":1755269967213,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-e","res":{"statusCode":200},"responseTime":34.80358900129795,"msg":"request completed"}
+{"level":30,"time":1755269967242,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-g","req":{"method":"GET","url":"/assets/default.png","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269967242,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-g","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269967242,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-g","source":"/assets/default.png","msg":"fetching from remote server"}
+{"level":30,"time":1755269967246,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-g","msg":"response received"}
+{"level":30,"time":1755269967246,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-g","res":{"statusCode":304},"responseTime":4.765233993530273,"msg":"request completed"}
+{"level":30,"time":1755269970289,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-h","req":{"method":"POST","url":"/api/auth/logout","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269970289,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-h","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269970289,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-h","source":"/logout","msg":"fetching from remote server"}
+{"level":30,"time":1755269970292,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-h","msg":"response received"}
+{"level":30,"time":1755269970293,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-h","res":{"statusCode":200},"responseTime":4.480065003037453,"msg":"request completed"}
+{"level":30,"time":1755269970324,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-i","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269970324,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-i","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269970324,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-i","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269970326,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-i","msg":"response received"}
+{"level":30,"time":1755269970327,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-i","res":{"statusCode":401},"responseTime":3.011064000427723,"msg":"request completed"}
+{"level":30,"time":1755269971938,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-j","req":{"method":"GET","url":"/api/auth/google","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269971938,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-j","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269971938,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-j","source":"/google","msg":"fetching from remote server"}
+{"level":30,"time":1755269971941,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-j","msg":"response received"}
+{"level":30,"time":1755269971941,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-j","res":{"statusCode":302},"responseTime":3.581125997006893,"msg":"request completed"}
+{"level":30,"time":1755269981418,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-k","req":{"method":"GET","url":"/api/auth/google/callback?state=Y8v6kQWfEMYWOvXOjwoijw&code=4%2F0AVMBsJhA9lwQmu6lMLZB5fUAvBeYytGnvrrg7IwuLn8JUnu08FKafcPvSWcFxivxmZzNtQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269981419,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-k","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269981419,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-k","source":"/google/callback","msg":"fetching from remote server"}
+{"level":30,"time":1755269981941,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-k","msg":"response received"}
+{"level":30,"time":1755269981942,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-k","res":{"statusCode":200},"responseTime":523.8740830048919,"msg":"request completed"}
+{"level":30,"time":1755269984512,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-l","req":{"method":"GET","url":"/api/auth/verify","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53014},"msg":"incoming request"}
+{"level":30,"time":1755269984512,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-l","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269984512,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-l","source":"/verify","msg":"fetching from remote server"}
+{"level":30,"time":1755269984513,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-m","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":53018},"msg":"incoming request"}
+{"level":30,"time":1755269984513,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-m","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269984515,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-n","req":{"method":"GET","url":"/api/user-management/allachievements","host":"localhost:3000","remoteAddress":"172.21.0.1","remotePort":57414},"msg":"incoming request"}
+{"level":30,"time":1755269984515,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-n","ip":"172.21.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755269984516,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-l","msg":"response received"}
+{"level":30,"time":1755269984516,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-l","res":{"statusCode":200},"responseTime":4.280556000769138,"msg":"request completed"}
+{"level":30,"time":1755269984522,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-m","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755269984524,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-n","source":"/api/user-management/allachievements","msg":"fetching from remote server"}
+{"level":30,"time":1755269984530,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-n","msg":"response received"}
+{"level":30,"time":1755269984531,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-n","res":{"statusCode":200},"responseTime":15.861092001199722,"msg":"request completed"}
+{"level":30,"time":1755269984542,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-m","msg":"response received"}
+{"level":30,"time":1755269984542,"pid":18,"hostname":"64e26cbeebc1","reqId":"req-m","res":{"statusCode":200},"responseTime":29.834213994443417,"msg":"request completed"}

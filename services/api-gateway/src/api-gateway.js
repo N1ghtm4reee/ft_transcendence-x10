@@ -112,7 +112,7 @@ const authenticateWs = async (request, reply) => {
 
 
 app.addHook('preHandler', async (request, reply) => {
-  const publicRoutes = ['/api/auth/', '/health', '/metrics', '/assets'];
+  const publicRoutes = ['/api/auth/', '/health', '/metrics', '/assets','/api/auth/auth'];
 
   if (publicRoutes.some(route => request.url.startsWith(route))) return;
 

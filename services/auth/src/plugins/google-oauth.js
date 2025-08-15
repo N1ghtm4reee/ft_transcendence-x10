@@ -11,7 +11,7 @@ async function googleOAuthPlugin(fastify, options) {
       },
       auth: oauth2.GOOGLE_CONFIGURATION,
     },
-    startRedirectPath: "/auth/google",
+    startRedirectPath: "/google",
     callbackUri: process.env.GOOGLE_REDIRECT_URI,
     scope: ["profile", "email"],
   });

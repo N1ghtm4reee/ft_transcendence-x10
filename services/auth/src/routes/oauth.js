@@ -24,7 +24,7 @@ async function createNewProfile(userData) {
 
 async function oauthRoutes(fastify, options) {
   fastify.get(
-    "/auth/google/callback",
+    "/google/callback",
     {
       schema: {
         tags: ["OAuth"],
@@ -257,29 +257,29 @@ async function oauthRoutes(fastify, options) {
     }
   );
 
-  fastify.post(
-    "/auth/logout",
-    {
-      schema: {
-        tags: ["OAuth"],
-        summary: "OAuth Logout",
-        description: "Clear OAuth authentication cookie",
-        security: [{ cookieAuth: [] }],
-        response: {
-          200: {
-            type: "object",
-            properties: {
-              message: { type: "string" },
-            },
-          },
-        },
-      },
-    },
-    async (request, reply) => {
-      reply.clearCookie("token");
-      return reply.send({ message: "Logged out successfully" });
-    }
-  );
+  // fastify.post(
+  //   "/auth/logout",
+  //   {
+  //     schema: {
+  //       tags: ["OAuth"],
+  //       summary: "OAuth Logout",
+  //       description: "Clear OAuth authentication cookie",
+  //       security: [{ cookieAuth: [] }],
+  //       response: {
+  //         200: {
+  //           type: "object",
+  //           properties: {
+  //             message: { type: "string" },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  //   async (request, reply) => {
+  //     reply.clearCookie("token");
+  //     return reply.send({ message: "Logged out successfully" });
+  //   }
+  // );
 }
 
 export default oauthRoutes;
