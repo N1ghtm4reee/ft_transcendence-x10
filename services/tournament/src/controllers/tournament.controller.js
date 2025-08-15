@@ -8,11 +8,7 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      // Use Docker service name instead of localhost
-      const userServiceUrls = [
-        "http://user-service:3002",
-        "http://localhost:3002",
-      ];
+      const userServiceUrls = "http://user-service:3002";
 
       let userData = null;
       for (const baseUrl of userServiceUrls) {
@@ -88,11 +84,7 @@ export const tournamentControllers = {
     const userId = req.headers["x-user-id"];
 
     try {
-      // Use Docker service name instead of localhost
-      const userServiceUrls = [
-        "http://user-service:3002",
-        "http://localhost:3002",
-      ];
+      const userServiceUrls = "http://user-service:3002";
 
       let userData = null;
       for (const baseUrl of userServiceUrls) {
@@ -135,7 +127,7 @@ export const tournamentControllers = {
       }
 
       // check if tournament full or not
-      if (tournament.playersCount == 4) {
+      if (tournament.playersCount >= 4) {
         return res.status(400).send({
           error: "tournament is full !",
         });
@@ -190,11 +182,7 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      // Use Docker service name instead of localhost
-      const userServiceUrls = [
-        "http://user-service:3002",
-        "http://localhost:3002",
-      ];
+      const userServiceUrls = "http://user-service:3002";
 
       let userData = null;
       for (const baseUrl of userServiceUrls) {
@@ -272,11 +260,7 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      // Use Docker service name instead of localhost
-      const userServiceUrls = [
-        "http://user-service:3002",
-        "http://localhost:3002",
-      ];
+      const userServiceUrls = "http://user-service:3002";
 
       let userData = null;
       for (const baseUrl of userServiceUrls) {
