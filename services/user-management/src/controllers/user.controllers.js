@@ -6,7 +6,7 @@ import path from "path";
 const getOnlineStatus = async (userId) => {
   try {
     const res = await fetch(
-      `http://localhost:3005/api/notifications/user/${user.id}/online`
+      `http://localhost:3005/api/notifications/user/${userId}/online`
     );
     const data = await res.json();
     return data.online;
