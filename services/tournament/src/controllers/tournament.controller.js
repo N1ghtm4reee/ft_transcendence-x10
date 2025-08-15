@@ -215,10 +215,10 @@ export const tournamentControllers = {
         });
       }
 
-      if (tournament.players.length === 0) {
+      if (tournament.players.length === 0 || tournament.players.length < 4) {
         return res
           .status(400)
-          .send({ error: "Cannot start tournament with no players" });
+          .send({ error: "Cannot start tournament with no enough players" });
       }
 
       await brackets.generateInitialMatches(tournament.players, tournamentId);
