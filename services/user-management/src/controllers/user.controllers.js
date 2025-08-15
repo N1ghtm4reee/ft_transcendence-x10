@@ -9,7 +9,7 @@ const getOnlineStatus = async (userId) => {
       `http://notification-service:3005/api/notifications/user/${userId}/online`
     );
     const data = await res.json();
-    console.log("IS HE ONLINE",data)
+    console.log("IS HE ONLINE", data);
     return data.online;
   } catch (error) {
     console.error(`Error fetching online status for user ${userId}:`, error);
@@ -555,20 +555,22 @@ export const userController = {
       const now = new Date();
       const friends = await Promise.all(
         friendships.map(async (friendship) => {
-          const friend = friendship.requesterId === id
-            ? friendship.receiver
-            : friendship.requester;
-          
+          const friend =
+            friendship.requesterId === id
+              ? friendship.receiver
+              : friendship.requester;
+
           return {
             id: friend.id,
             displayName: friend.displayName,
             avatar: friend.avatar,
-            status: await getOnlineStatus(friend.id) ? "online" : "offline",
-            lastActive: new Intl.RelativeTimeFormat("en", { style: "short" }).format(now, "days"),
+            status: (await getOnlineStatus(friend.id)) ? "online" : "offline",
+            lastActive: new Intl.RelativeTimeFormat("en", {
+              style: "short",
+            }).format(now, "days"),
           };
         })
       );
-      
 
       // 6. Get friend requests (pending)
       const receivedRequestsRaw = await prisma.friendship.findMany({
@@ -589,29 +591,40 @@ export const userController = {
         },
       });
 
-      const friendRequests = {
-        received: receivedRequestsRaw.map((req) => ({
+      const receivedRequests = await Promise.all(
+        receivedRequestsRaw.map(async (req) => ({
           user: {
             id: req.requester.id,
             displayName: req.requester.displayName,
             avatar: req.requester.avatar,
-            status: getOnlineStatus(req.requester.id) ? "online" : "offline",
+            status: (await getOnlineStatus(req.requester.id))
+              ? "online"
+              : "offline",
             lastActive: now,
           },
-          id : req.id,
+          id: req.id,
           createdAt: req.createdAt,
-        })),
-        sent: sentRequestsRaw.map((req) => ({
+        }))
+      );
+      const sentRequests = await Promise.all(
+        sentRequestsRaw.map(async (req) => ({
           user: {
             id: req.receiver.id,
             displayName: req.receiver.displayName,
             avatar: req.receiver.avatar,
-            status:  getOnlineStatus(req.receiver.id) ? "online" : "offline",
+            status: (await getOnlineStatus(req.receiver.id))
+              ? "online"
+              : "offline",
             lastActive: now,
           },
-          id : req.id,
+          id: req.id,
           createdAt: req.createdAt,
-        })),
+        }))
+      );
+
+      const friendRequests = {
+        received: receivedRequests,
+        sent: sentRequests,
       };
 
       return reply.send({
