@@ -19,7 +19,7 @@ app.register(fastifyCors, {
 });
 
 app.register(fastifyWebsocket);
-app.register(notificationRoutes, { prefix: "/api/notifications/" });
+app.register(notificationRoutes, { prefix: "/api/notifications" });
 app.register(notificationSocket, { prefix: "/ws/notifications" });
 
 app.get("/health", () => {

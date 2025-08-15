@@ -161,11 +161,24 @@ app.register(proxy, createProxyWithHeaders(
   '/api/chat'
 ));
 
+app.register(proxy, createProxyWithHeaders(
+  process.env.CHAT_SERVICE_URL || 'http://notification-service:3005',
+  '/api/notifications'
+));
+
 app.register(proxy, {
-  wsUpstream: process.env.CHAT_SERVICE_URL || 'ws://chat-service:3004',
+  wsUpstream: 'ws://chat-service:3004',
   prefix: '/ws/chat',
   http2: false,
   rewritePrefix: '/ws/chat',
+  websocket: true
+});
+
+app.register(proxy, {
+  wsUpstream: 'ws://notification-service:3005',
+  prefix: '/ws/notifications',
+  http2: false,
+  rewritePrefix: '/ws/notifications',
   websocket: true
 });
 
