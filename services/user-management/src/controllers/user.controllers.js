@@ -553,21 +553,21 @@ export const userController = {
       });
 
       const now = new Date();
-      let friends = []
-      for (let i = 0 ; i < friendships.length; i++) 
-      {
-        const friend =
-          friendships[i].requesterId === id
-            ? friendships[i].receiver
-            : friendships[i].requester;
-        friends.push(  {
-          id: friend.id,
-          displayName: friend.displayName,
-          avatar: friend.avatar,
-          status: await  getOnlineStatus(friend.id) ? "online" : "offline",
-          lastActive: now, 
-        });
-      }
+      const friends = await Promise.all(
+        friendships.map(async (friendship) => {
+          const friend = friendship.requesterId === id
+            ? friendship.receiver
+            : friendship.requester;
+          
+          return {
+            id: friend.id,
+            displayName: friend.displayName,
+            avatar: friend.avatar,
+            status: await getOnlineStatus(friend.id) ? "online" : "offline",
+            lastActive: new Intl.RelativeTimeFormat("en", { style: "short" }).format(now, "days"),
+          };
+        })
+      );
       
 
       // 6. Get friend requests (pending)
