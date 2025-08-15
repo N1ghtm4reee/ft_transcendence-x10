@@ -6,9 +6,10 @@ import path from "path";
 const getOnlineStatus = async (userId) => {
   try {
     const res = await fetch(
-      `http://localhost:3005/api/notifications/user/${userId}/online`
+      `http://notification-service:3005/api/notifications/user/${userId}/online`
     );
     const data = await res.json();
+    console.log("IS HE ONLINE",data)
     return data.online;
   } catch (error) {
     console.error(`Error fetching online status for user ${userId}:`, error);
@@ -552,21 +553,22 @@ export const userController = {
       });
 
       const now = new Date();
-
-      const friends = friendships.map((friendship) => {
+      let friends = []
+      for (let i = 0 ; i < friendships.length; i++) 
+      {
         const friend =
-          friendship.requesterId === id
-            ? friendship.receiver
-            : friendship.requester;
-
-        return {
+          friendships[i].requesterId === id
+            ? friendships[i].receiver
+            : friendships[i].requester;
+        friends.push(  {
           id: friend.id,
           displayName: friend.displayName,
           avatar: friend.avatar,
-          status: getOnlineStatus(friend.id) ? "online" : "offline",
-          lastActive: now, // Replace with real field if available
-        };
-      });
+          status: await  getOnlineStatus(friend.id) ? "online" : "offline",
+          lastActive: now, 
+        });
+      }
+      
 
       // 6. Get friend requests (pending)
       const receivedRequestsRaw = await prisma.friendship.findMany({
@@ -593,7 +595,7 @@ export const userController = {
             id: req.requester.id,
             displayName: req.requester.displayName,
             avatar: req.requester.avatar,
-            status: "offline",
+            status: getOnlineStatus(req.requester.id) ? "online" : "offline",
             lastActive: now,
           },
           id : req.id,
@@ -604,7 +606,7 @@ export const userController = {
             id: req.receiver.id,
             displayName: req.receiver.displayName,
             avatar: req.receiver.avatar,
-            status: "offline",
+            status:  getOnlineStatus(req.receiver.id) ? "online" : "offline",
             lastActive: now,
           },
           id : req.id,

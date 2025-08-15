@@ -347,11 +347,13 @@ export const notificationControllers = {
   // Check if a specific user is online
   isUserOnline: async (req, res) => {
     try {
+      console.log(req.params)
       const userId = parseInt(req.params.userId);
-      const userConnections = socketConnections.get(userId);
+      const userConnections = socketConnections.get(userId) || false;
+      console.log(userConnections)
       const isOnline = userConnections && userConnections.size > 0;
-
-      return res.send({
+      console.log(isOnline)
+      return res.code(200).send({
         userId: userId,
         online: isOnline,
         connections: isOnline ? userConnections.size : 0,
