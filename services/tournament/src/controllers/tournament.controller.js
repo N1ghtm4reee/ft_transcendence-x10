@@ -7,25 +7,15 @@ export const tournamentControllers = {
     const {
       name,
       status,
-      prizePool,
-      entryFee,
-      difficulty,
       startTime,
       username,
-      rank,
-      country,
     } = req.body;
 
     if (
       !name ||
       !status ||
-      !prizePool ||
-      !entryFee ||
-      !difficulty ||
       !startTime ||
-      !username ||
-      !rank ||
-      !country
+      !username
     ) {
       return res.status(400).send({ error: "Missing required fields" });
     }
@@ -33,14 +23,9 @@ export const tournamentControllers = {
     console.log("Creating tournament with data:", {
       name,
       status,
-      prizePool,
-      entryFee,
-      difficulty,
       startTime,
       userId,
       username,
-      rank,
-      country,
     });
 
     try {
@@ -49,9 +34,6 @@ export const tournamentControllers = {
           data: {
             name,
             status,
-            prizePool,
-            entryFee,
-            difficulty,
             startTime,
             createdBy: userId,
           },
@@ -61,8 +43,6 @@ export const tournamentControllers = {
           data: {
             userId,
             username,
-            rank,
-            country,
             tournamentId: tournament.id,
           },
         });
@@ -86,9 +66,9 @@ export const tournamentControllers = {
     if (!userId) {
       return res.status(400).send({ error: "Missing user ID" });
     }
-    const { username, rank, country, tournamentId } = req.body;
+    const { username, tournamentId } = req.body;
 
-    if (!username || !rank || !country || !tournamentId) {
+    if (!username || !tournamentId) {
       return res.status(400).send({ error: "Missing fields" });
     }
 
@@ -96,9 +76,16 @@ export const tournamentControllers = {
       const tournament = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
       });
-
       if (!tournament) {
         return res.status(404).send({ error: "Tournament not found" });
+      }
+
+      // check if tournament full or not
+      if (tournament.playersCount == 4)
+      {
+        return res.status(400).send({
+          error: "tournament is full !",
+        });
       }
       if (
         tournament.status === "started" ||
@@ -109,6 +96,9 @@ export const tournamentControllers = {
           error: "Cannot join tournament that has already started or completed",
         });
       }
+
+      // check if userID exists or not
+
       const existingPlayer = await prisma.Player.findFirst({
         where: { userId, tournamentId },
       });
@@ -121,10 +111,15 @@ export const tournamentControllers = {
         data: {
           userId,
           username,
-          rank,
-          country,
           tournamentId,
         },
+      });
+
+      await prisma.Tournament.update({
+        where: { id: tournamentId },
+        data: { playersCount: {
+          increment: 1,
+        }, },
       });
 
       res.send({ message: "Player joined tournament successfully" });

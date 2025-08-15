@@ -44,7 +44,7 @@ re: down all
 
 db-setup:
 	@mkdir -p databases
-	@touch databases/auth.db databases/users.db databases/game.db databases/chat.db
+	@touch databases/auth.db databases/users.db databases/game.db databases/chat.db databases/tournaments.db
 
 # Restart specific service
 restart-%:

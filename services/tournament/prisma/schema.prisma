@@ -11,12 +11,10 @@ model Tournament {
     id         String    @id @default(cuid())
     name       String
     status     String // "upcoming", "ongoing", "done", "cancelled" , "pending" this is the status i used 
-    prizePool  Int?
-    entryFee   Int?
-    difficulty String? // "easy", "medium", "hard"
     startTime  DateTime?
     players    Player[]
     matches    Match[]
+    playersCount Int @default(1)
     createdBy  String?
     createdAt  DateTime  @default(now())
     winnerId   String?
@@ -26,8 +24,6 @@ model Player {
     id           String     @id @default(cuid())
     userId       String
     username     String
-    rank         String?
-    country      String?
     tournamentId String
     Tournament   Tournament @relation(fields: [tournamentId], references: [id])
 

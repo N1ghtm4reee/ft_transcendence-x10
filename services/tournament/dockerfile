@@ -12,6 +12,6 @@ COPY . .
 
 RUN npx prisma generate
 
-EXPOSE 3006
+EXPOSE 3007
 
 CMD ["sh", "-c", "npx prisma db push --accept-data-loss && npm run start"]

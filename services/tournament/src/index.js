@@ -13,7 +13,7 @@ fastify.register(swagger, {
       description: "API for managing tournaments, players, and matches.",
       version: "1.0.0",
     },
-    servers: [{ url: "http://localhost:3006/api" }],
+    servers: [{ url: "http://localhost:3007/api" }],
   },
 });
 
@@ -35,11 +35,11 @@ fastify.register(tournamentRoutes, { prefix: "/api" });
 const start = async () => {
   try {
     await fastify.listen({
-      port: process.env.TOURNAMENT_PORT || 3006,
+      port: process.env.TOURNAMENT_PORT || 3007,
       host: "0.0.0.0",
     });
-    console.log("Swagger docs available at http://localhost:3006/docs");
-    console.log("OpenAPI JSON available at http://localhost:3006/openapi.json");
+    console.log("Swagger docs available at http://localhost:3007/docs");
+    console.log("OpenAPI JSON available at http://localhost:3007/openapi.json");
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

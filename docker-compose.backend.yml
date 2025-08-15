@@ -92,7 +92,24 @@ services:
     networks:
       - transcendence-network
 
-
+  # # Tournament Service
+  tournament-service:
+    container_name: tournament-service
+    build: ./services/tournament
+    ports:
+      - "3007:3007"
+    environment:
+      - DATABASE_PATH=file:/databases/tournaments.db
+    volumes:
+      - ./databases/tournaments.db:/databases/tournaments.db
+      - ./services/logs/tournament-service:/app/logs
+    networks:
+      - transcendence-network
+    env_file: .env
+    depends_on:
+      - auth-service
+      - user-service
+      - chat-service
 
 # volumes:
 
