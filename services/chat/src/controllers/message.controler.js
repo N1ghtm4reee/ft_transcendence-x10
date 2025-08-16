@@ -75,6 +75,13 @@ export const chatControllers = {
                     select: { id: true }
                 });
             }
+            const data = {
+                type: 'new_conversation',
+                conversationId: conversation.id,
+                senderId,
+            };
+
+            broadcastToUser(receiverId, data);
             return res.send({
                 conversation: {
                     id: conversation.id
