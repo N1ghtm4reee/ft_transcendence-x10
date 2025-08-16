@@ -244,6 +244,8 @@ export const friendshipControllers = {
 
   removeFriend: async (req, res) => {
     const friendshipId = parseInt(req.params.id, 10);
+    const userId = parseInt(req.headers["x-user-id"], 10);
+    
     // change this
     try {
       const friendship = await prisma.friendship.findUnique({
@@ -254,7 +256,7 @@ export const friendshipControllers = {
       if (!friendship) {
         return res.status(404).send({ error: "Friendship not found" });
       }
-
+      if (friendship.)
       await prisma.friendship.delete({
         where: { id: friendshipId },
       });
