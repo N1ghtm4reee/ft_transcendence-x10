@@ -390,19 +390,7 @@ export const notificationControllers = {
   },
   //
   liveNotifications: async (connection, req) => {
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      console.error("No cookies provided in WebSocket connection");
-      connection.socket.close(1008, "Missing cookies");
-      return;
-    }
-    const cookieMap = Object.fromEntries(
-      cookies.split(";").map((cookie) => {
-        const [name, ...rest] = cookie.trim().split("=");
-        return [name, decodeURIComponent(rest.join("="))];
-      })
-    );
-    const token = cookieMap.token;
+    const token = req.query.token;
     if (!token) {
       console.error("No token found in cookies");
       connection.socket.close(1008, "Missing token in cookies");
