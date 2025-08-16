@@ -2,7 +2,6 @@ import { prisma } from "../config/database.js";
 
 const socketConnections = new Map();
 
-// send socket message to user that received a message
 function broadcastToUser(userId, data) {
   const userConnections = socketConnections.get(parseInt(userId));
   if (userConnections && userConnections.size > 0) {
@@ -10,23 +9,102 @@ function broadcastToUser(userId, data) {
       `Broadcasting to ${userConnections.size} connections for user ${userId}:`,
       data
     );
+    console.log("data : ", data);
 
     userConnections.forEach((connection) => {
       if (connection.readyState === 1) {
-        try {
-          connection.send(
-            JSON.stringify({
-              type: "notification",
-              data: data,
-            })
+        if (data.type === "FRIEND_REQUEST_RECEIVED") {
+          console.log(
+            `Sending friend request notification to user ${userId}:`,
+            data
           );
-          console.log(`Notification sent to user ${userId}`);
-        } catch (error) {
-          console.error(
-            ` Error sending notification to user ${userId}:`,
-            error
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "FRIEND_REQUEST_RECEIVED",
+                content: data.content,
+                title: data.title,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending friend request notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
+        } else if (data.type === "FRIEND_REQUEST_ACCEPTED") {
+          console.log(
+            `Sending friend request accepted notification to user ${userId}:`,
+            data
           );
-          userConnections.delete(connection);
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "FRIEND_REQUEST_ACCEPTED",
+                content: data.content,
+                title: data.title,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending friend request accepted notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
+        } else if (data.type === "FRIEND_REQUEST_DECLINED") {
+          console.log(
+            `Sending friend request declined notification to user ${userId}:`,
+            data
+          );
+
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "FRIEND_REQUEST_DECLINED",
+                content: data.content,
+                title: data.title,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending friend request declined notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
+        } else {
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "notification",
+                data: data,
+              })
+            );
+            console.log(`Notification sent to user ${userId}`);
+          } catch (error) {
+            console.error(
+              ` Error sending notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         }
       } else {
         console.log(`Removing closed connection for user ${userId}`);
@@ -47,7 +125,31 @@ function broadcastToUser(userId, data) {
 export const notificationControllers = {
   createNotification: async (req, res) => {
     try {
-      const { userId, type, title, content, sourceId, sourceType } = req.body;
+      const { userId, type, title, content, sourceId } = req.body;
+      let user;
+      try {
+        const userResponse = await fetch(
+          `http://user-service:3002/api/user-management/users/${sourceId}`,
+          {
+            method: "GET",
+          }
+        );
+        console.log("userResponse : ", userResponse);
+        if (!userResponse.ok) {
+          return res.code(404).send({
+            error: "User not found",
+            sourceId: sourceId,
+          });
+        }
+        user = await userResponse.json();
+        console.log("parsed user data:", user);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        return res.code(500).send({
+          error: "Failed to fetch user data",
+          details: error.message,
+        });
+      }
 
       const notification = await prisma.notification.create({
         data: {
@@ -56,10 +158,8 @@ export const notificationControllers = {
           title,
           content,
           sourceId,
-          sourceType,
         },
       });
-
       const notificationData = {
         id: notification.id,
         userId: notification.userId,
@@ -69,7 +169,11 @@ export const notificationControllers = {
         read: notification.read,
         createdAt: notification.createdAt,
         sourceId: notification.sourceId,
-        sourceType: notification.sourceType,
+        user: {
+          id: user.id,
+          displayName: user.displayName,
+          avatar: user.avatar,
+        },
       };
 
       broadcastToUser(notification.userId, notificationData);
@@ -113,7 +217,6 @@ export const notificationControllers = {
           read: true,
           createdAt: true,
           sourceId: true,
-          sourceType: true,
         },
       });
 
@@ -287,15 +390,7 @@ export const notificationControllers = {
   },
   //
   liveNotifications: async (connection, req) => {
-    const userId = parseInt(req.query.userId);
     const cookies = req.headers.cookie;
-    console.log("userId : ", userId);
-
-    if (!userId) {
-      console.error("No userId provided in WebSocket connection");
-      connection.socket.close(1008, "Missing userId parameter");
-      return;
-    }
     if (!cookies) {
       console.error("No cookies provided in WebSocket connection");
       connection.socket.close(1008, "Missing cookies");
@@ -327,13 +422,13 @@ export const notificationControllers = {
       return;
     }
     const userData = await response.json();
-    if (userData.user.id !== userId) {
-      console.error("Token does not match userId in WebSocket connection");
-      connection.socket.close(1008, "Token mismatch");
+    console.log("User data verified:", userData);
+    const userId = userData.user.id;
+    if (!userId) {
+      console.error("No userId provided in WebSocket connection");
+      connection.socket.close(1008, "Missing userId parameter");
       return;
     }
-    console.log("User data verified:", userData);
-
     if (!socketConnections.has(userId)) {
       socketConnections.set(userId, new Set());
       console.log("added to sockets connected");

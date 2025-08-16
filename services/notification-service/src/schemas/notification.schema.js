@@ -7,12 +7,16 @@ export const notificationSchemas = {
         userId: { type: "number" },
         type: {
           type: "string",
-          enum: ["message", "friend_request", "game_invite", "system"],
+          enum: [
+            "FRIEND_REQUEST_RECEIVED",
+            "FRIEND_REQUEST_ACCEPTED",
+            "FRIEND_REQUEST_DECLINED",
+            "system",
+          ],
         },
         title: { type: "string" },
         content: { type: "string" },
         sourceId: { type: "string" },
-        sourceType: { type: "string" },
       },
     },
   },
