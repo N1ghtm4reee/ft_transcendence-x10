@@ -277,7 +277,6 @@ export const chatControllers = {
 
     // WebSocket connection manager
     liveChat: async (connection, req) => {
-        const cookies = req.headers.cookie;
         // userId is part of token, so no need to validate 
         const userId = Number(req.query.userId);
         if (!cookies) {
@@ -285,7 +284,12 @@ export const chatControllers = {
             connection.socket.close(1008, "Missing cookies");
             return;
         }
-        const token = cookies.token;
+        const token = req.query.token;
+        if (!token) {
+        console.error("No token found in cookies");
+        connection.socket.close(1008, "Missing token in cookies");
+        return;
+        }
         console.log("token : ", token);
         const response = await fetch(`http://auth-service:3001/verify`, {
             method: "GET",
