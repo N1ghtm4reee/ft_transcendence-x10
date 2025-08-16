@@ -4,14 +4,14 @@ import TwoFactorService from "../services/TwoFactorService.js";
 
 // controller
 async function createNewProfile(userData) {
-  console.log('createNewProfile, createNewProfile');
+  console.log("createNewProfile, createNewProfile");
   const userProfile = {
     id: userData.id,
     displayName: userData.name,
     avatar: userData.avatar || "assets/default.png",
     bio: "hey there! want to play a game?",
   };
-  console.log('userProfile : ', userProfile);
+  console.log("userProfile : ", userProfile);
   // should be internal service call
   const profileResponse = await fetch(
     "http://user-service:3002/api/user-management/profiles",
@@ -27,9 +27,7 @@ async function createNewProfile(userData) {
   }
 }
 
-async function initGameStats(userData){
-  
-}
+async function initGameStats(userData) {}
 
 async function authRoutes(fastify, options) {
   fastify.post(
@@ -43,7 +41,7 @@ async function authRoutes(fastify, options) {
       },
     },
     async (request, reply) => {
-      console.log('\n\nsignupsignupsignupsignup\n\n');
+      console.log("\n\nsignupsignupsignupsignup\n\n");
       const { email, password, name } = request.body;
 
       if (!email || !password || !name) {
@@ -53,7 +51,7 @@ async function authRoutes(fastify, options) {
       }
 
       try {
-        // need to add email or username 
+        // need to add email or username
         const existingUser = await fastify.prisma.user.findUnique({
           where: { email },
         });
@@ -75,12 +73,12 @@ async function authRoutes(fastify, options) {
         try {
           await createNewProfile(user);
           // add user to notifications map to update his status to online
-          // await 
+          // await
         } catch (err) {
           console.error("Error calling user service", err);
         }
 
-        console.log('user id : ' + user.id);
+        console.log("user id : " + user.id);
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", token, {
@@ -388,60 +386,62 @@ async function authRoutes(fastify, options) {
     }
   );
 
-fastify.get(
-  "/verify",
-  {
-    schema: {
-      tags: ["Authentication"],
-      summary: "Verify JWT Token from Cookie",
-      description: "Verifies the JWT token from cookies and returns user info",
-      response: {
-        200: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
-            user: {
-              type: "object",
-              properties: {
-                id: { type: "number" },
-                email: { type: "string" },
+  fastify.get(
+    "/verify",
+    {
+      schema: {
+        tags: ["Authentication"],
+        summary: "Verify JWT Token from Cookie",
+        description:
+          "Verifies the JWT token from cookies and returns user info",
+        response: {
+          200: {
+            type: "object",
+            properties: {
+              message: { type: "string" },
+              user: {
+                type: "object",
+                properties: {
+                  id: { type: "number" },
+                  email: { type: "string" },
+                },
               },
             },
           },
-        },
-        401: {
-          type: "object",
-          properties: {
-            message: { type: "string" },
+          401: {
+            type: "object",
+            properties: {
+              message: { type: "string" },
+            },
           },
         },
       },
     },
-  },
-  async (req, res) => {
-    try {
-      const token = req.cookies?.token;
+    async (req, res) => {
+      try {
+        const token = req.cookies?.token;
 
-      if (!token) {
-        return res.status(401).send({ message: "Token not found in cookies" });
+        if (!token) {
+          return res
+            .status(401)
+            .send({ message: "Token not found in cookies" });
+        }
+
+        const decoded = fastify.jwt.verify(token);
+        console.log("decoded:", decoded);
+
+        return res.send({
+          message: "Token is valid",
+          user: {
+            id: decoded.id,
+            email: decoded.email,
+          },
+        });
+      } catch (error) {
+        return res.status(401).send({ message: "Invalid or expired token" });
       }
-
-      const decoded = fastify.jwt.verify(token);
-      console.log("decoded:", decoded);
-
-      return res.send({
-        message: "Token is valid",
-        user: {
-          id: decoded.id,
-          email: decoded.email,
-        },
-      });
-    } catch (error) {
-      return res.status(401).send({ message: "Invalid or expired token" });
     }
-  }
-);
-
+  );
 }
 
 export default authRoutes;

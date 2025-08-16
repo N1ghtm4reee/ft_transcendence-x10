@@ -44,50 +44,10 @@ function broadcastToUser(userId, data) {
   }
 }
 
-// ?
-async function shouldSendNotification(userId, notificationType) {
-  try {
-    const settings = await prisma.notificationSettings.findUnique({
-      where: { userId },
-    });
-
-    if (!settings) {
-      await prisma.notificationSettings.create({
-        data: { userId },
-      });
-      return true;
-    }
-
-    switch (notificationType) {
-      case "message":
-        return settings.enableMessages;
-      case "friend_request":
-        return settings.enableFriendRequests;
-      case "game_invite":
-        return settings.enableGameInvites;
-      case "system":
-        return settings.enableSystemAlerts;
-      default:
-        return true;
-    }
-  } catch (error) {
-    console.error("Error checking notification preferences:", error);
-    return true;
-  }
-}
-
 export const notificationControllers = {
-  // post route to create notification e.g (when user sends a message to another user)
   createNotification: async (req, res) => {
     try {
       const { userId, type, title, content, sourceId, sourceType } = req.body;
-
-      const shouldSend = await shouldSendNotification(userId, type);
-      if (!shouldSend) {
-        return res
-          .code(200)
-          .send({ message: "Notification not sent due to user preferences" });
-      }
 
       const notification = await prisma.notification.create({
         data: {
@@ -112,7 +72,6 @@ export const notificationControllers = {
         sourceType: notification.sourceType,
       };
 
-      // we should broadcast to user instantly
       broadcastToUser(notification.userId, notificationData);
 
       return res.code(201).send({
@@ -255,74 +214,6 @@ export const notificationControllers = {
     }
   },
 
-  getSettings: async (req, res) => {
-    try {
-      const userId = parseInt(req.headers["x-user-id"]);
-
-      let settings = await prisma.notificationSettings.findUnique({
-        where: { userId: userId },
-      });
-
-      if (!settings) {
-        settings = await prisma.notificationSettings.create({
-          data: { userId: userId },
-        });
-      }
-
-      return res.send({ settings });
-    } catch (error) {
-      console.error("Error fetching notification settings:", error);
-      return res.code(500).send({
-        error: "Failed to fetch notification settings",
-        details: error.message,
-      });
-    }
-  },
-
-  updateSettings: async (req, res) => {
-    try {
-      const userId = parseInt(req.headers["x-user-id"]);
-      const updateData = req.body;
-
-      const allowedFields = [
-        "enableMessages",
-        "enableFriendRequests",
-        "enableGameInvites",
-        "enableSystemAlerts",
-        "enableRealTime",
-        "enableEmail",
-        "enablePush",
-      ];
-
-      const filteredUpdateData = {};
-      Object.keys(updateData).forEach((key) => {
-        if (allowedFields.includes(key)) {
-          filteredUpdateData[key] = updateData[key];
-        }
-      });
-
-      const settings = await prisma.notificationSettings.upsert({
-        where: { userId: userId },
-        update: filteredUpdateData,
-        create: {
-          userId: userId,
-          ...filteredUpdateData,
-        },
-      });
-
-      return res.send({
-        message: "Notification settings updated successfully",
-        settings,
-      });
-    } catch (error) {
-      console.error("Error updating notification settings:", error);
-      return res.code(500).send({
-        error: "Failed to update notification settings",
-        details: error.message,
-      });
-    }
-  },
-
   getUnreadCount: async (req, res) => {
     try {
       const userId = parseInt(req.headers["x-user-id"]);
@@ -347,12 +238,12 @@ export const notificationControllers = {
   // Check if a specific user is online
   isUserOnline: async (req, res) => {
     try {
-      console.log(req.params)
+      console.log(req.params);
       const userId = parseInt(req.params.userId);
       const userConnections = socketConnections.get(userId) || false;
-      console.log(userConnections)
+      console.log(userConnections);
       const isOnline = userConnections && userConnections.size > 0;
-      console.log(isOnline)
+      console.log(isOnline);
       return res.code(200).send({
         userId: userId,
         online: isOnline,
@@ -394,21 +285,58 @@ export const notificationControllers = {
       });
     }
   },
-  // 
+  //
   liveNotifications: async (connection, req) => {
-    console.log('Client connected');
     const userId = parseInt(req.query.userId);
-    console.log('userId : ', userId);
+    const cookies = req.headers.cookie;
+    console.log("userId : ", userId);
 
     if (!userId) {
       console.error("No userId provided in WebSocket connection");
       connection.socket.close(1008, "Missing userId parameter");
       return;
     }
+    if (!cookies) {
+      console.error("No cookies provided in WebSocket connection");
+      connection.socket.close(1008, "Missing cookies");
+      return;
+    }
+    const cookieMap = Object.fromEntries(
+      cookies.split(";").map((cookie) => {
+        const [name, ...rest] = cookie.trim().split("=");
+        return [name, decodeURIComponent(rest.join("="))];
+      })
+    );
+    const token = cookieMap.token;
+    if (!token) {
+      console.error("No token found in cookies");
+      connection.socket.close(1008, "Missing token in cookies");
+      return;
+    }
+    console.log("token : ", token);
+    const response = await fetch(`http://auth-service:3001/verify`, {
+      method: "GET",
+      headers: {
+        Cookie: `token=${token}`,
+      },
+    });
+    console.log("response : ", response);
+    if (!response.ok) {
+      console.error("Invalid token provided in WebSocket connection");
+      connection.socket.close(1008, "Invalid token");
+      return;
+    }
+    const userData = await response.json();
+    if (userData.user.id !== userId) {
+      console.error("Token does not match userId in WebSocket connection");
+      connection.socket.close(1008, "Token mismatch");
+      return;
+    }
+    console.log("User data verified:", userData);
 
     if (!socketConnections.has(userId)) {
       socketConnections.set(userId, new Set());
-      console.log('added to sockets connected');
+      console.log("added to sockets connected");
     }
 
     socketConnections.get(userId).add(connection.socket);
@@ -492,4 +420,4 @@ export const notificationControllers = {
   },
 };
 
-export { broadcastToUser, shouldSendNotification };
+export { broadcastToUser };

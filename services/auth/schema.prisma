@@ -20,7 +20,6 @@ model User {
   salt          String?
 
   twoFactorAuth            TwoFactorAuth?
-
   createdAt     DateTime  @default(now())     @map("created_at")
   updatedAt     DateTime  @updatedAt          @map("updated_at")
   

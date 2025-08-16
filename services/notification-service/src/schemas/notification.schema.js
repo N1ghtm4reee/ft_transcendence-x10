@@ -51,26 +51,4 @@ export const notificationSchemas = {
       },
     },
   },
-
-  updateSettingsSchema: {
-    headers: {
-      type: "object",
-      required: ["x-user-id"],
-      properties: {
-        "x-user-id": { type: "number" },
-      },
-    },
-    body: {
-      type: "object",
-      properties: {
-        enableMessages: { type: "boolean" },
-        enableFriendRequests: { type: "boolean" },
-        enableGameInvites: { type: "boolean" },
-        enableSystemAlerts: { type: "boolean" },
-        enableRealTime: { type: "boolean" },
-        enableEmail: { type: "boolean" },
-        enablePush: { type: "boolean" },
-      },
-    },
-  },
 };

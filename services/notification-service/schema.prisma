@@ -22,18 +22,3 @@ model Notification {
     @@map("notifications")
 }
 
-model NotificationSettings {
-    id     Int @id @default(autoincrement())
-    userId Int @unique @map("user_id")
-
-    enableMessages       Boolean @default(true) @map("enable_messages")
-    enableFriendRequests Boolean @default(true) @map("enable_friend_requests")
-    enableGameInvites    Boolean @default(true) @map("enable_game_invites")
-    enableSystemAlerts   Boolean @default(true) @map("enable_system_alerts")
-
-    enableRealTime Boolean @default(true) @map("enable_real_time")
-    enableEmail    Boolean @default(false) @map("enable_email")
-    enablePush     Boolean @default(true) @map("enable_push")
-
-    @@map("notification_settings")
-}

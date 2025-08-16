@@ -22,16 +22,6 @@ export const notificationRoutes = async (app, options) => {
     handler: notificationControllers.markAllAsRead,
   });
 
-  app.get("/settings", {
-    schema: { headers: notificationSchemas.getUserNotificationsSchema.headers },
-    handler: notificationControllers.getSettings,
-  });
-
-  app.put("/settings", {
-    schema: notificationSchemas.updateSettingsSchema,
-    handler: notificationControllers.updateSettings,
-  });
-
   app.get("/unread-count", {
     schema: { headers: notificationSchemas.getUserNotificationsSchema.headers },
     handler: notificationControllers.getUnreadCount,
