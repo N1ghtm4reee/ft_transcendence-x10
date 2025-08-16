@@ -341,8 +341,7 @@ export const notificationControllers = {
 
     socketConnections.get(userId).add(connection.socket);
     console.log(
-      `User ${userId} connected to live notifications. Total connections: ${
-        socketConnections.get(userId).size
+      `User ${userId} connected to live notifications. Total connections: ${socketConnections.get(userId).size
       }`
     );
 

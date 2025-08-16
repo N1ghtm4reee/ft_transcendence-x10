@@ -24,7 +24,7 @@ async function validateChatPermissions(senderId, receiverId) {
     try {
         const response = await fetch(`http://user-service:3002/internal/user-management/chat-permissions/${senderId}/${receiverId}`);
         const data = await response.json();
-        
+
         if (!response.ok) {
             console.log('error validate chat permission');
             return { success: false, status: response.status, data };
@@ -40,11 +40,11 @@ export const chatControllers = {
 
 
     createConversation: async (req, res) => {
-        try{
+        try {
             const senderId = parseInt(req.headers['x-user-id'], 10);
             const receiverId = req.body.receiverId;
             const receiverIdInt = parseInt(receiverId, 10);
-         
+
             const validationResult = await validateChatPermissions(senderId, receiverIdInt);
             if (!validationResult.success) {
                 return res.status(validationResult.status).send(validationResult.data);
@@ -76,15 +76,14 @@ export const chatControllers = {
                 });
             }
             return res.send({
-                conversation : {
+                conversation: {
                     id: conversation.id
                 }
             });
         }
-        catch(error)
-        {
+        catch (error) {
             console.error('Error creating conversation :', error);
-            return res.code(500).send({ 
+            return res.code(500).send({
                 error: 'Failed to create conversation',
                 details: error.message
             });
@@ -96,7 +95,7 @@ export const chatControllers = {
             const senderId = parseInt(req.headers['x-user-id'], 10);
             const { content, receiverId } = req.body;
             const receiverIdInt = parseInt(receiverId, 10);
-         
+
             const validationResult = await validateChatPermissions(senderId, receiverIdInt);
             if (!validationResult.success) {
                 return res.status(validationResult.status).send(validationResult.data);
@@ -151,7 +150,7 @@ export const chatControllers = {
             // send notification to the receiver
             const notifResponse = await fetch('http://notification-service:3005/api/notifications/', {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     userId: receiverIdInt,
                     type: "message",
@@ -166,7 +165,7 @@ export const chatControllers = {
 
         } catch (error) {
             console.error('Error sending message:', error);
-            return res.code(500).send({ 
+            return res.code(500).send({
                 error: 'Failed to send message',
                 details: error.message
             });
@@ -178,7 +177,7 @@ export const chatControllers = {
         try {
             const userId = parseInt(req.headers['x-user-id'], 10);
             console.log('getAllConversations userId: ', userId);
-            
+
             const conversations = await prisma.conversation.findMany({
                 where: {
                     members: {
@@ -187,8 +186,8 @@ export const chatControllers = {
                 },
                 select: {
                     id: true,
-                    members: { 
-                        select: { userId: true } 
+                    members: {
+                        select: { userId: true }
                     },
                     messages: {
                         orderBy: { createdAt: 'desc' },
@@ -225,7 +224,7 @@ export const chatControllers = {
         try {
             const requesterId = parseInt(req.headers['x-user-id'], 10);
             const participantId = parseInt(req.params.participantId, 10);
-            
+
             const conversation = await prisma.conversation.findFirst({
                 where: {
                     AND: [
@@ -246,7 +245,7 @@ export const chatControllers = {
             if (!conversation) {
                 return res.code(404).send({ error: 'Conversation not found' });
             }
-            
+
             return res.send({
                 conversation: {
                     id: conversation.id,
@@ -263,7 +262,7 @@ export const chatControllers = {
 
         } catch (error) {
             console.error('Error fetching conversation:', error);
-            return res.code(500).send({ 
+            return res.code(500).send({
                 error: 'Failed to fetch conversation'
             });
         }
@@ -271,9 +270,28 @@ export const chatControllers = {
 
     // WebSocket connection manager
     liveChat: async (connection, req) => {
+        const cookies = req.headers.cookie;
         // userId is part of token, so no need to validate 
         const userId = Number(req.query.userId);
-
+        if (!cookies) {
+            console.error("No cookies provided in WebSocket connection");
+            connection.socket.close(1008, "Missing cookies");
+            return;
+        }
+        const token = cookies.token;
+        console.log("token : ", token);
+        const response = await fetch(`http://auth-service:3001/verify`, {
+            method: "GET",
+            headers: {
+                Cookie: `token=${token}`,
+            },
+        });
+        console.log("response : ", response);
+        if (!response.ok) {
+            console.error("Invalid token provided in WebSocket connection");
+            connection.socket.close(1008, "Invalid token");
+            return;
+        }
         if (!socketConnections.has(userId)) {
             socketConnections.set(userId, new Set());
         }
