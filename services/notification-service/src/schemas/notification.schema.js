@@ -17,6 +17,7 @@ export const notificationSchemas = {
         title: { type: "string" },
         content: { type: "string" },
         sourceId: { type: "string" },
+        requestId: { type: "number" },
       },
     },
   },

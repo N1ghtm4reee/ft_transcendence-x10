@@ -52,7 +52,18 @@ export const friendshipControllers = {
           status: "pending",
         },
       });
+      let userFriendship;
+      try {
+        const response = await fetch(
+          `http://user-service:3002/api/user-management/users/${requesterId}`
+        );
+        userFriendship = await response.json();
+      } catch (error) {
+        console.error("Error fetching User:", error);
+        return res.status(500).send({ error: "Failed to fetch User" });
+      }
 
+      console.log("FRIENDSHIP    :", userFriendship);
       // notify the user about the friend request (notification service to be implemented)
       try {
         const notification = await fetch(
@@ -66,7 +77,7 @@ export const friendshipControllers = {
               userId: receiverId,
               type: "FRIEND_REQUEST_RECEIVED",
               title: "New Friend Request",
-              content: `User ${requesterId} sent you a friend request`,
+              content: `User ${userFriendship.displayName} sent you a friend request`,
               sourceId: requesterId,
               requestId: friendship.id,
             }),

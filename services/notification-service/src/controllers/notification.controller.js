@@ -9,7 +9,7 @@ function broadcastToUser(userId, data) {
       `Broadcasting to ${userConnections.size} connections for user ${userId}:`,
       data
     );
-    console.log("data : ", data);
+    console.log("WAAAAAAAAAAAAAAAAAAAAA : ", data);
 
     userConnections.forEach((connection) => {
       if (connection.readyState === 1) {
@@ -185,7 +185,7 @@ async function broadcastToAllUsers(userId, connectionType) {
 export const notificationControllers = {
   createNotification: async (req, res) => {
     try {
-      const { userId, type, title, content, sourceId } = req.body;
+      const { userId, type, title, content, sourceId, requestId } = req.body;
       let user;
       try {
         const userResponse = await fetch(
@@ -194,7 +194,6 @@ export const notificationControllers = {
             method: "GET",
           }
         );
-        console.log("userResponse : ", userResponse);
         if (!userResponse.ok) {
           return res.code(404).send({
             error: "User not found",
@@ -229,6 +228,7 @@ export const notificationControllers = {
         read: notification.read,
         createdAt: notification.createdAt,
         sourceId: notification.sourceId,
+        requestId: requestId,
         user: {
           id: user.id,
           displayName: user.displayName,
