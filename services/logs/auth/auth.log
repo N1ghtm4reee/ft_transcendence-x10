@@ -10454,3 +10454,25 @@
 {"level":30,"time":1755442800855,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-6","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":38876},"msg":"incoming request"}
 {"level":30,"time":1755442800855,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-6","ip":"172.18.0.2","msg":"new request to auth-service"}
 {"level":30,"time":1755442800856,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-6","res":{"statusCode":200},"responseTime":0.8337770029902458,"msg":"request completed"}
+{"level":30,"time":1755443120276,"pid":137,"hostname":"e97a5d2a2d05","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1755443120277,"pid":137,"hostname":"e97a5d2a2d05","msg":"Server listening at http://172.18.0.4:3001"}
+{"level":30,"time":1755443145953,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":54860},"msg":"incoming request"}
+{"level":30,"time":1755443145954,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443145959,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","res":{"statusCode":200},"responseTime":4.741831999272108,"msg":"request completed"}
+{"level":30,"time":1755443148787,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":54860},"msg":"incoming request"}
+{"level":30,"time":1755443148787,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443148788,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","res":{"statusCode":200},"responseTime":0.7331559993326664,"msg":"request completed"}
+{"level":30,"time":1755443381355,"pid":137,"hostname":"e97a5d2a2d05","msg":"Server listening at http://127.0.0.1:3001"}
+{"level":30,"time":1755443381355,"pid":137,"hostname":"e97a5d2a2d05","msg":"Server listening at http://172.18.0.4:3001"}
+{"level":30,"time":1755443384272,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":59122},"msg":"incoming request"}
+{"level":30,"time":1755443384274,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443384281,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-1","res":{"statusCode":200},"responseTime":7.0820359997451305,"msg":"request completed"}
+{"level":30,"time":1755443387431,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":59122},"msg":"incoming request"}
+{"level":30,"time":1755443387431,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443387432,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-2","res":{"statusCode":200},"responseTime":0.667688999325037,"msg":"request completed"}
+{"level":30,"time":1755443413568,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-3","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":59122},"msg":"incoming request"}
+{"level":30,"time":1755443413568,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-3","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443413569,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-3","res":{"statusCode":200},"responseTime":0.7737920023500919,"msg":"request completed"}
+{"level":30,"time":1755443428612,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-4","req":{"method":"GET","url":"/verify","host":"auth-service:3001","remoteAddress":"172.18.0.2","remotePort":59122},"msg":"incoming request"}
+{"level":30,"time":1755443428612,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-4","ip":"172.18.0.2","msg":"new request to auth-service"}
+{"level":30,"time":1755443428614,"pid":137,"hostname":"e97a5d2a2d05","reqId":"req-4","res":{"statusCode":200},"responseTime":1.0497419983148575,"msg":"request completed"}

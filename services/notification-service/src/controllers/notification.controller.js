@@ -98,7 +98,7 @@ function broadcastToUser(userId, data) {
               JSON.stringify({
                 type: "STATUS_UPDATE",
                 user: {
-                  id: data.user.userId,
+                  id: data.user.id,
                   isFriend: data.user.isFriend,
                   isOnline: data.isOnline,
                 },
@@ -147,7 +147,7 @@ function broadcastToUser(userId, data) {
 async function broadcastToAllUsers(userId, connectionType) {
   for (const object of socketConnections) {
     let isFriend;
-    let response
+    let response;
     if (object[0] === userId) continue;
     try {
       response = await fetch(
@@ -164,7 +164,7 @@ async function broadcastToAllUsers(userId, connectionType) {
         throw new Error("failed to fetch users");
       }
       isFriend = await response.json();
-      console.log("IS FRIEND: ",isFriend)
+      console.log("IS FRIEND: ", isFriend);
     } catch (err) {
       console.log({ message: err });
       return;
@@ -172,6 +172,7 @@ async function broadcastToAllUsers(userId, connectionType) {
 
     const notification = {
       isOnline: connectionType,
+      type: "STATUS_UPDATE",
       user: {
         id: userId,
         isFriend: isFriend,
