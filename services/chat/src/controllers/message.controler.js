@@ -232,7 +232,7 @@ export const chatControllers = {
             const requesterId = parseInt(req.headers['x-user-id'], 10);
             const participantId = parseInt(req.params.participantId, 10);
 
-            const conversation = await prisma.conversation.findFirst({
+            let conversation = await prisma.conversation.findFirst({
                 where: {
                     AND: [
                         { members: { some: { userId: requesterId } } },
@@ -254,8 +254,8 @@ export const chatControllers = {
                     data: {
                         members: {
                             create: [
-                                { userId: senderId },
-                                { userId: receiverIdInt }
+                                { userId: requesterId },
+                                { userId: participantId }
                             ]
                         }
                     },
