@@ -1441,3 +1441,8 @@
 {"level":30,"time":1755450902440,"pid":174,"hostname":"8162d74424d5","reqId":"req-4","res":{"statusCode":404},"responseTime":7.954126998782158,"msg":"request completed"}
 {"level":30,"time":1755451027873,"pid":199,"hostname":"c965a179e5d1","msg":"Server listening at http://127.0.0.1:3004"}
 {"level":30,"time":1755451027874,"pid":199,"hostname":"c965a179e5d1","msg":"Server listening at http://172.21.0.2:3004"}
+{"level":30,"time":1755451466081,"pid":183,"hostname":"a5eb714246d0","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1755451466081,"pid":183,"hostname":"a5eb714246d0","msg":"Server listening at http://172.19.0.4:3004"}
+{"level":30,"time":1755451546655,"pid":183,"hostname":"a5eb714246d0","reqId":"req-1","req":{"method":"POST","url":"/api/chat/conversation","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":53460},"msg":"incoming request"}
+{"level":30,"time":1755451546656,"pid":183,"hostname":"a5eb714246d0","reqId":"req-1","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755451546750,"pid":183,"hostname":"a5eb714246d0","reqId":"req-1","res":{"statusCode":200},"responseTime":91.77328399941325,"msg":"request completed"}

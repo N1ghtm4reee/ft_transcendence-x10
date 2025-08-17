@@ -249,7 +249,19 @@ export const chatControllers = {
                 }
             });
 
-            if (!conversation) this.createConversation(req, res);
+            if (!conversation){
+                conversation = await prisma.conversation.create({
+                    data: {
+                        members: {
+                            create: [
+                                { userId: senderId },
+                                { userId: receiverIdInt }
+                            ]
+                        }
+                    },
+                    select: { id: true }
+                });
+            }
 
             return res.send({
                 conversation: {

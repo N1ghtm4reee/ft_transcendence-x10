@@ -16257,3 +16257,11 @@
 {"level":30,"time":1755451082659,"pid":18,"hostname":"d09a0f437f87","reqId":"req-b","source":"/assets/default.png","msg":"fetching from remote server"}
 {"level":30,"time":1755451082664,"pid":18,"hostname":"d09a0f437f87","reqId":"req-b","msg":"response received"}
 {"level":30,"time":1755451082665,"pid":18,"hostname":"d09a0f437f87","reqId":"req-b","res":{"statusCode":304},"responseTime":6.0252429991960526,"msg":"request completed"}
+{"level":30,"time":1755451446751,"pid":18,"hostname":"ac83f45f0583","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755451446752,"pid":18,"hostname":"ac83f45f0583","msg":"Server listening at http://172.19.0.7:3000"}
+{"level":30,"time":1755451446752,"pid":18,"hostname":"ac83f45f0583","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755451546624,"pid":18,"hostname":"ac83f45f0583","reqId":"req-1","req":{"method":"POST","url":"/api/chat/conversation","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":58738},"msg":"incoming request"}
+{"level":30,"time":1755451546625,"pid":18,"hostname":"ac83f45f0583","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755451546650,"pid":18,"hostname":"ac83f45f0583","reqId":"req-1","source":"/api/chat/conversation","msg":"fetching from remote server"}
+{"level":30,"time":1755451546748,"pid":18,"hostname":"ac83f45f0583","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755451546751,"pid":18,"hostname":"ac83f45f0583","reqId":"req-1","res":{"statusCode":200},"responseTime":126.9337489977479,"msg":"request completed"}

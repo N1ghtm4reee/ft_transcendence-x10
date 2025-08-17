@@ -14663,3 +14663,9 @@
 {"level":30,"time":1755451082677,"pid":209,"hostname":"66f01a7118dc","reqId":"req-9","req":{"method":"GET","url":"/api/user-management/friendships/isFriend/13","host":"user-service:3002","remoteAddress":"172.21.0.4","remotePort":56494},"msg":"incoming request"}
 {"level":30,"time":1755451082678,"pid":209,"hostname":"66f01a7118dc","reqId":"req-9","ip":"172.21.0.4","msg":"new request to user-management"}
 {"level":30,"time":1755451082684,"pid":209,"hostname":"66f01a7118dc","reqId":"req-9","res":{"statusCode":200},"responseTime":5.275291010737419,"msg":"request completed"}
+{"level":30,"time":1755451458683,"pid":185,"hostname":"ad872ba0d378","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755451458683,"pid":185,"hostname":"ad872ba0d378","msg":"Server listening at http://172.19.0.6:3002"}
+{"level":30,"time":1755451458683,"pid":185,"hostname":"ad872ba0d378","msg":"Server listening at http://127.0.0.1:3002"}
+{"level":30,"time":1755451546688,"pid":185,"hostname":"ad872ba0d378","reqId":"req-1","req":{"method":"GET","url":"/internal/user-management/chat-permissions/2/1","host":"user-service:3002","remoteAddress":"172.19.0.4","remotePort":55984},"msg":"incoming request"}
+{"level":30,"time":1755451546689,"pid":185,"hostname":"ad872ba0d378","reqId":"req-1","ip":"172.19.0.4","msg":"new request to user-management"}
+{"level":30,"time":1755451546732,"pid":185,"hostname":"ad872ba0d378","reqId":"req-1","res":{"statusCode":200},"responseTime":40.676676001399755,"msg":"request completed"}
