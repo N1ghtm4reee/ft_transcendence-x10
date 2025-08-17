@@ -24,6 +24,7 @@ function broadcastToUser(userId, data) {
                 type: "FRIEND_REQUEST_RECEIVED",
                 content: data.content,
                 title: data.title,
+                requestId: data.requestId,
                 user: {
                   id: data.user.id,
                   displayName: data.user.displayName,
@@ -89,6 +90,27 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+        } else if (data.type === "STATUS_UPDATE") {
+          console.log(`Sending status update to user ${userId}:`, data);
+
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "STATUS_UPDATE",
+                user: {
+                  id: data.user.userId,
+                  isFriend: data.user.isFriend,
+                  isOnline: data.isOnline,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending status update to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         } else {
           try {
             connection.send(
@@ -119,6 +141,43 @@ function broadcastToUser(userId, data) {
     console.log(
       `No active connections for user ${userId} - notification stored but not broadcast`
     );
+  }
+}
+
+async function broadcastToAllUsers(userId, connectionType) {
+  for (const object of socketConnections) {
+    let isFriend;
+    let response
+    if (object[0] === userId) continue;
+    try {
+      response = await fetch(
+        `http://user-service:3002/api/user-management/friendships/isFriend/${object[0]}`,
+        {
+          method: "GET",
+          headers: {
+            "x-user-id": userId,
+          },
+        }
+      );
+
+      if (!response) {
+        throw new Error("failed to fetch users");
+      }
+      isFriend = await response.json();
+      console.log("IS FRIEND: ",isFriend)
+    } catch (err) {
+      console.log({ message: err });
+      return;
+    }
+
+    const notification = {
+      isOnline: connectionType,
+      user: {
+        id: userId,
+        isFriend: isFriend,
+      },
+    };
+    broadcastToUser(object[0], notification);
   }
 }
 
@@ -424,7 +483,8 @@ export const notificationControllers = {
 
     socketConnections.get(userId).add(connection.socket);
     console.log(
-      `User ${userId} connected to live notifications. Total connections: ${socketConnections.get(userId).size
+      `User ${userId} connected to live notifications. Total connections: ${
+        socketConnections.get(userId).size
       }`
     );
 
@@ -439,6 +499,7 @@ export const notificationControllers = {
           },
         })
       );
+      broadcastToAllUsers(userId, true);
       console.log(`Connection confirmation sent to user ${userId}`);
     } catch (error) {
       console.error(
@@ -484,6 +545,7 @@ export const notificationControllers = {
 
         if (userConnections.size === 0) {
           socketConnections.delete(userId);
+          broadcastToAllUsers(userId, false);
           console.log(`Cleaned up empty connection set for user ${userId}`);
         }
       }

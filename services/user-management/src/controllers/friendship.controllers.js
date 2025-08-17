@@ -68,6 +68,7 @@ export const friendshipControllers = {
               title: "New Friend Request",
               content: `User ${requesterId} sent you a friend request`,
               sourceId: requesterId,
+              requestId: friendship.id,
             }),
           }
         );
@@ -168,11 +169,11 @@ export const friendshipControllers = {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                userId: friendship.requesterId,
-                type: "FRIEND_REQUEST_ACCEPTED",
-                title: "Friend Request Accepted",
-                content: `Your friend request to user ${friendship.receiverId} has been accepted`,
-                sourceId: friendship.receiverId,
+              userId: friendship.requesterId,
+              type: "FRIEND_REQUEST_ACCEPTED",
+              title: "Friend Request Accepted",
+              content: `Your friend request to user ${friendship.receiverId} has been accepted`,
+              sourceId: friendship.receiverId,
             }),
           }
         );
@@ -245,7 +246,7 @@ export const friendshipControllers = {
   removeFriend: async (req, res) => {
     const friendshipId = parseInt(req.params.id, 10);
     const userId = parseInt(req.headers["x-user-id"], 10);
-    
+
     // change this
     try {
       const friendship = await prisma.friendship.findUnique({
@@ -256,7 +257,6 @@ export const friendshipControllers = {
       if (!friendship) {
         return res.status(404).send({ error: "Friendship not found" });
       }
-      if (friendship.)
       await prisma.friendship.delete({
         where: { id: friendshipId },
       });
@@ -287,6 +287,36 @@ export const friendshipControllers = {
     } catch (error) {
       console.error("Error fetching friend requests:", error);
       return res.status(500).send({ error: "Failed to fetch friend requests" });
+    }
+  },
+  getFriend: async (req, res) => {
+    const theFriend = req.params.id;
+    const userId = req.headers["x-user-id"];
+
+    try {
+      const friend = await prisma.friendship.findFirst({
+        where: {
+          OR: [
+            {
+              receiverId: parseInt(userId, 10),
+              status: "accepted",
+              requesterId: parseInt(theFriend, 10),
+            },
+            {
+              receiverId: parseInt(theFriend, 10),
+              status: "accepted",
+              requesterId: parseInt(userId, 10),
+            },
+          ],
+        },
+      });
+      console.log("FRIEND  :", friend);
+      let status = false;
+      if (friend) status = true;
+      return res.send(status);
+    } catch (error) {
+      console.error("Error fetching friend:", error);
+      return res.status(500).send({ error: "Failed to fetch friend" });
     }
   },
 };
