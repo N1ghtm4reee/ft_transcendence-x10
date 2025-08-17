@@ -108,7 +108,7 @@ export const chatControllers = {
                 return res.status(validationResult.status).send(validationResult.data);
             }
             console.log('friendship exists');
-            // Find existing conversation between these two users
+            // Find existinroag conversation between these two users
             let conversation = await prisma.conversation.findFirst({
                 where: {
                     AND: [
@@ -249,9 +249,7 @@ export const chatControllers = {
                 }
             });
 
-            if (!conversation) {
-                return res.code(404).send({ error: 'Conversation not found' });
-            }
+            if (!conversation) this.createConversation(req, res);
 
             return res.send({
                 conversation: {

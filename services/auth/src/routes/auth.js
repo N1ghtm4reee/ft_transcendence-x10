@@ -82,7 +82,6 @@ async function authRoutes(fastify, options) {
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", token, {
-          httpOnly: true,
           secure: false,
           sameSite: "lax",
           maxAge: 3600,
@@ -171,7 +170,6 @@ async function authRoutes(fastify, options) {
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", token, {
-          httpOnly: true,
           secure: false,
           sameSite: "lax",
           maxAge: 3600,
@@ -271,7 +269,6 @@ async function authRoutes(fastify, options) {
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", token, {
-          httpOnly: true,
           secure: false,
           sameSite: "lax",
           maxAge: 3600,

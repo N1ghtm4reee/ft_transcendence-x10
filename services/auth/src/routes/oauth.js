@@ -190,7 +190,6 @@ async function oauthRoutes(fastify, options) {
         const jwtToken = fastify.jwt.sign({ id: user.id, email: user.email });
 
         reply.setCookie("token", jwtToken, {
-          httpOnly: true,
           secure: false,
           sameSite: "lax",
           maxAge: 3600,
