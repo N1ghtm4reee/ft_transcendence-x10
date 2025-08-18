@@ -315,12 +315,12 @@ export const chatControllers = {
     // WebSocket connection manager
     liveChat: async (connection, req) => {
         // userId is part of token, so no need to validate 
-        const userId = Number(req.query.userId);
-        if (!cookies) {
-            console.error("No cookies provided in WebSocket connection");
-            connection.socket.close(1008, "Missing cookies");
-            return;
-        }
+        // const userId = Number(req.query.userId);
+        // if (!cookies) {
+        //     console.error("No cookies provided in WebSocket connection");
+        //     connection.socket.close(1008, "Missing cookies");
+        //     return;
+        // }
         const token = req.query.token;
         if (!token) {
             console.error("No token found in cookies");
@@ -339,6 +339,14 @@ export const chatControllers = {
             console.error("Invalid token provided in WebSocket connection");
             connection.socket.close(1008, "Invalid token");
             return;
+        }
+        const userData = await response.json();
+        console.log("User data verified:", userData);
+        const userId = userData.user.id;
+        if (!userId) {
+        console.error("No userId provided in WebSocket connection");
+        connection.socket.close(1008, "Missing userId parameter");
+        return;
         }
         if (!socketConnections.has(userId)) {
             socketConnections.set(userId, new Set());
