@@ -173,11 +173,11 @@ export const chatControllers = {
                 console.log('notification sent to received user ok');
 
             return res.code(201).send({
-                    id: msg.id,
-                    content: msg.content,
-                    senderId: msg.senderId,
-                    receiverId: msg.receiverId,
-                    createdAt: msg.createdAt
+                    id: newMessage.id,
+                    content: newMessage.content,
+                    senderId: newMessage.senderId,
+                    receiverId: newMessage.receiverId,
+                    createdAt: newMessage.createdAt
             });
 
         } catch (error) {
@@ -236,54 +236,73 @@ export const chatControllers = {
 
     // get the whole conversation with a single user
     getConversation: async (req, res) => {
-        try {
-            const requesterId = parseInt(req.headers['x-user-id'], 10);
-            const participantId = parseInt(req.params.participantId, 10);
+    try {
+        const requesterId = parseInt(req.headers['x-user-id'], 10);
+        const participantId = parseInt(req.params.participantId, 10);
 
-            let conversation = await prisma.conversation.findFirst({
-                where: {
-                    AND: [
-                        { members: { some: { userId: requesterId } } },
-                        { members: { some: { userId: participantId } } }
-                    ]
+        let conversation = await prisma.conversation.findFirst({
+            where: {
+                AND: [
+                    { members: { some: { userId: requesterId } } },
+                    { members: { some: { userId: participantId } } }
+                ]
+            },
+            include: {
+                messages: {
+                    orderBy: { createdAt: 'asc' }
+                },
+                members: {
+                    where: {
+                        OR: [
+                            { userId: requesterId },
+                            { userId: participantId }
+                        ]
+                    },
+                    select: { userId: true }
+                }
+            }
+        });
+
+        if (!conversation) {
+            conversation = await prisma.conversation.create({
+                data: {
+                    members: {
+                        create: [
+                            { userId: requesterId },
+                            { userId: participantId }
+                        ]
+                    }
                 },
                 include: {
-                    messages: {
-                        orderBy: { createdAt: 'asc' }
-                    },
                     members: {
-                        select: { userId: true }
-                    }
-                }
-            });
-
-            if (!conversation) {
-                conversation = await prisma.conversation.create({
-                    data: {
-                        members: {
-                            create: [
+                        where: {
+                            OR: [
                                 { userId: requesterId },
                                 { userId: participantId }
                             ]
-                        }
+                        },
+                        select: { userId: true }
                     },
-                    select: { id: true }
-                });
-            }
-
-            return res.send({
-                conversation: {
-                    id: conversation.id,
-                    members: conversation.members.map(m => m.userId),
-                    messages: conversation.messages.map(msg => ({
-                        id: msg.id,
-                        content: msg.content,
-                        senderId: msg.senderId,
-                        receiverId: msg.receiverId,
-                        createdAt: msg.createdAt
-                    }))
+                    messages: {
+                        orderBy: { createdAt: 'asc' }
+                    }
                 }
             });
+        }
+
+        return res.send({
+            conversation: {
+                id: conversation.id,
+                members: [requesterId, participantId],
+                messages: conversation.messages.map(msg => ({
+                    id: msg.id,
+                    content: msg.content,
+                    senderId: msg.senderId,
+                    receiverId: msg.receiverId,
+                    createdAt: msg.createdAt
+                }))
+            }
+        });
 
         } catch (error) {
             console.error('Error fetching conversation:', error);
