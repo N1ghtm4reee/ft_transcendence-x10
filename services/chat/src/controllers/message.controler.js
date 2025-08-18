@@ -151,6 +151,7 @@ export const chatControllers = {
                     senderId: newMessage.senderId,
                     receiverId: newMessage.receiverId,
                     createdAt: newMessage.createdAt,
+                    convoId : conversation.id,
                 type: 'new_message'
             };
 
