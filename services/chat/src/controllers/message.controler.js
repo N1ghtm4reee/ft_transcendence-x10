@@ -191,19 +191,12 @@ export const chatControllers = {
                         some: { userId: userId }
                     }
                 },
-                select: {
-                    id: true,
+                include: {
+                    messages: {
+                        orderBy: { createdAt: 'asc' }
+                    },
                     members: {
                         select: { userId: true }
-                    },
-                    messages: {
-                        orderBy: { createdAt: 'desc' },
-                        take: 1,
-                        select: {
-                            content: true,
-                            createdAt: true,
-                            senderId: true
-                        }
                     }
                 }
             });
@@ -211,13 +204,18 @@ export const chatControllers = {
             console.log("getAllConversations conversations: ", conversations);
 
             return res.send({
-                conversations: conversations.map(conv => ({
-                    id: conv.id,
-                    memberIds: conv.members.map(m => m.userId),
-                    lastMessage: conv.messages[0] || null
+                conversations: conversations.map(conversation => ({
+                    id: conversation.id,
+                    members: conversation.members.map(m => m.userId),
+                    messages: conversation.messages.map(msg => ({
+                        id: msg.id,
+                        content: msg.content,
+                        senderId: msg.senderId,
+                        receiverId: msg.receiverId,
+                        createdAt: msg.createdAt
+                    }))
                 }))
             });
-
         } catch (error) {
             console.error('Error fetching conversations:', error);
             return res.code(500).send({
