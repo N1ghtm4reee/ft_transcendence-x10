@@ -41,5 +41,5 @@ export const chatRoutes = async (app, options) => {
 }
 
 export const chatSocket = async (app) => {
-    app.get('/live:', { websocket: true }, chatControllers.liveChat);
+    app.get('/live', { websocket: true }, chatControllers.liveChat);
 }
