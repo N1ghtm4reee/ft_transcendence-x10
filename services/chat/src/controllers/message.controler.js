@@ -146,7 +146,11 @@ export const chatControllers = {
 
             // Prepare message for broadcast
             const messageForBroadcast = {
-                ...newMessage,
+                id: newMessage.id,
+                    content: newMessage.content,
+                    senderId: newMessage.senderId,
+                    receiverId: newMessage.receiverId,
+                    createdAt: newMessage.createdAt,
                 type: 'new_message'
             };
 
@@ -168,7 +172,13 @@ export const chatControllers = {
             if (notifResponse.ok)
                 console.log('notification sent to received user ok');
 
-            return res.code(201).send('Message sent successfully');
+            return res.code(201).send({
+                    id: msg.id,
+                    content: msg.content,
+                    senderId: msg.senderId,
+                    receiverId: msg.receiverId,
+                    createdAt: msg.createdAt
+            });
 
         } catch (error) {
             console.error('Error sending message:', error);
@@ -247,7 +257,7 @@ export const chatControllers = {
                 }
             });
 
-            if (!conversation){
+            if (!conversation) {
                 conversation = await prisma.conversation.create({
                     data: {
                         members: {
@@ -294,9 +304,9 @@ export const chatControllers = {
         }
         const token = req.query.token;
         if (!token) {
-        console.error("No token found in cookies");
-        connection.socket.close(1008, "Missing token in cookies");
-        return;
+            console.error("No token found in cookies");
+            connection.socket.close(1008, "Missing token in cookies");
+            return;
         }
         console.log("token : ", token);
         const response = await fetch(`http://auth-service:3001/verify`, {
