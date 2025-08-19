@@ -112,6 +112,30 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+        } 
+        else if (data.type === "FRIEND_REMOVED") {
+          console.log(
+            `Sending friend removed notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "FRIEND_REMOVED",
+                content: data.content,
+                title: data.title,
+                user: {
+                  id: data.user.id,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending friend removed notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         } else {
           try {
             connection.send(
