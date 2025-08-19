@@ -105,10 +105,17 @@ export const userController = {
         where: { id: user.id },
       });
       console.log("stats: ", stats);
+
+      const isOnline = await getOnlineStatus(user.id);
+      console.log("isOnline: ", isOnline);
+
       // get h2h vs you
       // console.log('game')
       return reply.send({
-        user,
+        user: {
+          ...user,
+          isOnline,
+        },
         games,
         gamesH2h,
         achievements: userAchievements.achievements,
