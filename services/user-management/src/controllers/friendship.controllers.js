@@ -276,7 +276,7 @@ export const friendshipControllers = {
             { receiverId: friendToRemove, requesterId: userId },
             { requesterId: friendToRemove, receiverId: userId },
           ],
-          status: 'accepted' // Only remove accepted friendships
+          status: 'accepted'
         },
         select: {
           id: true,
