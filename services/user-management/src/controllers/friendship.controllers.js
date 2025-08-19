@@ -265,20 +265,32 @@ export const friendshipControllers = {
   },
 
   removeFriend: async (req, res) => {
-    const friendshipId = parseInt(req.params.id, 10);
+    const friendToRemove = parseInt(req.params.id, 10);
     const userId = parseInt(req.headers["x-user-id"], 10);
 
     // change this
     try {
+      console.log("Friend to remove not found:", friendToRemove);
       const friendship = await prisma.friendship.findUnique({
-        where: { id: friendshipId },
+        where: {
+          OR: [
+            { receiverId: friendToRemove, requesterId: userId },
+            { requesterId: friendToRemove, receiverId: userId },
+          ],
+        },
         select: { id: true },
       });
+      if (!friendship) {
+        return res.status(404).send({ error: "Friendship not found" });
+      }
       if (friendship) {
 
         const removed = await prisma.friendship.delete({
-          where: { id: friendshipId },
+          where: { id: friendToRemove },
         });
+        if (!removed) {
+          return res.status(404).send({ error: "Failed to remove friend" });
+        }
         if (removed) {
           const notification = await fetch(
             "http://notification-service:3005/api/notifications",
