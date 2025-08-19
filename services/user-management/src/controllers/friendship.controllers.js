@@ -335,11 +335,11 @@ export const friendshipControllers = {
         // Don't fail the whole operation if notification fails
       }
 
-      return res.json({ message: "Friend removed successfully" });
+      return res.send({ message: "Friend removed successfully" });
 
     } catch (error) {
       console.error("Error removing friend:", error);
-      return res.status(500).json({ error: "Failed to remove friend" });
+      return res.status(500).send({ error: "Failed to remove friend" });
     }
   },
 
