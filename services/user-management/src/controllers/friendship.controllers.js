@@ -286,7 +286,7 @@ export const friendshipControllers = {
       });
 
       if (!friendship) {
-        return res.status(404).json({ error: "Friendship not found" });
+        return res.status(404).send({ error: "Friendship not found" });
       }
 
       // Delete the friendship
