@@ -285,12 +285,11 @@ export const friendshipControllers = {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                userId: receiverId,
+                userId: friendshipId,
                 type: "FRIEND_REMOVED",
                 title: "Friend Removed",
                 content: ``,
-                sourceId: requesterId,
-                requestId: friendship.id,
+                sourceId: userId,
               }),
             }
           );
