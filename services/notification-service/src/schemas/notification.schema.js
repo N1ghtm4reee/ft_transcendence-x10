@@ -11,6 +11,7 @@ export const notificationSchemas = {
             "FRIEND_REQUEST_RECEIVED",
             "FRIEND_REQUEST_ACCEPTED",
             "FRIEND_REQUEST_DECLINED",
+            "FRIEND_REMOVED",
             "system",
           ],
         },

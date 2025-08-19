@@ -295,9 +295,7 @@ export const friendshipControllers = {
       });
 
       // Determine who to notify (the other person)
-      const notifyUserId = friendship.requesterId === userId
-        ? friendship.receiverId
-        : friendship.requesterId;
+      const notifyUserId = friendToRemove
 
       // Get the current user's display name for the notification
       const currentUser = await prisma.userProfile.findUnique({
