@@ -110,7 +110,18 @@ export const friendshipControllers = {
       const friendship = await prisma.friendship.findUnique({
         where: { id: requestid },
       });
+      let userFriendship;
+      try {
+        const response = await fetch(
+          `http://user-service:3002/api/user-management/users/${proccesserId}`
+        );
+        userFriendship = await response.json();
+      } catch (error) {
+        console.error("Error fetching User:", error);
+        return res.status(500).send({ error: "Failed to fetch User" });
+      }
 
+      console.log("FRIENDSHIP    :", userFriendship);
       if (!friendship) {
         return res.status(404).send({ error: "Friendship request not found" });
       }
@@ -146,7 +157,7 @@ export const friendshipControllers = {
                 userId: friendship.requesterId,
                 type: "FRIEND_REQUEST_DECLINED",
                 title: "Friend Request Declined",
-                content: `Your friend request to user ${friendship.receiverId} has been declined`,
+                content: `Your friend request to user ${userFriendship.displayName} has been declined`,
                 sourceId: friendship.receiverId,
               }),
             }
@@ -183,7 +194,7 @@ export const friendshipControllers = {
               userId: friendship.requesterId,
               type: "FRIEND_REQUEST_ACCEPTED",
               title: "Friend Request Accepted",
-              content: `Your friend request to user ${friendship.receiverId} has been accepted`,
+              content: `Your friend request to user ${userFriendship.displayName} has been accepted`,
               sourceId: friendship.receiverId,
             }),
           }
