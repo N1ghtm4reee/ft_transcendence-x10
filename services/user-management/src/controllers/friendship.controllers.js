@@ -38,8 +38,8 @@ export const friendshipControllers = {
       if (blockExists) {
         return res.status(400).send({
           error: `Can't send Friend request: ${blockExists.blockerId == requesterId
-              ? "you blocked this user"
-              : "this user blocked you"
+            ? "you blocked this user"
+            : "this user blocked you"
             }`,
         });
       }
@@ -268,59 +268,78 @@ export const friendshipControllers = {
     const friendToRemove = parseInt(req.params.id, 10);
     const userId = parseInt(req.headers["x-user-id"], 10);
 
-    // change this
     try {
-      console.log("Friend to remove not found:", friendToRemove);
-      const friendship = await prisma.friendship.findUnique({
+      // Find the friendship record
+      const friendship = await prisma.friendship.findFirst({
         where: {
           OR: [
             { receiverId: friendToRemove, requesterId: userId },
             { requesterId: friendToRemove, receiverId: userId },
           ],
+          status: 'accepted' // Only remove accepted friendships
         },
-        select: { id: true },
+        select: {
+          id: true,
+          requesterId: true,
+          receiverId: true
+        },
       });
-      if (!friendship) {
-        return res.status(404).send({ error: "Friendship not found" });
-      }
-      if (friendship) {
 
-        const removed = await prisma.friendship.delete({
-          where: { id: friendToRemove },
-        });
-        if (!removed) {
-          return res.status(404).send({ error: "Failed to remove friend" });
-        }
-        if (removed) {
-          const notification = await fetch(
-            "http://notification-service:3005/api/notifications",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userId: receiverId,
-                type: "FRIEND_REQUEST_RECEIVED",
-                title: "New Friend Request",
-                content: `User ${userFriendship.displayName} sent you a friend request`,
-                sourceId: requesterId,
-                requestId: friendship.id,
-              }),
-            }
-          );
-          if (!notification.ok) {
-            console.error(
-              "Failed to send notification:",
-              await notification.text()
-            );
-            return res.send({ message: "Friend removed successfully" });
-          }
-        }
+      if (!friendship) {
+        return res.status(404).json({ error: "Friendship not found" });
       }
+
+      // Delete the friendship
+      await prisma.friendship.delete({
+        where: { id: friendship.id }, // Use friendship.id, not friendToRemove
+      });
+
+      // Determine who to notify (the other person)
+      const notifyUserId = friendship.requesterId === userId
+        ? friendship.receiverId
+        : friendship.requesterId;
+
+      // Get the current user's display name for the notification
+      const currentUser = await prisma.userProfile.findUnique({
+        where: { id: userId },
+        select: { displayName: true }
+      });
+
+      // Send notification to the other person
+      try {
+        const notification = await fetch(
+          "http://notification-service:3005/api/notifications",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: notifyUserId,
+              type: "FRIEND_REMOVED",
+              title: "Friend Removed",
+              content: `${currentUser?.displayName || 'A user'} removed you from their friends list`,
+              sourceId: userId.toString(),
+            }),
+          }
+        );
+
+        if (!notification.ok) {
+          console.error(
+            "Failed to send notification:",
+            await notification.text()
+          );
+        }
+      } catch (notificationError) {
+        console.error("Notification error:", notificationError);
+        // Don't fail the whole operation if notification fails
+      }
+
+      return res.json({ message: "Friend removed successfully" });
+
     } catch (error) {
       console.error("Error removing friend:", error);
-      return res.status(500).send({ error: "Failed to remove friend" });
+      return res.status(500).json({ error: "Failed to remove friend" });
     }
   },
 
