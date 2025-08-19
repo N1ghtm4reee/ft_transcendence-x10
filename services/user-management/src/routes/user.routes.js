@@ -49,4 +49,12 @@ export default async function profileRoutes(app) {
     // schema: userSchemas.getUserById,
     handler: userController.getUserById,
   });
+
+  app.get("/lastSeen", {
+    handler: userController.getLastSeen,
+  });
+
+  app.post("/lastSeen", {
+    handler: userController.updateLastSeen,
+  });
 }

@@ -549,6 +549,31 @@ export const notificationControllers = {
           broadcastToAllUsers(userId, false);
           console.log(`Cleaned up empty connection set for user ${userId}`);
         }
+
+        // update last seen
+        const response = fetch(
+          `http://user-service:3002/api/user-management/lastSeen`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-user-id": userId,
+            }
+          }
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("Last seen updated for user:", userId);
+          })
+          .catch((error) => {
+            console.error("Error updating last seen:", error);
+          });
+        if (response) {
+          console.log("Last seen updated successfully for user:", userId);
+        }
+        else {
+          console.error("Failed to update last seen for user:", userId);
+        }
       }
     });
 

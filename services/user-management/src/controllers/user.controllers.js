@@ -551,10 +551,10 @@ export const userController = {
         },
         include: {
           requester: {
-            select: { id: true, displayName: true, avatar: true },
+            select: { id: true, displayName: true, avatar: true, lastSeen: true },
           },
           receiver: {
-            select: { id: true, displayName: true, avatar: true },
+            select: { id: true, displayName: true, avatar: true, lastSeen: true },
           },
         },
       });
@@ -572,9 +572,7 @@ export const userController = {
             displayName: friend.displayName,
             avatar: friend.avatar,
             status: (await getOnlineStatus(friend.id)) ? "online" : "offline",
-            lastActive: new Intl.RelativeTimeFormat("en", {
-              style: "short",
-            }).format(now, "days"),
+            lastActive: friend.lastSeen,
           };
         })
       );
@@ -584,7 +582,7 @@ export const userController = {
         where: { receiverId: id, status: "pending" },
         include: {
           requester: {
-            select: { id: true, displayName: true, avatar: true },
+            select: { id: true, displayName: true, avatar: true, lastSeen: true },
           },
         },
       });
@@ -593,7 +591,7 @@ export const userController = {
         where: { requesterId: id, status: "pending" },
         include: {
           receiver: {
-            select: { id: true, displayName: true, avatar: true },
+            select: { id: true, displayName: true, avatar: true, lastSeen: true },
           },
         },
       });
@@ -607,7 +605,7 @@ export const userController = {
             status: (await getOnlineStatus(req.requester.id))
               ? "online"
               : "offline",
-            lastActive: now,
+            lastActive: req.requester.lastSeen,
           },
           id: req.id,
           createdAt: req.createdAt,
@@ -622,7 +620,7 @@ export const userController = {
             status: (await getOnlineStatus(req.receiver.id))
               ? "online"
               : "offline",
-            lastActive: now,
+            lastActive: req.receiver.lastSeen,
           },
           id: req.id,
           createdAt: req.createdAt,
@@ -786,6 +784,53 @@ export const userController = {
     } catch (error) {
       console.error("Error fetching user by ID:", error);
       return response.status(500).send({ error: "Failed to fetch user" });
+    }
+  },
+  getLastSeen: async function (request, response) {
+    const userId = parseInt(request.headers["x-user-id"], 10);
+    if (isNaN(userId)) {
+      return response.status(400).send({ error: "Invalid user ID" });
+    }
+
+    try {
+      const lastSeen = await prisma.userProfile.findUnique({
+        where: { id: userId },
+        select: { lastSeen: true },
+      });
+
+      if (!lastSeen) {
+        return response.status(404).send({ error: "User not found" });
+      }
+
+      return response.send({ lastSeen: lastSeen.lastSeen });
+    } catch (error) {
+      console.error("Error fetching last seen:", error);
+      return response.status(500).send({ error: "Failed to fetch last seen" });
+    }
+  },
+  updateLastSeen: async function (request, response) {
+    const userId = parseInt(request.headers["x-user-id"], 10);
+    if (isNaN(userId)) {
+      return response.status(400).send({ error: "Invalid user ID" });
+    }
+
+    try {
+      const updatedUser = await prisma.userProfile.update({
+        where: { id: userId },
+        data: { lastSeen: new Date() },
+      });
+      
+      if (!updatedUser) {
+        return response.status(404).send({ error: "User not found" });
+      }
+
+      return response.send({
+        message: "Last seen updated successfully",
+        lastSeen: updatedUser.lastSeen,
+      });
+    } catch (error) {
+      console.error("Error updating last seen:", error);
+      return response.status(500).send({ error: "Failed to update last seen" });
     }
   },
 };

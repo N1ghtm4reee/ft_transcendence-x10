@@ -25,6 +25,8 @@ model UserProfile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  lastSeen DateTime @default(now()) @updatedAt @map("last_seen")
+
   sentFriendRequests     Friendship[] @relation("FriendshipRequester")
   receivedFriendRequests Friendship[] @relation("FriendshipReceiver")
   gameHistory           GameHistory[]
