@@ -19236,3 +19236,11 @@
 {"level":30,"time":1755631759687,"pid":18,"hostname":"fa38f8f7399a","msg":"Server listening at http://127.0.0.1:3000"}
 {"level":30,"time":1755631759688,"pid":18,"hostname":"fa38f8f7399a","msg":"Server listening at http://172.19.0.8:3000"}
 {"level":30,"time":1755631759688,"pid":18,"hostname":"fa38f8f7399a","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755632292345,"pid":19,"hostname":"19a31fde83ff","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755632292346,"pid":19,"hostname":"19a31fde83ff","msg":"Server listening at http://172.19.0.8:3000"}
+{"level":30,"time":1755632292346,"pid":19,"hostname":"19a31fde83ff","msg":"Server listening at http://127.0.0.1:3000"}
+{"level":30,"time":1755632310879,"pid":19,"hostname":"19a31fde83ff","reqId":"req-1","req":{"method":"GET","url":"/api/user-management/me","host":"localhost:3000","remoteAddress":"172.19.0.1","remotePort":54594},"msg":"incoming request"}
+{"level":30,"time":1755632310880,"pid":19,"hostname":"19a31fde83ff","reqId":"req-1","ip":"172.19.0.1","msg":"api-gateway received request"}
+{"level":30,"time":1755632310932,"pid":19,"hostname":"19a31fde83ff","reqId":"req-1","source":"/api/user-management/me","msg":"fetching from remote server"}
+{"level":30,"time":1755632310959,"pid":19,"hostname":"19a31fde83ff","reqId":"req-1","msg":"response received"}
+{"level":30,"time":1755632310965,"pid":19,"hostname":"19a31fde83ff","reqId":"req-1","res":{"statusCode":200},"responseTime":85.525112003088,"msg":"request completed"}

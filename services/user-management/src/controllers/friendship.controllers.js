@@ -271,18 +271,36 @@ export const friendshipControllers = {
 
     // change this
     try {
-      const friendship = await prisma.friendship.findUnique({
+      
+      const removed = await prisma.friendship.delete({
         where: { id: friendshipId },
-        select: { id: true },
       });
-
-      if (!friendship) {
-        return res.status(404).send({ error: "Friendship not found" });
+      if (removed)
+      {
+        const notification = await fetch(
+            "http://notification-service:3005/api/notifications",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userId: receiverId,
+                type: "FRIEND_REMOVED",
+                title: "Friend Removed",
+                content: ``,
+                sourceId: requesterId,
+                requestId: friendship.id,
+              }),
+            }
+          );
+          if (!notification.ok) {
+            console.error(
+              "Failed to send notification:",
+              await notification.text()
+            );
+          }
       }
-      await prisma.friendship.delete({
-        where: { id: friendshipId },
-      });
-
       return res.send({ message: "Friend removed successfully" });
     } catch (error) {
       console.error("Error removing friend:", error);
