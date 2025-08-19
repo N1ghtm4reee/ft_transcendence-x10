@@ -692,17 +692,31 @@ export const userController = {
 
   searchProfile: async function (request, response) {
     const username = request.query.username;
+    const userId = parseInt(request.headers["x-user-id"], 10);
     if (!username) {
       return response.status(400).send({ error: "Username is required" });
     }
 
     try {
-      const users = await prisma.$queryRaw`
-            SELECT id, display_name, avatar, bio
-            FROM "user_profiles"
-            WHERE LOWER("display_name") LIKE '%' || ${username.toLowerCase()} || '%'
-            LIMIT 10
-        `;
+      const users = await prisma.userProfile.findMany({
+        where: {
+          displayName: {
+            contains: username,
+            mode: 'insensitive' // Case-insensitive search
+          },
+          NOT: {
+            id: userId // Exclude yourself
+          }
+        },
+        select: {
+          id: true,
+          displayName: true,
+          avatar: true,
+          bio: true
+        },
+        take: 10
+      });
+
 
       if (!users || users.length === 0) {
         return response.status(404).send({ error: "No users found" });
@@ -819,7 +833,7 @@ export const userController = {
         where: { id: userId },
         data: { lastSeen: new Date() },
       });
-      
+
       if (!updatedUser) {
         return response.status(404).send({ error: "User not found" });
       }
