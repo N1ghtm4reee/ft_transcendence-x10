@@ -37,11 +37,10 @@ export const friendshipControllers = {
       const blockExists = await blockUtils.exists(requesterId, receiverId);
       if (blockExists) {
         return res.status(400).send({
-          error: `Can't send Friend request: ${
-            blockExists.blockerId == requesterId
+          error: `Can't send Friend request: ${blockExists.blockerId == requesterId
               ? "you blocked this user"
               : "this user blocked you"
-          }`,
+            }`,
         });
       }
 
@@ -271,13 +270,17 @@ export const friendshipControllers = {
 
     // change this
     try {
-      
-      const removed = await prisma.friendship.delete({
+      const friendship = await prisma.friendship.findUnique({
         where: { id: friendshipId },
+        select: { id: true },
       });
-      if (removed)
-      {
-        const notification = await fetch(
+      if (friendship) {
+
+        const removed = await prisma.friendship.delete({
+          where: { id: friendshipId },
+        });
+        if (removed) {
+          const notification = await fetch(
             "http://notification-service:3005/api/notifications",
             {
               method: "POST",
@@ -285,11 +288,12 @@ export const friendshipControllers = {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                userId: friendshipId,
-                type: "FRIEND_REMOVED",
-                title: "Friend Removed",
-                content: ``,
-                sourceId: userId,
+                userId: receiverId,
+                type: "FRIEND_REQUEST_RECEIVED",
+                title: "New Friend Request",
+                content: `User ${userFriendship.displayName} sent you a friend request`,
+                sourceId: requesterId,
+                requestId: friendship.id,
               }),
             }
           );
@@ -298,9 +302,10 @@ export const friendshipControllers = {
               "Failed to send notification:",
               await notification.text()
             );
+            return res.send({ message: "Friend removed successfully" });
           }
+        }
       }
-      return res.send({ message: "Friend removed successfully" });
     } catch (error) {
       console.error("Error removing friend:", error);
       return res.status(500).send({ error: "Failed to remove friend" });
