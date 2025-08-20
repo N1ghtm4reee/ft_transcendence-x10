@@ -339,9 +339,8 @@ export const chatControllers = {
                 }
             });
             const data = {
-                type: 'new_conversation',
-                conversationId: conversation.id,
-                senderId,
+                type: 'CONVERSATION_ADDED',
+                ...conversation
             };
 
             broadcastToUser(participantId, data);
