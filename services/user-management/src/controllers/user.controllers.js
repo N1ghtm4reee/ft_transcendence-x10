@@ -1,4 +1,5 @@
 import prisma from "#root/prisma/prisma.js";
+import { profile } from "console";
 import { userUtils } from "../utils/user.utils.js";
 import fs from "fs";
 import path from "path";
@@ -59,7 +60,7 @@ export const userController = {
           displayName: userName,
         },
       });
-
+ 
       if (!user) {
         console.log("user not found");
         return reply.status(404).send({ error: "User profile not found" });
@@ -112,9 +113,9 @@ export const userController = {
       // get h2h vs you
       // console.log('game')
       return reply.send({
-        user: {
+        profile: {
           ...user,
-          isOnline,
+          status: isOnline ? "online" : "offline",
         },
         gameHistory: games,
         gamesH2h,
