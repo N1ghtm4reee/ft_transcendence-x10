@@ -40,13 +40,14 @@ export const chatControllers = {
 
     deleteConversationHistory: async (req, res) => {
         try {
+            console.log('deleteConversationHistory called');
             const userId = parseInt(req.params.userId, 10);
             const friendToRemove = parseInt(req.params.friendToRemove, 10);
-            const validationResult = await validateChatPermissions(userId, friendToRemove);
-            if (!validationResult.success) {
-                return res.status(validationResult.status).send(validationResult.data);
-            }
-            console.log('friendship exists');
+            // const validationResult = await validateChatPermissions(userId, friendToRemove);
+            // if (!validationResult.success) {
+            //     return res.status(validationResult.status).send(validationResult.data);
+            // }
+            // console.log('friendship exists');
             // Find the conversation between the user and the friend
             const conversation = await prisma.conversation.findFirst({
                 where: {
@@ -58,16 +59,25 @@ export const chatControllers = {
                 select: { id: true }
             });
             if (!conversation) {
+                console.error('Conversation not found');
                 return res.status(404).send({ error: "Conversation not found" });
             }
             // Delete all messages in the conversation
-            await prisma.directMessages.deleteMany({
+            const messagesDeleted = await prisma.directMessages.deleteMany({
                 where: { conversationId: conversation.id }
             });
+            if (!messagesDeleted) {
+                console.error('No messages found in the conversation');
+                return res.status(404).send({ error: "No messages found in the conversation" });
+            }
             // Delete the conversation itself
-            await prisma.conversation.delete({
+            const convDeleted = await prisma.conversation.delete({
                 where: { id: conversation.id }
             });
+            if (!convDeleted) {
+                console.error('Conversation not found');
+                return res.status(404).send({ error: "Conversation not found" });
+            }
         } catch (error) {
             console.error('Error deleting conversation history:', error);
             return res.status(500).send({
