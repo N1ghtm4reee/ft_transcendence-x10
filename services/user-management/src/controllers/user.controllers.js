@@ -698,25 +698,13 @@ export const userController = {
     }
 
     try {
-      const users = await prisma.userProfile.findMany({
-        where: {
-          displayName: {
-            contains: username
-            // mode: 'insensitive' // Case-insensitive search
-          },
-          NOT: {
-            id: userId // Exclude yourself
-          }
-        },
-        select: {
-          id: true,
-          displayName: true,
-          avatar: true,
-          bio: true
-        },
-        take: 10
-      });
-
+      const users = await prisma.$queryRaw`
+            SELECT id, display_name, avatar, bio
+            FROM "user_profiles"
+            WHERE LOWER("display_name") LIKE '%' || ${username.toLowerCase()} || '%'
+            AND id != ${userId}
+            LIMIT 10
+        `;
 
       if (!users || users.length === 0) {
         return response.status(404).send({ error: "No users found" });
