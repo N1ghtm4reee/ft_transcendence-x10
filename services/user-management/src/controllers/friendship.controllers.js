@@ -302,7 +302,18 @@ export const friendshipControllers = {
         where: { id: userId },
         select: { displayName: true }
       });
-
+      // remove chat history with the friend
+      try {
+        await fetch(
+          `http://chat-service:3004/api/chat/history/${userId}/${friendToRemove}`,
+          {
+            method: "DELETE",
+          }
+        );
+      } catch (error) {
+        console.error("Error removing chat history:", error);
+        // Don't fail the whole operation if chat history removal fails
+      }
       // Send notification to the other person
       try {
         const notification = await fetch(

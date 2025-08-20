@@ -38,6 +38,45 @@ async function validateChatPermissions(senderId, receiverId) {
 
 export const chatControllers = {
 
+    deleteConversationHistory: async (req, res) => {
+        try {
+            const userId = parseInt(req.params.userId, 10);
+            const friendToRemove = parseInt(req.params.friendToRemove, 10);
+            const validationResult = await validateChatPermissions(userId, friendToRemove);
+            if (!validationResult.success) {
+                return res.status(validationResult.status).send(validationResult.data);
+            }
+            console.log('friendship exists');
+            // Find the conversation between the user and the friend
+            const conversation = await prisma.conversation.findFirst({
+                where: {
+                    AND: [
+                        { members: { some: { userId: userId } } },
+                        { members: { some: { userId: friendToRemove } } }
+                    ]
+                },
+                select: { id: true }
+            });
+            if (!conversation) {
+                return res.status(404).send({ error: "Conversation not found" });
+            }
+            // Delete all messages in the conversation
+            await prisma.directMessages.deleteMany({
+                where: { conversationId: conversation.id }
+            });
+            // Delete the conversation itself
+            await prisma.conversation.delete({
+                where: { id: conversation.id }
+            });
+        } catch (error) {
+            console.error('Error deleting conversation history:', error);
+            return res.status(500).send({
+                error: 'Failed to delete conversation history',
+                details: error.message
+            });
+        }
+        return res.send({ message: "Conversation history deleted successfully" });
+    },
 
     createConversation: async (req, res) => {
         try {

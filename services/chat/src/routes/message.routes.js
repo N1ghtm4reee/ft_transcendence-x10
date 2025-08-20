@@ -38,6 +38,9 @@ export const chatRoutes = async (app, options) => {
         // schema: chatSchemas.getConversationSchema,
         handler: chatControllers.getConversation
     });
+    app.delete('/history/:userId/:friendToRemove', {
+        handler: chatControllers.deleteConversationHistory
+    })
 }
 
 export const chatSocket = async (app) => {
