@@ -50,9 +50,9 @@ export const chatControllers = {
             // Find the conversation between the user and the friend
             const conversation = await prisma.conversation.findFirst({
                 where: {
-                    AND: [
-                        { members: { some: { userId: userId } } },
-                        { members: { some: { userId: friendToRemove } } }
+                    OR: [
+                        {AND: [{ members: { some: { userId: userId } } }, { members: { some: { userId: friendToRemove } } }]},
+                        {AND: [{ members: { some: { userId: friendToRemove } } }, { members: { some: { userId: userId } } }]}
                     ]
                 },
                 select: { id: true }
