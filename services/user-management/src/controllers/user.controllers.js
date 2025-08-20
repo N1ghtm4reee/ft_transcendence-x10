@@ -701,8 +701,8 @@ export const userController = {
       const users = await prisma.userProfile.findMany({
         where: {
           displayName: {
-            contains: username,
-            mode: 'insensitive' // Case-insensitive search
+            contains: username
+            // mode: 'insensitive' // Case-insensitive search
           },
           NOT: {
             id: userId // Exclude yourself
