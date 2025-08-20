@@ -116,10 +116,10 @@ export const userController = {
           ...user,
           isOnline,
         },
-        games,
+        gameHistory: games,
         gamesH2h,
         achievements: userAchievements.achievements,
-        stats,
+        gameStats: stats,
       });
     } catch (error) {
       console.log("error: ", error);
