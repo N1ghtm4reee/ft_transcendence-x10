@@ -338,6 +338,13 @@ export const chatControllers = {
                     }
                 }
             });
+            const data = {
+                type: 'new_conversation',
+                conversationId: conversation.id,
+                senderId,
+            };
+
+            broadcastToUser(participantId, data);
         }
 
         return res.send({

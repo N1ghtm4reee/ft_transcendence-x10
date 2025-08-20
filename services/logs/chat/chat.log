@@ -2512,3 +2512,15 @@
 {"level":30,"time":1755708996539,"pid":182,"hostname":"b8ec1168f33a","reqId":"req-11","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":42874},"msg":"incoming request"}
 {"level":30,"time":1755708996539,"pid":182,"hostname":"b8ec1168f33a","reqId":"req-11","ip":"172.19.0.7","msg":"new request to chat-service"}
 {"level":30,"time":1755708996544,"pid":182,"hostname":"b8ec1168f33a","reqId":"req-11","res":{"statusCode":200},"responseTime":4.20210599899292,"msg":"request completed"}
+{"level":30,"time":1755709317028,"pid":184,"hostname":"dcda0313893b","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1755709317029,"pid":184,"hostname":"dcda0313893b","msg":"Server listening at http://172.19.0.5:3004"}
+{"level":30,"time":1755709328864,"pid":184,"hostname":"dcda0313893b","reqId":"req-1","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":56236},"msg":"incoming request"}
+{"level":30,"time":1755709328866,"pid":184,"hostname":"dcda0313893b","reqId":"req-1","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755709328884,"pid":184,"hostname":"dcda0313893b","reqId":"req-1","res":{"statusCode":200},"responseTime":17.89759600162506,"msg":"request completed"}
+{"level":30,"time":1755709351493,"pid":184,"hostname":"dcda0313893b","reqId":"req-2","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":56236},"msg":"incoming request"}
+{"level":30,"time":1755709351493,"pid":184,"hostname":"dcda0313893b","reqId":"req-2","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755709351497,"pid":184,"hostname":"dcda0313893b","reqId":"req-2","res":{"statusCode":200},"responseTime":2.437520995736122,"msg":"request completed"}
+{"level":30,"time":1755709357126,"pid":184,"hostname":"dcda0313893b","reqId":"req-3","req":{"method":"GET","url":"/ws/chat/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJha2hyaWZheW91YjMzQGdtYWlsLmNvbSIsImlhdCI6MTc1NTcwOTMyNywiZXhwIjoxNzU1NzEyOTI3fQ.6xUP31-Yg2vI1sHQpZXQzfEKIqgyKUtIEvFVL2TWasE","host":"localhost:3004","remoteAddress":"172.19.0.1","remotePort":37390},"msg":"incoming request"}
+{"level":30,"time":1755709357126,"pid":184,"hostname":"dcda0313893b","reqId":"req-3","ip":"172.19.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1755709357196,"pid":184,"hostname":"dcda0313893b","reqId":"req-4","req":{"method":"GET","url":"/ws/chat/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJhYWtocmkxZkBnbWFpbC5jb20iLCJpYXQiOjE3NTU3MDkzNTAsImV4cCI6MTc1NTcxMjk1MH0.qM9tehUQl55ySabXdyylt8WyLnlyjm_EG6_rsaaFDZI","host":"localhost:3004","remoteAddress":"172.19.0.1","remotePort":37392},"msg":"incoming request"}
+{"level":30,"time":1755709357196,"pid":184,"hostname":"dcda0313893b","reqId":"req-4","ip":"172.19.0.1","msg":"new request to chat-service"}
