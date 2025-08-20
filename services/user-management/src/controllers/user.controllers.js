@@ -273,7 +273,10 @@ export const userController = {
           }
         }
       } else {
-        fields = request.body || {};
+         const {avatar, displayName, bio} = request.body;
+        if (avatar) fields.avatar = avatar;
+        if (displayName) fields.displayName = displayName;
+        if (bio) fields.bio = bio;
       }
 
       const updatedUser = await prisma.userProfile.update({
