@@ -460,9 +460,7 @@ export const notificationControllers = {
       });
 
       return res.send({
-        onlineUsers: onlineUsers,
-        totalOnline: onlineUsers.length,
-        timestamp: new Date().toISOString(),
+        totalOnline: onlineUsers.length
       });
     } catch (error) {
       console.error("Error getting online users:", error);
