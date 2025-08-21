@@ -61,8 +61,8 @@ function createGameSession(playerId1, playerId2, mode = 'classic') {
   return gameId;
 }
 
-// POST /game endpoint to create a new game
-fastify.post('/game', async (request, reply) => {
+// POST /challenge endpoint to create a new game
+fastify.post('/challenge', async (request, reply) => {
   try {
     const { playerId1, playerId2, mode } = request.body;
     

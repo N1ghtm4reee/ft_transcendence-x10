@@ -166,6 +166,11 @@ app.register(proxy, createProxyWithHeaders(
   '/api/notifications'
 ));
 
+app.register(proxy, createProxyWithHeaders(
+  process.env.GAME_SERVICE_URL || 'http://game-service:3006',
+  '/api/game'
+));
+
 app.register(proxy, {
   wsUpstream: 'ws://chat-service:3004',
   prefix: '/ws/chat',
