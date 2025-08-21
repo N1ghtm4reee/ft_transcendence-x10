@@ -5024,3 +5024,20 @@
 {"level":30,"time":1755793981662,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-c","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":59534},"msg":"incoming request"}
 {"level":30,"time":1755793981662,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-c","ip":"172.19.0.7","msg":"new request to chat-service"}
 {"level":30,"time":1755793981668,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-c","res":{"statusCode":200},"responseTime":4.954124987125397,"msg":"request completed"}
+{"level":30,"time":1755794173572,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-d","req":{"method":"GET","url":"/ws/chat/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJjcmlzdGlhbm9AZ21haWwuY29tIiwiaWF0IjoxNzU1NzkzODUwLCJleHAiOjE3NTU3OTc0NTB9.T8hJMVlwbDZ082cAdTBKDfo_ruGhtftdYruUPYTeBvs","host":"localhost:3004","remoteAddress":"172.19.0.1","remotePort":38288},"msg":"incoming request"}
+{"level":30,"time":1755794173572,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-d","ip":"172.19.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1755794173582,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-e","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":58068},"msg":"incoming request"}
+{"level":30,"time":1755794173582,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-e","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755794173587,"pid":183,"hostname":"1a5d3da409fd","reqId":"req-e","res":{"statusCode":200},"responseTime":4.8264870047569275,"msg":"request completed"}
+{"level":30,"time":1755794456312,"pid":183,"hostname":"f1e5ae468611","msg":"Server listening at http://127.0.0.1:3004"}
+{"level":30,"time":1755794456312,"pid":183,"hostname":"f1e5ae468611","msg":"Server listening at http://172.19.0.3:3004"}
+{"level":30,"time":1755794542393,"pid":183,"hostname":"f1e5ae468611","reqId":"req-1","req":{"method":"GET","url":"/ws/chat/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhYWtocmlmMUBnbWFpbC5jb20iLCJpYXQiOjE3NTU3OTQ1NDEsImV4cCI6MTc1NTc5ODE0MX0.g7fOdMaHwpEdShGH5Fr_R-hbjhXQWgj1k3xN1QpOY3I","host":"localhost:3004","remoteAddress":"172.19.0.1","remotePort":38676},"msg":"incoming request"}
+{"level":30,"time":1755794542395,"pid":183,"hostname":"f1e5ae468611","reqId":"req-1","ip":"172.19.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1755794542451,"pid":183,"hostname":"f1e5ae468611","reqId":"req-2","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":52160},"msg":"incoming request"}
+{"level":30,"time":1755794542451,"pid":183,"hostname":"f1e5ae468611","reqId":"req-2","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755794542532,"pid":183,"hostname":"f1e5ae468611","reqId":"req-2","res":{"statusCode":200},"responseTime":78.2620990127325,"msg":"request completed"}
+{"level":30,"time":1755794557071,"pid":183,"hostname":"f1e5ae468611","reqId":"req-3","req":{"method":"GET","url":"/ws/chat/live?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhYWtocmlmMUBnbWFpbC5jb20iLCJpYXQiOjE3NTU3OTQ1NDEsImV4cCI6MTc1NTc5ODE0MX0.g7fOdMaHwpEdShGH5Fr_R-hbjhXQWgj1k3xN1QpOY3I","host":"localhost:3004","remoteAddress":"172.19.0.1","remotePort":47728},"msg":"incoming request"}
+{"level":30,"time":1755794557072,"pid":183,"hostname":"f1e5ae468611","reqId":"req-3","ip":"172.19.0.1","msg":"new request to chat-service"}
+{"level":30,"time":1755794557087,"pid":183,"hostname":"f1e5ae468611","reqId":"req-4","req":{"method":"GET","url":"/api/chat/conversations","host":"chat-service:3004","remoteAddress":"172.19.0.7","remotePort":52160},"msg":"incoming request"}
+{"level":30,"time":1755794557087,"pid":183,"hostname":"f1e5ae468611","reqId":"req-4","ip":"172.19.0.7","msg":"new request to chat-service"}
+{"level":30,"time":1755794557093,"pid":183,"hostname":"f1e5ae468611","reqId":"req-4","res":{"statusCode":200},"responseTime":5.480342000722885,"msg":"request completed"}

@@ -75,6 +75,7 @@ export const userController = {
         orderBy: {
           playedAt: "desc",
         },
+        take: 10,
       });
       console.log("gamesH2h: ", gamesH2h);
       // get user overall game history
