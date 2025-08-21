@@ -138,12 +138,16 @@ export const userController = {
         where: { id: user.id },
       });
       console.log("stats: ", stats);
+      // overall record
+      const totalWins = gamesH2h.reduce((sum, game) => {
+        return sum + (game.result === 'win' ? 1 : 0);
+      }, 0);
+
+      const totalGames = gamesH2h.length;
 
       const isOnline = await getOnlineStatus(user.id);
       console.log("isOnline: ", isOnline);
 
-      // get h2h vs you
-      // console.log('game')
       return reply.send({
         profile: {
           ...user,
@@ -153,6 +157,10 @@ export const userController = {
         gamesH2h,
         achievements: userAchievements.achievements.map((a) => a.id),
         gameStats: stats,
+        overallRecord: {
+        wins: totalWins,
+        losses: totalGames - totalWins,
+      },
       });
     } catch (error) {
       console.log("error: ", error);
