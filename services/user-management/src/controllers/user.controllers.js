@@ -60,7 +60,7 @@ export const userController = {
           displayName: userName,
         },
       });
- 
+
       if (!user) {
         console.log("user not found");
         return reply.status(404).send({ error: "User profile not found" });
@@ -87,7 +87,38 @@ export const userController = {
         },
         take: 10,
       });
+
+
+      // const user = await prisma.userProfile.findUnique({
+      //   where: { id: userId },
+      //   select: {
+      //     id: true,
+      //     displayName: true,
+      //     avatar: true,
+      //     bio: true,
+      //   },
+      // });
+
       console.log("games: ", games);
+      const gamesWithOpponents = await Promise.all(
+        games.map(async (game) => {
+          const opponent = await prisma.userProfile.findUnique({
+            where: { id: game.opponentId },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              bio: true,
+            },
+          });
+          return {
+            ...game,
+            opponentName: opponent?.displayName || "Unknown",
+          };
+        })
+      );
+
+      console.log("gamesWithOpponents: ", gamesWithOpponents);
       // ?
       // if (games.length === 0)
       //     return reply.send('No games played')
@@ -117,7 +148,7 @@ export const userController = {
           ...user,
           status: isOnline ? "online" : "offline",
         },
-        gameHistory: games,
+        gameHistory: gamesWithOpponents,
         gamesH2h,
         achievements: userAchievements.achievements,
         gameStats: stats,
@@ -274,7 +305,7 @@ export const userController = {
           }
         }
       } else {
-         const {avatar, displayName, bio} = request.body;
+        const { avatar, displayName, bio } = request.body;
         if (avatar) fields.avatar = avatar;
         if (displayName) fields.displayName = displayName;
         if (bio) fields.bio = bio;

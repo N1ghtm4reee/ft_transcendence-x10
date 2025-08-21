@@ -15,7 +15,7 @@
     "db:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "prisma": {
-    "seed" : "node prisma/seed.js"
+    "seed" : "node prisma/seed.js && node prisma/seedTest.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",

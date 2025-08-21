@@ -8,6 +8,9 @@
     "dev": "nodemon src/app.js",
     "build": "tsc"
   },
+    "prisma": {
+    "seed" : "node plugin/authSeed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
