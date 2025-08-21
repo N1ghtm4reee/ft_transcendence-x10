@@ -150,7 +150,7 @@ export const userController = {
         },
         gameHistory: gamesWithOpponents,
         gamesH2h,
-        achievements: userAchievements.achievements,
+        achievements: userAchievements.achievements.map((a) => a.id),
         gameStats: stats,
       });
     } catch (error) {
