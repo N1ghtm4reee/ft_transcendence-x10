@@ -75,7 +75,7 @@ export const userController = {
         orderBy: {
           playedAt: "desc",
         },
-        take: 10,
+        take: 5,
       });
       console.log("gamesH2h: ", gamesH2h);
       // get user overall game history
@@ -672,7 +672,7 @@ export const userController = {
         profile: user,
         gameHistory,
         gameStats,
-        achievements,
+        achievements: achievements.map((a) => a.id),
         friends,
         friendRequests,
       });
