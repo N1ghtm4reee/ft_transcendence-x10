@@ -555,6 +555,7 @@ export const userController = {
         result: game.result,
         playerScore: game.playerScore,
         opponentScore: game.opponentScore,
+        opponentId: game.opponentId,
       }));
 
       // 3. Get game stats
@@ -677,9 +678,27 @@ export const userController = {
         sent: sentRequests,
       };
 
+      const gamesWithOpponents = await Promise.all(
+        gameHistory.map(async (gameHistory) => {
+          const opponent = await prisma.userProfile.findUnique({
+            where: { id: gameHistory.opponentId },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              bio: true,
+            },
+          });
+          return {
+            ...gameHistory,
+            opponentName: opponent?.displayName || "Unknown",
+          };
+        })
+      );
+
       return reply.send({
         profile: user,
-        gameHistory,
+        gameHistory: gamesWithOpponents,
         gameStats,
         achievements: achievements.map((a) => a.id),
         friends,
