@@ -307,6 +307,7 @@ export const notificationControllers = {
         createdAt: notification.createdAt,
         sourceId: notification.sourceId,
         gameId: requestId,
+        requestId: requestId,
         user: {
           id: user.id,
           displayName: user.displayName,
