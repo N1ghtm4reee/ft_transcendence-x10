@@ -3,7 +3,7 @@ import { notificationSchemas } from "../schemas/notification.schema.js";
 
 export const notificationRoutes = async (app, options) => {
   app.post("/", {
-    schema: notificationSchemas.createNotificationSchema,
+    // schema: notificationSchemas.createNotificationSchema,
     handler: notificationControllers.createNotification,
   });
 

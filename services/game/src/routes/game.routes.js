@@ -9,6 +9,16 @@ export default async function profileRoutes(app) {
     handler: gameController.addGameHistory
   });
 
+  // app.post('/reject', {
+  //   // schema: gameSchemas.createUser,
+  //   handler: gameController.rejectGameRequest
+  // });
+
+  // app.post('/accept', {
+  //   // schema: gameSchemas.createUser,
+  //   handler: gameController.addGameHistory
+  // });  // do we need this?
+
   app.post('/achievements', {
     // schema: gameSchemas.achievement
     handler: gameController.addAchievements

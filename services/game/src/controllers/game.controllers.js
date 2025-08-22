@@ -1,14 +1,20 @@
 import prisma from "../prisma/prisma.js";
 
 export const gameController = {
+  // rejectGameRequest: async function (request, reply) {
+    
+
+  // },
   addGameHistory: async function (request, reply) {
     const { session, gameId } = request.body;
+    console.log('addGameHistory session:', session);
+    console.log('addGameHistory gameId:', gameId);
 
     const player1 = await prisma.userProfile.findFirst({
-      where: { displayName: session.player1username },
+      where: { id: parseInt(session.player1Id, 10) },
     });
     const player2 = await prisma.userProfile.findFirst({
-      where: { displayName: session.player2username },
+      where: { id: parseInt(session.player2Id, 10) },
     });
 
     if (!player1 || !player2) {

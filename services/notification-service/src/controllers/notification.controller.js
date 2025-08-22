@@ -40,6 +40,59 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+        } else if (data.type === "GAME_INVITE"){
+            console.log(
+              `Sending game invite notification to user ${userId}:`,
+              data
+            );
+            try {
+              connection.send(
+                JSON.stringify({
+                  type: "GAME_INVITE",
+                  content: data.content,
+                  title: data.title,
+                  gameId: data.gameId,
+                  user: {
+                    id: data.user.id,
+                    displayName: data.user.displayName,
+                    avatar: data.user.avatar,
+                  },
+                })
+              );
+            } catch (error) {
+              console.error(
+                `Error sending game invite notification to user ${userId}:`,
+                error
+              );
+              userConnections.delete(connection);
+            }
+        }
+        else if (data.type === "GAME_REJECTED"){
+            console.log(
+              `Sending game invite notification to user ${userId}:`,
+              data
+            );
+            try {
+              connection.send(
+                JSON.stringify({
+                  type: "GAME_REJECTED",
+                  content: data.content,
+                  title: data.title,
+                  gameId: data.gameId,
+                  user: {
+                    id: data.user.id,
+                    displayName: data.user.displayName,
+                    avatar: data.user.avatar,
+                  },
+                })
+              );
+            } catch (error) {
+              console.error(
+                `Error sending game invite notification to user ${userId}:`,
+                error
+              );
+              userConnections.delete(connection);
+            }
         } else if (data.type === "FRIEND_REQUEST_ACCEPTED") {
           console.log(
             `Sending friend request accepted notification to user ${userId}:`,
@@ -241,7 +294,7 @@ export const notificationControllers = {
           type,
           title,
           content,
-          sourceId,
+          sourceId: String(sourceId)
         },
       });
       const notificationData = {
@@ -253,7 +306,7 @@ export const notificationControllers = {
         read: notification.read,
         createdAt: notification.createdAt,
         sourceId: notification.sourceId,
-        requestId: requestId,
+        gameId: requestId,
         user: {
           id: user.id,
           displayName: user.displayName,

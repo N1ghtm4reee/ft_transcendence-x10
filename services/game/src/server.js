@@ -62,10 +62,24 @@ function createGameSession(playerId1, playerId2, mode = 'classic') {
 }
 
 // POST /challenge endpoint to create a new game
-fastify.post('/challenge', async (request, reply) => {
+fastify.post('/api/game/challenge', async (request, reply) => {
   try {
-    const { playerId1, playerId2, mode } = request.body;
-    
+    const playerId1 = request.headers['x-user-id'];
+    const playerId2 = request.query.opponentId;
+    const mode = request.query.mode || 'classic';
+
+
+    // get both players profiles
+    const [player1Profile, player2Profile] = await Promise.all([
+      prisma.userProfile.findUnique({ where: { id: parseInt(playerId1, 10) } }),
+      prisma.userProfile.findUnique({ where: { id: parseInt(playerId2, 10) } })
+    ]);
+    if (playerId1 === playerId2) {
+      return reply.status(400).send({ error: 'You cannot challenge yourself' });
+    }
+    if (!player1Profile || !player2Profile) {
+      return reply.status(404).send({ error: 'One or both players not found' });
+    }
     // Validate required fields
     if (!playerId1 || !playerId2) {
       return reply.status(400).send({
@@ -114,6 +128,30 @@ fastify.post('/challenge', async (request, reply) => {
       console.log(`Player ${playerId2} already connected via websocket - assigned to game ${gameId}`);
     }
     
+    // send in notification service game invite (TODO)
+    try{
+      const notificationResponse = await fetch('http://notification-service:3005/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: player2Profile.id,
+          type: "GAME_INVITE",
+          title: "New Game Invite",
+          content: `User ${player1Profile.displayName} has invited you to a game`,
+          sourceId: player1Profile.id,
+          requestId: gameId
+        })
+      });
+      if (!notificationResponse.ok) {
+        console.error('Failed to send game invite notification:', await notificationResponse.text());
+      } else {
+        console.log('Game invite notification sent successfully');
+      }
+    } catch(err){
+      console.error('Error sending game invite notification:', err);
+    }
     // Notify connected players about the game
     if (session.player1Sock) {
       sendToPlayer(session.player1Sock, JSON.stringify({
@@ -273,8 +311,8 @@ async function updateBall(session, gameId) {
     
     try {
       const cleanSession = {
-        player1username: session.playerId1,
-        player2username: session.playerId2,
+        player1Id: session.playerId1,
+        player2Id: session.playerId2,
         score: session.score,
         createdAt: session.createdAt,
         gameType: session.mode,
@@ -301,25 +339,25 @@ async function updateBall(session, gameId) {
     }
     
     // Update achievements
-    try{
-      const response = await fetch('http://localhost:3006/api/game/achievements', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          winner: winner
-        })
-      });
+    // try{
+    //   const response = await fetch('http://localhost:3006/api/game/achievements', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       winner: winner
+    //     })
+    //   });
 
-      if (!response.ok) {
-        console.error('Failed to update achievements:', await response.text());
-      } else {
-        console.log('Achievements updated successfully');
-      }
-    } catch(error) {
-      console.error('Error updating achievements:', error);
-    }
+    //   if (!response.ok) {
+    //     console.error('Failed to update achievements:', await response.text());
+    //   } else {
+    //     console.log('Achievements updated successfully');
+    //   }
+    // } catch(error) {
+    //   console.error('Error updating achievements:', error);
+    // }
     
     sessions.delete(gameId);
   }
@@ -683,7 +721,100 @@ fastify.get('/stats', async (request, reply) => {
   return stats;
 });
 
-// Get specific game info
+fastify.post('/api/game/reject/:gameId', async (request, reply) => {
+  try {
+    const gameId = request.params.gameId;
+    console.log('rejectGameRequest gameId:', gameId);
+    
+    const session = sessions.get(gameId);
+    if (!session) {
+      console.log('Session not found for gameId:', gameId);
+      return reply.code(404).send({ error: "Session not found." });
+    }
+    
+    // Use the correct property names from the session object
+    const player1Id = session.playerId1;  // Changed from player1Id
+    const player2Id = session.playerId2;  // Changed from player2Id
+    console.log('player1Id:', player1Id);
+    console.log('player2Id:', player2Id);
+    
+    // Get both players profiles using the correct variable names
+    const [player1Profile, player2Profile] = await Promise.all([
+      prisma.userProfile.findUnique({ where: { id: parseInt(player1Id, 10) } }), // Fixed variable name
+      prisma.userProfile.findUnique({ where: { id: parseInt(player2Id, 10) } })  // Fixed variable name
+    ]);
+    
+    if (!player1Profile || !player2Profile) {
+      return reply.status(404).send({ error: 'One or both players not found' });
+    }
+    
+    // Notify the inviter (player1) about the rejection
+    try {
+      const notificationResponse = await fetch('http://notification-service:3005/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: player1Profile.id, // Use the profile id
+          type: "GAME_REJECTED",
+          title: "Game Invitation Rejected",
+          content: `User ${player2Profile.displayName} has rejected your game invitation`,
+          sourceId: player2Profile.id, // Use the profile id
+          requestId: gameId // Changed from gameId to requestId to match your notification structure
+        })
+      });
+      
+      if (!notificationResponse.ok) {
+        console.error('Failed to send game rejection notification:', await notificationResponse.text());
+      } else {
+        console.log('Game rejection notification sent successfully');
+      }
+    } catch(err) {
+      console.error('Error sending game rejection notification:', err);
+    }
+    
+    // Clean up the session since the game was rejected
+    stopGameLoop(gameId);
+    sessions.delete(gameId);
+    disconnected.delete(gameId);
+    
+    // Also notify any connected players via WebSocket
+    if (session.player1Sock) {
+      sendToPlayer(session.player1Sock, JSON.stringify({
+        type: 'gameRejected',
+        gameId: gameId,
+        message: 'Your game invitation was rejected'
+      }));
+      // Clear the gameId from the connection
+      session.player1Sock.gameId = null;
+    }
+    
+    if (session.player2Sock) {
+      sendToPlayer(session.player2Sock, JSON.stringify({
+        type: 'gameRejected',
+        gameId: gameId,
+        message: 'Game invitation rejected successfully'
+      }));
+      // Clear the gameId from the connection
+      session.player2Sock.gameId = null;
+    }
+    
+    return reply.send({ 
+      success: true, 
+      message: 'Game invitation rejected successfully',
+      gameId: gameId
+    });
+    
+  } catch (error) {
+    console.error('Error in reject game endpoint:', error);
+    return reply.status(500).send({ 
+      error: 'Failed to reject game invitation',
+      details: error.message
+    });
+  }
+});
+
 fastify.get('/game/:gameId', async (request, reply) => {
   const { gameId } = request.params;
   const session = sessions.get(gameId);
