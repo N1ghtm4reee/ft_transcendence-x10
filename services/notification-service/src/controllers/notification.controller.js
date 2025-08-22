@@ -67,6 +67,33 @@ function broadcastToUser(userId, data) {
               userConnections.delete(connection);
             }
         }
+        else if (data.type === "GAME_ACCEPTED"){
+            console.log(
+              `Sending game invite notification to user ${userId}:`,
+              data
+            );
+            try {
+              connection.send(
+                JSON.stringify({
+                  type: "GAME_ACCEPTED",
+                  content: data.content,
+                  title: data.title,
+                  gameId: data.gameId,
+                  user: {
+                    id: data.user.id,
+                    displayName: data.user.displayName,
+                    avatar: data.user.avatar,
+                  },
+                })
+              );
+            } catch (error) {
+              console.error(
+                `Error sending game invite notification to user ${userId}:`,
+                error
+              );
+              userConnections.delete(connection);
+            }
+        }
         else if (data.type === "GAME_REJECTED"){
             console.log(
               `Sending game invite notification to user ${userId}:`,

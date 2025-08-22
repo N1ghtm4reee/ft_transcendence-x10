@@ -4,12 +4,18 @@ import url from 'url'
 import gameRoutes from './routes/game.routes.js';
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import fastifyCors from '@fastify/cors';
 
 const prisma = new PrismaClient();
 
 const fastify = Fastify()
 await fastify.register(websocket)
 
+// Register CORS support
+fastify.register(fastifyCors, {
+  origin: true,
+  credentials: true,
+});
 // Use a Map for better performance with object keys
 const sessions = new Map();
 const gameLoops = new Map();
@@ -61,6 +67,65 @@ function createGameSession(playerId1, playerId2, mode = 'classic') {
   return gameId;
 }
 
+fastify.post('/api/game/accepted/:gameId', async (request, reply) => {
+  try {
+    const userId = request.headers['x-user-id'];
+    const gameId = request.params.gameId;
+    console.log('acceptGameRequest gameId:', gameId);
+    const session = sessions.get(gameId);
+    if (!session) {
+      console.log('Session not found for gameId:', gameId);
+      return reply.code(404).send({ error: "Session not found." });
+    }
+    // send notification to the sender that the game was accepted
+    const player1Id = session.playerId1;
+
+    const notifResponse = await fetch('http://notification-service:3005/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: player1Id,
+        type: "GAME_ACCEPTED",
+        title: "Game Invitation Accepted",
+        content: `User ${session.playerId2} has accepted your game invitation now redirecting to game...`,
+        sourceId: session.playerId2,
+        requestId: gameId
+      })
+    });
+    if (!notifResponse.ok) {
+      console.error('Failed to send game accepted notification:', await notifResponse.text());
+    } else {
+      console.log('Game accepted notification sent successfully');
+    }
+    const notifResponse2 = await fetch('http://notification-service:3005/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: session.playerId2,
+        type: "GAME_ACCEPTED",
+        title: "Game Invitation Accepted",
+        content: `redirecting to game...`,
+        sourceId: session.playerId1,
+        requestId: gameId
+      })
+    });
+    if (!notifResponse2.ok) {
+      console.error('Failed to send game accepted notification:', await notifResponse.text());
+    } else {
+      console.log('Game accepted notification sent successfully');
+    }
+  } catch (error) {
+    console.error('Error in accept game endpoint:', error);}
+    return reply.status(500).send({ 
+      error: 'Failed to accept game invitation',
+      details: error.message
+    });
+});
+    
 // POST /challenge endpoint to create a new game
 fastify.post('/api/game/challenge', async (request, reply) => {
   try {
@@ -506,7 +571,7 @@ setInterval(cleanupOldSessions, 300000);
 // WebSocket connection endpoint - players connect with their playerId
 fastify.get('/ws', { websocket: true }, (connection, req) => {
   const { playerId, gameId: reconnectId } = url.parse(req.url, true).query;
-  
+
   if (!playerId) {
     connection.close(1008, 'playerId required');
     return;
