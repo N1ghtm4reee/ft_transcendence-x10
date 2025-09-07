@@ -340,6 +340,19 @@ function startGameLoop(gameId) {
         session.player2Sock && session.player2Sock.readyState === 1;
 
       if (!p1Connected || !p2Connected) {
+        console.log(
+          `⏸️ Game ${gameId} pausing - p1Connected: ${p1Connected}, p2Connected: ${p2Connected}`
+        );
+        console.log(
+          `   Player1 socket: ${!!session.player1Sock}, readyState: ${
+            session.player1Sock?.readyState
+          }`
+        );
+        console.log(
+          `   Player2 socket: ${!!session.player2Sock}, readyState: ${
+            session.player2Sock?.readyState
+          }`
+        );
         pauseGame(gameId);
         return;
       }
@@ -349,12 +362,19 @@ function startGameLoop(gameId) {
     }, 1000 / 60)
   ); // 60 FPS
 }
+function pauseGameWin(gameId) {
+  const session = sessions.get(gameId);
+  if (session) {
+    session.gameStarted = false;
+    console.log(`Game ${gameId} paused due to player win`);
+  }
+}
 
 function pauseGame(gameId) {
   const session = sessions.get(gameId);
   if (session) {
     session.gameStarted = false;
-    console.log(`Game ${gameId} paused due to player disconnection`);
+    console.log(`🛑 Game ${gameId} paused due to player disconnection`);
   }
 }
 
@@ -432,7 +452,7 @@ async function updateBall(session, gameId) {
       session.score.player1 >= winningScore
         ? session.playerId1
         : session.playerId2;
-    pauseGame(gameId);
+    pauseGameWin(gameId);
     stopGameLoop(gameId);
 
     // Broadcast game end
@@ -586,8 +606,18 @@ function handleReconnection(connection, playerId) {
       }
 
       console.log(
-        `${playerId} reconnected to game ${gameId} as player ${playerNumber}`
+        `✅ ${playerId} reconnected to game ${gameId} as player ${playerNumber}`
       );
+
+      // Log current connection status
+      console.log(`🔍 Connection status after ${playerId} joined:`, {
+        player1Connected:
+          !!session.player1Sock && session.player1Sock.readyState === 1,
+        player2Connected:
+          !!session.player2Sock && session.player2Sock.readyState === 1,
+        waitingForPlayers: session.waitingForPlayers,
+        gameStarted: session.gameStarted,
+      });
 
       connection.send(
         JSON.stringify({
@@ -606,7 +636,12 @@ function handleReconnection(connection, playerId) {
       const p2Connected =
         session.player2Sock && session.player2Sock.readyState === 1;
 
+      console.log(
+        `🎮 Checking if game can start: p1Connected=${p1Connected}, p2Connected=${p2Connected}, waitingForPlayers=${session.waitingForPlayers}`
+      );
+
       if (p1Connected && p2Connected && session.waitingForPlayers) {
+        console.log(`🚀 Both players connected - starting game ${gameId}`);
         session.gameStarted = true;
         session.waitingForPlayers = false;
         startGameLoop(gameId);
@@ -642,7 +677,12 @@ setInterval(cleanupOldSessions, 300000);
 fastify.get("/ws", { websocket: true }, (connection, req) => {
   const { playerId, gameId: reconnectId } = url.parse(req.url, true).query;
 
+  console.log(
+    `🔗 WebSocket connection attempt - playerId: ${playerId}, gameId: ${reconnectId}`
+  );
+
   if (!playerId) {
+    console.log("❌ Connection rejected - no playerId");
     connection.close(1008, "playerId required");
     return;
   }
@@ -650,41 +690,21 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
   connection.playerId = playerId;
   playerConnections.set(playerId, connection);
 
-  console.log(`Player ${playerId} connected via WebSocket`);
+  console.log(`✅ Player ${playerId} connected via WebSocket`);
 
-  // Handle explicit reconnection to a specific game
-  if (reconnectId) {
-    const session = sessions.get(reconnectId);
-    if (
-      session &&
-      (session.playerId1 === playerId || session.playerId2 === playerId)
-    ) {
-      handleReconnection(connection, playerId);
-      return;
-    }
-  }
-
-  // Handle automatic reconnection based on existing games
-  if (handleReconnection(connection, playerId)) {
-    return;
-  }
-
-  // Send connection confirmation
-  connection.send(
-    JSON.stringify({
-      type: "connected",
-      playerId: playerId,
-      message: "Connected successfully. Waiting for game assignment.",
-    })
-  );
-
+  // Set up message handler FIRST - before any reconnection logic
   connection.on("message", (msg) => {
     try {
       const message = JSON.parse(msg.toString());
+      console.log("📨 Received message from client:", message);
+
       if (message.type === "move") {
-        console.log("Received move message:", message);
+        console.log("🎮 Processing move message:", message);
         const session = sessions.get(connection.gameId);
-        if (!session) return;
+        if (!session) {
+          console.log("❌ No session found for gameId:", connection.gameId);
+          return;
+        }
 
         let player = null;
         if (connection === session.player1Sock) {
@@ -698,22 +718,28 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
           let newY = currentY;
 
           if (message.direction === "up") {
-            console.log("Moving up");
+            console.log("🔼 Moving up for player:", player);
             newY = Math.max(PADDLE_HEIGHT / 2, currentY - PADDLE_SPEED);
           } else if (message.direction === "down") {
-            console.log("Moving down");
+            console.log("🔽 Moving down for player:", player);
             newY = Math.min(
               GAME_HEIGHT - PADDLE_HEIGHT / 2,
               currentY + PADDLE_SPEED
             );
           }
+
           session.gameBoard[player].paddleY = newY;
-          console.log(`Player ${player} moved paddle to Y: ${newY}`);
+          console.log(
+            `✅ Player ${player} moved paddle from ${currentY} to ${newY}`
+          );
 
           // Immediately broadcast the updated paddle position
           broadcastGameState(connection.gameId);
+        } else {
+          console.log("❌ Could not identify player for connection");
         }
       }
+
       if (message.type === "paddlePosition") {
         const session = sessions.get(connection.gameId);
         if (!session) return;
@@ -734,8 +760,13 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
           session.gameBoard[player].paddleY = clampedY;
         }
       }
+
+      if (message.type === "stop") {
+        console.log("🛑 Processing stop message for player connection");
+        // No need to update paddle position for stop, just log it
+      }
     } catch (error) {
-      console.error("Error parsing message:", error);
+      console.error("❌ Error parsing message:", error);
     }
   });
 
@@ -747,6 +778,47 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
     console.error("WebSocket error:", error);
     handlePlayerDisconnection(connection);
   });
+
+  // Handle explicit reconnection to a specific game
+  if (reconnectId) {
+    console.log(
+      `🔄 Attempting reconnection to game ${reconnectId} for player ${playerId}`
+    );
+    const session = sessions.get(reconnectId);
+    if (
+      session &&
+      (session.playerId1 === playerId || session.playerId2 === playerId)
+    ) {
+      console.log(
+        `✅ Reconnection successful for player ${playerId} to game ${reconnectId}`
+      );
+      handleReconnection(connection, playerId);
+      return;
+    } else {
+      console.log(
+        `❌ Reconnection failed - no valid session found for player ${playerId} in game ${reconnectId}`
+      );
+    }
+  }
+
+  // Handle automatic reconnection based on existing games
+  console.log(`🔍 Checking for existing games for player ${playerId}`);
+  if (handleReconnection(connection, playerId)) {
+    console.log(`✅ Auto-reconnection successful for player ${playerId}`);
+    return;
+  }
+
+  console.log(
+    `📝 No existing game found for player ${playerId} - sending connection confirmation`
+  );
+  // Send connection confirmation
+  connection.send(
+    JSON.stringify({
+      type: "connected",
+      playerId: playerId,
+      message: "Connected successfully. Waiting for game assignment.",
+    })
+  );
 });
 
 function handlePlayerDisconnection(connection) {

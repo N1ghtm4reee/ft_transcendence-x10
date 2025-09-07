@@ -6,7 +6,7 @@ build:
 	@docker network create monitoring_network || true
 
 backend:
-	docker compose -f docker-compose.backend.yml up --build -d
+	docker compose -f docker-compose.backend.yml up --build
 
 ELKUP:
 	@echo "Starting ELK stack..."
