@@ -124,7 +124,7 @@ pipeline {
                 echo "Pushing images to DockerHub..."
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        def services = ["api-gateway", "auth-service", "user-service"]
+                        def services = ["trandandan_api-gateway", "trandandan_auth-service", "trandandan_user-service"]
                         for (svc in services) {
                             try {
                                 sh """
