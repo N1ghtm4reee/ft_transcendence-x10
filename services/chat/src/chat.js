@@ -27,7 +27,7 @@ await app.register(swagger, {
       description: 'API docs for the chat service',
       version: '1.0.0',
     },
-    host: 'localhost:3004',
+    host: '138.197.30.182:3004',
     schemes: ['http'],
     consumes: ['application/json'],
     produces: ['application/json'],

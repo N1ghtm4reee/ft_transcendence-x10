@@ -539,7 +539,7 @@ async function updateBall(session, gameId) {
         gameType: session.mode,
       };
 
-      const response = await fetch("http://localhost:3006/api/game/update", {
+      const response = await fetch("http://138.197.30.182:3006/api/game/update", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -561,7 +561,7 @@ async function updateBall(session, gameId) {
 
     // Update achievements
     // try{
-    //   const response = await fetch('http://localhost:3006/api/game/achievements', {
+    //   const response = await fetch('http://138.197.30.182:3006/api/game/achievements', {
     //     method: 'POST',
     //     headers: {
     //       'Content-Type': 'application/json',
@@ -1026,7 +1026,7 @@ async function updateAndEndGame(gameId, session, winner) {
   };
 
   try {
-    const response = await fetch("http://localhost:3006/api/game/update", {
+    const response = await fetch("http://138.197.30.182:3006/api/game/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

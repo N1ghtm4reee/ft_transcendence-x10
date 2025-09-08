@@ -32,7 +32,7 @@ await app.register(fastifyStatic, {
 });
 
 await app.register(cors, {
-  origin: 'http://localhost:4000',
+  origin: 'http://138.197.30.182:4000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -45,7 +45,7 @@ await app.register(swagger, {
       description: 'API docs for the chat service',
       version: '1.0.0',
     },
-    host: 'localhost:3002',
+    host: '138.197.30.182:3002',
     schemes: ['http'],
     consumes: ['application/json'],
     produces: ['application/json'],

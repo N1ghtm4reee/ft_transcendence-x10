@@ -14,7 +14,7 @@ app.decorate("prisma", prisma);
 
 // Register CORS support
 app.register(fastifyCors, {
-  origin: true,
+  origin: 'http://138.197.30.182:4000',
   credentials: true,
 });
 

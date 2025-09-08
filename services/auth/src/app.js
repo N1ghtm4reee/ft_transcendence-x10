@@ -11,6 +11,7 @@ import twoFactorRoutes from "./routes/2fa.js";
 import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifyMetrics from "fastify-metrics";
+import fastifyEnv from "@fastify/env";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,6 +25,9 @@ const app = fastify({
     }
   }
 });
+
+// env
+await app.register(fastifyEnv, options).after();
 
 // metrics
 await app.register(fastifyMetrics, {
@@ -42,7 +46,7 @@ await app.register(import("@fastify/static"), {
 });
 
 await app.register(cors, {
-  origin: 'http://localhost:4000',
+  origin: `http://${app.config.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -66,7 +70,7 @@ const start = async () => {
   try {
     await app.listen({ port: process.env.AUTH_PORT || 3001, host: "0.0.0.0" });
     console.log(
-      `Server listening on http://localhost:${process.env.AUTH_PORT || 3001}`
+      `Server listening on http://138.197.30.182:${process.env.AUTH_PORT || 3001}`
     );
   } catch (err) {
     app.log.error(err);

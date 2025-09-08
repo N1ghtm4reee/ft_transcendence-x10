@@ -31,7 +31,7 @@ app.addHook('onRequest', async (request, reply) => {
 });
 
 await app.register(cors, {
-  origin: 'http://localhost:4000',
+  origin: 'http://138.197.30.182:4000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
