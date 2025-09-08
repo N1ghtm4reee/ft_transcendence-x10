@@ -15,18 +15,17 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                echo "Building the backend services..."
-                // Use Docker Compose container
-                sh '''
-                docker run --rm \
-                  -v /var/run/docker.sock:/var/run/docker.sock \
-                  -v $PWD:/app -w /app \
-                  docker/compose:2.20.2 \
-                  -f docker-compose.backend.yml build
-                '''
-            }
-        }
+    steps {
+        echo "Building the backend services..."
+        sh '''
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $PWD:/app -w /app \
+          docker/compose:2 -f docker-compose.backend.yml build
+        '''
+    }
+}
+
 
         stage('Test') {
             steps {
