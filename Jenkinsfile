@@ -16,20 +16,31 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo "Building the backend services..."
-                sh 'docker-compose -f docker-compose.backend.yml build'
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v $PWD:/app -w /app \
+                docker/compose:2.17.3 -f docker-compose.backend.yml build
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                echo "Running tests..."
-                // Start backend services in background for testing
-                sh 'docker-compose -f docker-compose.backend.yml up -d'
-                sh 'sleep 10 && echo "✅ Tests passed (placeholder)"'
-                sh 'docker-compose -f docker-compose.backend.yml down'
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v $PWD:/app -w /app \
+                docker/compose:2.17.3 -f docker-compose.backend.yml up -d
+                sleep 10
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v $PWD:/app -w /app \
+                docker/compose:2.17.3 -f docker-compose.backend.yml down
+                '''
             }
         }
+
 
         stage('Push to DockerHub') {
             steps {
