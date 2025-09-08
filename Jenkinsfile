@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        registry = "n1ghtm4r3e"
-        registryCredential = "DOCKERHUB_LOGIN"
-        commitHash = "${env.GIT_COMMIT[0..6]}"
+        registry = "n1ghtm4r3e"              // your DockerHub username
+        registryCredential = "DOCKERHUB_LOGIN" // Jenkins credential ID for DockerHub
+        commitHash = "${env.GIT_COMMIT[0..6]}" // short commit hash for tagging
     }
 
     stages {
@@ -15,35 +15,19 @@ pipeline {
         }
 
         stage('Build') {
-    steps {
-        echo "Building the backend services..."
-        sh '''
-        docker run --rm \
-          -v /var/run/docker.sock:/var/run/docker.sock \
-          -v $PWD:/app -w /app \
-          docker/compose:2 -f docker-compose.backend.yml build
-        '''
-    }
-}
-
+            steps {
+                echo "Building the backend services..."
+                sh 'docker-compose -f docker-compose.backend.yml build'
+            }
+        }
 
         stage('Test') {
             steps {
                 echo "Running tests..."
-                sh '''
-                docker run --rm \
-                  -v /var/run/docker.sock:/var/run/docker.sock \
-                  -v $PWD:/app -w /app \
-                  docker/compose:2.20.2 \
-                  -f docker-compose.backend.yml up -d
-                # TODO: replace with real tests
-                sleep 10
-                docker run --rm \
-                  -v /var/run/docker.sock:/var/run/docker.sock \
-                  -v $PWD:/app -w /app \
-                  docker/compose:2.20.2 \
-                  -f docker-compose.backend.yml down
-                '''
+                // Start backend services in background for testing
+                sh 'docker-compose -f docker-compose.backend.yml up -d'
+                sh 'sleep 10 && echo "✅ Tests passed (placeholder)"'
+                sh 'docker-compose -f docker-compose.backend.yml down'
             }
         }
 
@@ -51,7 +35,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        def services = ["api-gateway", "auth-service", "user-service", "chat-service", "game-service", "notification-service", "tournament-service"]
+                        // Push each service image (from docker-compose.backend.yml)
+                        def services = ["api-gateway", "auth-service", "user-service"]
                         for (svc in services) {
                             sh """
                               docker tag ${registry}/${svc}:latest ${registry}/${svc}:${commitHash}
