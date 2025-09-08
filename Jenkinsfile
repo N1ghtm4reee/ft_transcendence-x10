@@ -59,66 +59,36 @@ pipeline {
                 sh 'echo "Tagged images:" && docker images | grep ${registry}'
             }
         }
-        // stage('Push to DockerHub') {
-        //     // steps {
-        //     //     echo "Logging into DockerHub and pushing images..."
-        //     //     script {
-        //     //         withCredentials([usernamePassword(credentialsId: "${registryCredential}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-        //     //             sh '''
-        //     //                 echo "Logging into DockerHub..."
-        //     //                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                            
-        //     //                 # Push each service
-        //     //                 for svc in trandandan_api-gateway trandandan_auth-service trandandan_user-service; do
-        //     //                     echo "🚀 Pushing ${registry}/$svc..."
-                                
-        //     //                     # Check if the tagged image exists before pushing
-        //     //                     if docker images ${registry}/$svc:latest --format '{{.Repository}}' | grep -q "${registry}/$svc"; then
-        //     //                         docker push ${registry}/$svc:latest
-        //     //                         docker push ${registry}/$svc:${commitHash}
-        //     //                         echo "✅ Successfully pushed ${registry}/$svc"
-        //     //                     else
-        //     //                         echo "❌ Tagged image ${registry}/$svc:latest not found, skipping"
-        //     //                     fi
-        //     //                 done
-                            
-        //     //                 echo "Logging out of DockerHub..."
-        //     //                 docker logout
-        //     //             '''
-        //     //         }
-        //     //     }
-        //     // }
-        // }
         stage('Push to DockerHub') {
-        steps {
-            echo "Pushing images to DockerHub..."
-            withCredentials([usernamePassword(credentialsId: "${registryCredential}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+            steps {
+                echo "Logging into DockerHub and pushing images..."
                 script {
-                    def services = [
-                        "api-gateway" : "trandandan_api-gateway",
-                        "auth-service": "trandandan_auth-service",
-                        "user-service": "trandandan_user-service"
-                    ]
-
-                    // Login to DockerHub
-                    sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
-
-                    // Push all services
-                    services.each { localName, remoteName ->
-                        sh """
-                            echo "Tagging $localName -> ${registry}/${remoteName}"
-                            docker tag ${localName}:latest ${registry}/${remoteName}:latest
-                            docker tag ${localName}:latest ${registry}/${remoteName}:${commitHash}
-
-                            echo "Pushing ${registry}/${remoteName}"
-                            docker push ${registry}/${remoteName}:latest
-                            docker push ${registry}/${remoteName}:${commitHash}
-                        """
+                    withCredentials([usernamePassword(credentialsId: "${registryCredential}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {                        
+                        sh '''
+                            echo "Logging into DockerHub..."
+                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                            
+                            # Push each service
+                            for svc in trandandan_api-gateway trandandan_auth-service trandandan_user-service; do
+                                echo "🚀 Pushing ${registry}/$svc..."
+                                
+                                # Check if the tagged image exists before pushing
+                                if docker images ${registry}/$svc:latest --format '{{.Repository}}' | grep -q "${registry}/$svc"; then
+                                    docker push ${registry}/$svc:latest
+                                    docker push ${registry}/$svc:${commitHash}
+                                    echo "✅ Successfully pushed ${registry}/$svc"
+                                else
+                                    echo "❌ Tagged image ${registry}/$svc:latest not found, skipping"
+                                fi
+                            done
+                            
+                            echo "Logging out of DockerHub..."
+                            docker logout
+                        '''
                     }
                 }
             }
         }
-    }
     }
     post {
         always {
