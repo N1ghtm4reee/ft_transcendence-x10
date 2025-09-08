@@ -399,15 +399,17 @@ async function updateBall(session, gameId) {
   }
 
   const paddleWidth = 0.5;
+  const ballRadius = 0.2; // Define ball radius for server collision detection
 
-  if (ball.x <= paddleWidth && ball.vx < 0) {
+  // Left paddle collision (Player 1)
+  if (ball.x - ballRadius <= paddleWidth && ball.vx < 0) {
     const p1Y = session.gameBoard.player1.paddleY;
     if (
-      ball.y >= p1Y - PADDLE_HEIGHT / 2 &&
-      ball.y <= p1Y + PADDLE_HEIGHT / 2
+      ball.y + ballRadius >= p1Y - PADDLE_HEIGHT / 2 &&
+      ball.y - ballRadius <= p1Y + PADDLE_HEIGHT / 2
     ) {
       ball.vx = -ball.vx;
-      ball.x = paddleWidth;
+      ball.x = paddleWidth + ballRadius;
       const hitPos = (ball.y - p1Y) / (PADDLE_HEIGHT / 2);
       ball.vy += hitPos * 0.05;
       const speedMultiplier = 1.02;
@@ -416,14 +418,15 @@ async function updateBall(session, gameId) {
     }
   }
 
-  if (ball.x >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
+  // Right paddle collision (Player 2)
+  if (ball.x + ballRadius >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
     const p2Y = session.gameBoard.player2.paddleY;
     if (
-      ball.y >= p2Y - PADDLE_HEIGHT / 2 &&
-      ball.y <= p2Y + PADDLE_HEIGHT / 2
+      ball.y + ballRadius >= p2Y - PADDLE_HEIGHT / 2 &&
+      ball.y - ballRadius <= p2Y + PADDLE_HEIGHT / 2
     ) {
       ball.vx = -ball.vx;
-      ball.x = GAME_WIDTH - paddleWidth;
+      ball.x = GAME_WIDTH - paddleWidth - ballRadius;
       const hitPos = (ball.y - p2Y) / (PADDLE_HEIGHT / 2);
       ball.vy += hitPos * 0.05;
       const speedMultiplier = 1.02;
