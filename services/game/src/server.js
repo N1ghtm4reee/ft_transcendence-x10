@@ -29,6 +29,7 @@ const BALL_SPEED = 0.15;
 const PADDLE_HEIGHT = 2;
 const PADDLE_SPEED = 0.5;
 const RECONNECT_TIMEOUT = 30000; // 30 seconds
+const GAME_PAUSE_TIMEOUT = 3000; // 3 seconds grace period before pausing
 
 function createGameSession(playerId1, playerId2, mode = "classic") {
   const gameId = randomUUID();
@@ -60,6 +61,9 @@ function createGameSession(playerId1, playerId2, mode = "classic") {
     gameStarted: false,
     waitingForPlayers: true,
     createdAt: Date.now(),
+    isPaused: false,
+    pauseReason: null,
+    lastUpdateTime: Date.now(),
   };
 
   sessions.set(gameId, session);
@@ -330,34 +334,42 @@ function startGameLoop(gameId) {
   gameLoops.set(
     gameId,
     setInterval(() => {
-      if (!session || !session.gameStarted) {
+      const currentSession = sessions.get(gameId);
+      if (!currentSession || !currentSession.gameStarted) {
         return;
       }
 
       const p1Connected =
-        session.player1Sock && session.player1Sock.readyState === 1;
+        currentSession.player1Sock &&
+        currentSession.player1Sock.readyState === 1;
       const p2Connected =
-        session.player2Sock && session.player2Sock.readyState === 1;
+        currentSession.player2Sock &&
+        currentSession.player2Sock.readyState === 1;
+
+      // If game is paused due to disconnection, don't update
+      if (currentSession.isPaused) {
+        return;
+      }
 
       if (!p1Connected || !p2Connected) {
         console.log(
           `⏸️ Game ${gameId} pausing - p1Connected: ${p1Connected}, p2Connected: ${p2Connected}`
         );
         console.log(
-          `   Player1 socket: ${!!session.player1Sock}, readyState: ${
-            session.player1Sock?.readyState
+          `   Player1 socket: ${!!currentSession.player1Sock}, readyState: ${
+            currentSession.player1Sock?.readyState
           }`
         );
         console.log(
-          `   Player2 socket: ${!!session.player2Sock}, readyState: ${
-            session.player2Sock?.readyState
+          `   Player2 socket: ${!!currentSession.player2Sock}, readyState: ${
+            currentSession.player2Sock?.readyState
           }`
         );
-        pauseGame(gameId);
+        pauseGame(gameId, "disconnection");
         return;
       }
 
-      updateBall(session, gameId);
+      updateBall(currentSession, gameId);
       broadcastGameState(gameId);
     }, 1000 / 60)
   ); // 60 FPS
@@ -366,16 +378,73 @@ function pauseGameWin(gameId) {
   const session = sessions.get(gameId);
   if (session) {
     session.gameStarted = false;
+    session.isPaused = true;
+    session.pauseReason = "win";
     console.log(`Game ${gameId} paused due to player win`);
   }
 }
 
-function pauseGame(gameId) {
+function pauseGame(gameId, reason = "unknown") {
   const session = sessions.get(gameId);
   if (session) {
     session.gameStarted = false;
-    console.log(`🛑 Game ${gameId} paused due to player disconnection`);
+    session.isPaused = true;
+    session.pauseReason = reason;
+    console.log(`🛑 Game ${gameId} paused due to ${reason}`);
+
+    // Notify players about game pause
+    const message = JSON.stringify({
+      type: "gamePaused",
+      reason: reason,
+      message:
+        reason === "disconnection"
+          ? "Game paused - waiting for player to reconnect..."
+          : "Game paused",
+    });
+
+    if (session.player1Sock && session.player1Sock.readyState === 1) {
+      sendToPlayer(session.player1Sock, message);
+    }
+    if (session.player2Sock && session.player2Sock.readyState === 1) {
+      sendToPlayer(session.player2Sock, message);
+    }
   }
+}
+
+function resumeGame(gameId) {
+  const session = sessions.get(gameId);
+  if (session && session.isPaused) {
+    const p1Connected =
+      session.player1Sock && session.player1Sock.readyState === 1;
+    const p2Connected =
+      session.player2Sock && session.player2Sock.readyState === 1;
+
+    if (p1Connected && p2Connected) {
+      session.gameStarted = true;
+      session.isPaused = false;
+      session.pauseReason = null;
+      console.log(`▶️ Game ${gameId} resumed`);
+
+      // Notify players about game resume
+      const message = JSON.stringify({
+        type: "gameResumed",
+        message: "Game resumed!",
+        gameBoard: session.gameBoard,
+        score: session.score,
+      });
+
+      sendToPlayer(session.player1Sock, message);
+      sendToPlayer(session.player2Sock, message);
+
+      // Restart game loop if needed
+      if (!gameLoops.has(gameId)) {
+        startGameLoop(gameId);
+      }
+
+      return true;
+    }
+  }
+  return false;
 }
 
 function stopGameLoop(gameId) {
@@ -594,6 +663,9 @@ function handleReconnection(connection, playerId) {
       if (disInfo && disInfo.playerId === playerId) {
         clearTimeout(disInfo.timeout);
         disconnected.delete(gameId);
+        console.log(
+          `⏰ Cleared disconnection timeout for ${playerId} in game ${gameId}`
+        );
       }
 
       connection.gameId = gameId;
@@ -620,6 +692,8 @@ function handleReconnection(connection, playerId) {
           !!session.player2Sock && session.player2Sock.readyState === 1,
         waitingForPlayers: session.waitingForPlayers,
         gameStarted: session.gameStarted,
+        isPaused: session.isPaused,
+        pauseReason: session.pauseReason,
       });
 
       connection.send(
@@ -630,6 +704,8 @@ function handleReconnection(connection, playerId) {
           gameBoard: session.gameBoard,
           score: session.score,
           mode: session.mode,
+          isPaused: session.isPaused,
+          pauseReason: session.pauseReason,
         })
       );
 
@@ -640,15 +716,23 @@ function handleReconnection(connection, playerId) {
         session.player2Sock && session.player2Sock.readyState === 1;
 
       console.log(
-        `🎮 Checking if game can start: p1Connected=${p1Connected}, p2Connected=${p2Connected}, waitingForPlayers=${session.waitingForPlayers}`
+        `🎮 Checking if game can start/resume: p1Connected=${p1Connected}, p2Connected=${p2Connected}, waitingForPlayers=${session.waitingForPlayers}, isPaused=${session.isPaused}`
       );
 
-      if (p1Connected && p2Connected && session.waitingForPlayers) {
-        console.log(`🚀 Both players connected - starting game ${gameId}`);
-        session.gameStarted = true;
-        session.waitingForPlayers = false;
-        startGameLoop(gameId);
-        broadcastGameState(gameId);
+      if (p1Connected && p2Connected) {
+        if (session.waitingForPlayers) {
+          console.log(`🚀 Both players connected - starting game ${gameId}`);
+          session.gameStarted = true;
+          session.waitingForPlayers = false;
+          session.isPaused = false;
+          startGameLoop(gameId);
+        } else if (
+          session.isPaused &&
+          session.pauseReason === "disconnection"
+        ) {
+          console.log(`🔄 Both players reconnected - resuming game ${gameId}`);
+          resumeGame(gameId);
+        }
       }
 
       return true;
@@ -852,16 +936,22 @@ function handlePlayerDisconnection(connection) {
   }
 
   if (disconnectedPlayerId) {
-    pauseGame(gameId);
+    // Pause the game immediately
+    pauseGame(gameId, "disconnection");
 
-    sendToPlayer(
-      remainingPlayerSock,
-      JSON.stringify({
-        type: "playerDisconnected",
-        message: "Opponent disconnected. Waiting for reconnection...",
-      })
-    );
+    // Notify remaining player about disconnection
+    if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
+      sendToPlayer(
+        remainingPlayerSock,
+        JSON.stringify({
+          type: "playerDisconnected",
+          message: "Opponent disconnected. Waiting for reconnection...",
+          disconnectedPlayer: disconnectedPlayerId,
+        })
+      );
+    }
 
+    // Check if this is a second disconnection (both players disconnected)
     const existingDisconnection = disconnected.get(gameId);
     if (existingDisconnection) {
       clearTimeout(existingDisconnection.timeout);
@@ -891,7 +981,11 @@ function handlePlayerDisconnection(connection) {
       await updateAndEndGame(gameId, session, winner);
 
       const remainingSession = sessions.get(gameId);
-      if (remainingSession && remainingPlayerSock) {
+      if (
+        remainingSession &&
+        remainingPlayerSock &&
+        remainingPlayerSock.readyState === 1
+      ) {
         sendToPlayer(
           remainingPlayerSock,
           JSON.stringify({
@@ -901,6 +995,9 @@ function handlePlayerDisconnection(connection) {
           })
         );
       }
+
+      // Clean up disconnection tracking
+      disconnected.delete(gameId);
     }, RECONNECT_TIMEOUT);
 
     disconnected.set(gameId, {
