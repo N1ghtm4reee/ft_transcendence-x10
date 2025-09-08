@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+        image 'docker:24.0.5-dind'
+        args '-v /var/run/docker.sock:/var/run/docker.sock'
+    }
+
+    }
 
     environment {
         registryCredential = 'DOCKERHUB_LOGIN'  // Jenkins credentials ID
