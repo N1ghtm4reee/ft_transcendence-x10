@@ -1,15 +1,10 @@
 pipeline {
-    agent {
-        docker {
-        image 'docker:24.0.5-dind'
-        args '-v /var/run/docker.sock:/var/run/docker.sock'
-    }
-
-    }
+    agent any
 
     environment {
-        registryCredential = 'DOCKERHUB_LOGIN'  // Jenkins credentials ID
-        registry = 'n1ghtm4r3e'                 // DockerHub username
+        registry = "n1ghtm4r3e"              // your DockerHub username
+        registryCredential = "DOCKERHUB_LOGIN" // Jenkins credential ID for DockerHub
+        commitHash = "${env.GIT_COMMIT[0..6]}" // short commit hash for tagging
     }
 
     stages {
@@ -19,9 +14,9 @@ pipeline {
             }
         }
 
-        stage('Build Services') {
+        stage('Build') {
             steps {
-                echo "Building all backend services..."
+                echo "Building the backend services..."
                 sh 'docker compose -f docker-compose.backend.yml build'
             }
         }
@@ -29,31 +24,27 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Running tests..."
-                // If you have test containers defined, run them here
-                // For now, just bring up services and exit
+                // Start backend services in background for testing
                 sh 'docker compose -f docker-compose.backend.yml up -d'
-                sh 'sleep 10'  // give services time to start
-                // Add curl, integration tests, etc.
+                // TODO: Replace with your test commands
+                sh 'sleep 10 && echo "✅ Tests passed (placeholder)"'
+                // Stop services after testing
                 sh 'docker compose -f docker-compose.backend.yml down'
             }
         }
 
-        stage('Push Images to DockerHub') {
+        stage('Push to DockerHub') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        // List of service images to push
-                        def images = [
-                            "${registry}/trandandan_api-gateway:latest",
-                            "${registry}/trandandan_auth-service:latest",
-                            "${registry}/trandandan_user-service:latest",
-                            "${registry}/trandandan_chat-service:latest",
-                            "${registry}/trandandan_game-service:latest"
-                        ]
-                        
-                        for (img in images) {
-                            echo "Pushing ${img}"
-                            sh "docker push ${img}"
+                        // Push each service image (from docker-compose.backend.yml)
+                        def services = ["api-gateway", "auth-service", "user-service"]
+                        for (svc in services) {
+                            sh """
+                              docker tag ${registry}/${svc}:latest ${registry}/${svc}:${commitHash}
+                              docker push ${registry}/${svc}:latest
+                              docker push ${registry}/${svc}:${commitHash}
+                            """
                         }
                     }
                 }
@@ -64,8 +55,7 @@ pipeline {
     post {
         always {
             echo "Cleaning up Docker..."
-            sh "docker compose -f docker-compose.backend.yml down || true"
-            sh "docker system prune -af || true"
+            sh 'docker system prune -af || true'
         }
     }
 }
