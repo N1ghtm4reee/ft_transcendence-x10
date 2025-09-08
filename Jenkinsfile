@@ -21,51 +21,36 @@ pipeline {
                 echo "Building backend images..."
                 script {
                     def composeCmd = "docker compose"
-                    // fallback if old docker-compose is installed
                     try {
-                        sh "${composeCmd} -v"
+                        sh "${composeCmd} version"
                     } catch (e) {
                         composeCmd = "docker-compose"
                     }
 
-                    // Build services
                     sh "${composeCmd} -f docker-compose.backend.yml build --no-cache"
                 }
                 sh 'docker images | grep -E "(api-gateway|auth-service|user-service)" || echo "No matching images found"'
             }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         echo "Starting backend services for testing..."
-        //         script {
-        //             def composeCmd = "docker compose"
-        //             try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
-
-        //             try {
-        //                 sh "${composeCmd} -f docker-compose.backend.yml up -d"
-        //                 sh "sleep 15" // wait for services
-        //                 sh "docker ps"
-        //                 sh "echo '✅ Placeholder tests passed'"
-        //             } finally {
-        //                 sh "${composeCmd} -f docker-compose.backend.yml down || true"
-        //             }
-        //         }
-        //     }
-        // }
-
         stage('Tag Images') {
             steps {
-                echo "Tagging images for DockerHub..."
+                echo "Tagging images with DockerHub namespace..."
                 script {
-                    def services = ["trandandan_api-gateway", "trandandan_auth-service", "trandandan_user-service"]
-                    for (svc in services) {
+                    def services = [
+                        "api-gateway" : "trandandan_api-gateway",
+                        "auth-service": "trandandan_auth-service",
+                        "user-service": "trandandan_user-service"
+                    ]
+
+                    services.each { localName, remoteName ->
                         sh """
-                            if docker images ${registry}/${svc}:latest --format '{{.Repository}}' | grep -q ${svc}; then
-                                docker tag ${registry}/${svc}:latest ${registry}/${svc}:${commitHash}
-                                echo "Tagged ${registry}/${svc}:${commitHash}"
+                            if docker images ${localName}:latest --format '{{.Repository}}' | grep -q ${localName}; then
+                                echo "Tagging ${localName} as ${registry}/${remoteName}"
+                                docker tag ${localName}:latest ${registry}/${remoteName}:latest
+                                docker tag ${localName}:latest ${registry}/${remoteName}:${commitHash}
                             else
-                                echo "❌ Image ${registry}/${svc}:latest not found"
+                                echo "❌ Local image ${localName}:latest not found"
                             fi
                         """
                     }
@@ -75,37 +60,19 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                echo "Pushing images to DockerHub..."
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        def services = ["trandandan_api-gateway", "trandandan_auth-service", "trandandan_user-service"]
-                        for (svc in services) {
-                            sh """
-                                docker push ${registry}/${svc}:latest
-                                docker push ${registry}/${svc}:${commitHash}
-                            """
-                        }
-                    }
+                echo "Logging into DockerHub and pushing images..."
+                withCredentials([usernamePassword(credentialsId: "${registryCredential}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        
+                        for svc in trandandan_api-gateway trandandan_auth-service trandandan_user-service; do
+                          echo "🚀 Pushing $svc ..."
+                          docker push ${registry}/$svc:latest
+                          docker push ${registry}/$svc:${commitHash}
+                        done
+                    '''
                 }
             }
         }
     }
-
-    // post {
-    //     always {
-    //         echo "Cleaning up Docker..."
-    //         script {
-    //             def composeCmd = "docker compose"
-    //             try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
-    //             sh "${composeCmd} -f docker-compose.backend.yml down --remove-orphans || true"
-    //             sh "docker system prune -f || true"
-    //         }
-    //     }
-    //     success {
-    //         echo "✅ Pipeline completed successfully! Images pushed with tag: ${commitHash}"
-    //     }
-    //     failure {
-    //         echo "❌ Pipeline failed!"
-    //     }
-    // }
 }
