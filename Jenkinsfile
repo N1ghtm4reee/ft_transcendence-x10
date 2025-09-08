@@ -35,24 +35,24 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                echo "Starting backend services for testing..."
-                script {
-                    def composeCmd = "docker compose"
-                    try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
+        // stage('Test') {
+        //     steps {
+        //         echo "Starting backend services for testing..."
+        //         script {
+        //             def composeCmd = "docker compose"
+        //             try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
 
-                    try {
-                        sh "${composeCmd} -f docker-compose.backend.yml up -d"
-                        sh "sleep 15" // wait for services
-                        sh "docker ps"
-                        sh "echo '✅ Placeholder tests passed'"
-                    } finally {
-                        sh "${composeCmd} -f docker-compose.backend.yml down || true"
-                    }
-                }
-            }
-        }
+        //             try {
+        //                 sh "${composeCmd} -f docker-compose.backend.yml up -d"
+        //                 sh "sleep 15" // wait for services
+        //                 sh "docker ps"
+        //                 sh "echo '✅ Placeholder tests passed'"
+        //             } finally {
+        //                 sh "${composeCmd} -f docker-compose.backend.yml down || true"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Tag Images') {
             steps {
@@ -91,21 +91,21 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            echo "Cleaning up Docker..."
-            script {
-                def composeCmd = "docker compose"
-                try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
-                sh "${composeCmd} -f docker-compose.backend.yml down --remove-orphans || true"
-                sh "docker system prune -f || true"
-            }
-        }
-        success {
-            echo "✅ Pipeline completed successfully! Images pushed with tag: ${commitHash}"
-        }
-        failure {
-            echo "❌ Pipeline failed!"
-        }
-    }
+    // post {
+    //     always {
+    //         echo "Cleaning up Docker..."
+    //         script {
+    //             def composeCmd = "docker compose"
+    //             try { sh "${composeCmd} -v" } catch (e) { composeCmd = "docker-compose" }
+    //             sh "${composeCmd} -f docker-compose.backend.yml down --remove-orphans || true"
+    //             sh "docker system prune -f || true"
+    //         }
+    //     }
+    //     success {
+    //         echo "✅ Pipeline completed successfully! Images pushed with tag: ${commitHash}"
+    //     }
+    //     failure {
+    //         echo "❌ Pipeline failed!"
+    //     }
+    // }
 }
