@@ -24,19 +24,19 @@ const app = Fastify({
 
 app.decorate('prisma', prisma);
 
-// await app.register(swagger, {
-//   swagger: {
-//     info: {
-//       title: 'Chat Service API',
-//       description: 'API docs for the chat service',
-//       version: '1.0.0',
-//     },
-//     host: '138.197.30.182:3004',
-//     schemes: ['http'],
-//     consumes: ['application/json'],
-//     produces: ['application/json'],
-//   }
-// });
+await app.register(swagger, {
+  swagger: {
+    info: {
+      title: 'Chat Service API',
+      description: 'API docs for the chat service',
+      version: '1.0.0',
+    },
+    host: '138.197.30.182:3004',
+    schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+  }
+});
 
 // metrics
 await app.register(fastifyMetrics, {
