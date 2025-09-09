@@ -32,7 +32,7 @@ app.addHook('onRequest', async (request, reply) => {
 });
 
 await app.register(cors, {
-  origin: 'http://138.197.30.182:4000',
+  origin: `http://${process.env.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -198,4 +198,5 @@ app.listen({ port: 3000, host: '0.0.0.0' }, (err, address) => {
     process.exit(1);
   }
   app.log.info(`Server listening at ${address}`);
+  console.log(`origin: http://${process.env.FRONT_IP}:4000`);
 });
