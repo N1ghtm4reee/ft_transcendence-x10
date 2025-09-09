@@ -162,10 +162,10 @@ app.register(proxy, createProxyWithHeaders(
   '/api/chat'
 ));
 
-app.register(proxy, createProxyWithHeaders(
-  process.env.CHAT_SERVICE_URL || 'http://notification-service:3005',
-  '/api/notifications'
-));
+app.register(proxy, {
+  upstream : 'http://notification-service:3005',
+  prefix: '/api/notifications'
+});
 
 app.register(proxy, createProxyWithHeaders(
   process.env.GAME_SERVICE_URL || 'http://game-service:3006',
