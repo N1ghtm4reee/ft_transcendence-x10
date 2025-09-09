@@ -5,7 +5,7 @@ import fastifyMetrics from 'fastify-metrics';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 
-dotenv.config();
+// dotenv.config();
 
 const app = fastify({
   logger: {
