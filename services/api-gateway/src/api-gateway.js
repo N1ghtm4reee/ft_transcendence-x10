@@ -188,6 +188,8 @@ app.register(proxy, {
   websocket: true
 });
 
+// need to add game service socket on port 3006
+
 app.get('/health', () => {
   return { message: 'healthy' };
 });
