@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import dotevn from 'dotenv';
+import env from 'dotenv';
 import profileRoutes from './routes/user.routes.js';
 import multipart from '@fastify/multipart'; // later for image profile uploads
 import {friendshipRoutes} from './routes/friendship.routes.js';
@@ -26,13 +26,16 @@ const app = fastify({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+env.config();
+
 await app.register(fastifyStatic, {
   root: path.join(__dirname, "assets"),
   prefix: "/assets/",
 });
 
 await app.register(cors, {
-  origin: 'http://138.197.30.182:4000',
+  origin: `http://${process.env.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -68,8 +71,6 @@ await app.register(fastifyMetrics, {
   defaultMetrics: true
 });
 
-
-dotevn.config();
 
 app.register(multipart, {
   limits: {

@@ -12,6 +12,7 @@ import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifyMetrics from "fastify-metrics";
 import fastifyEnv from "@fastify/env";
+import env from 'dotenv'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +29,7 @@ const app = fastify({
 
 // env
 await app.register(fastifyEnv, options).after();
+env.config();
 
 // metrics
 await app.register(fastifyMetrics, {
@@ -46,7 +48,7 @@ await app.register(import("@fastify/static"), {
 });
 
 await app.register(cors, {
-  origin: `http://${app.config.FRONT_IP}:4000`,
+  origin: `http://${process.env.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

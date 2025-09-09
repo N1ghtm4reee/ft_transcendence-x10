@@ -4,7 +4,7 @@
  * Run with: node test-online-status.js
  */
 
-const API_BASE = "http://localhost:3005/api/notifications";
+const API_BASE = `http://${FRONT_IP}:3005/api/notifications`;
 
 // Function to check if a specific user is online
 async function checkUserOnline(userId) {

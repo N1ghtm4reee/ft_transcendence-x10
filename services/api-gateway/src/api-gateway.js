@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import fastifyMetrics from 'fastify-metrics';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+
 dotenv.config();
 
 const app = fastify({

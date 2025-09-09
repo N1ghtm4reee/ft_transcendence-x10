@@ -4,7 +4,11 @@ import fastifyWebsocket from '@fastify/websocket';
 import { chatRoutes, chatSocket } from './routes/message.routes.js'
 import swagger from '@fastify/swagger';
 import swaggerUI from '@fastify/swagger-ui';
-import fastifyMetrics from 'fastify-metrics'
+import fastifyMetrics from 'fastify-metrics';
+import env from 'dotenv'
+
+
+env.config();
 
 export const prisma = new PrismaClient();
 const app = Fastify({

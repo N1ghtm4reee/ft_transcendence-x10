@@ -779,6 +779,7 @@ export const userController = {
         const notificationServiceUrls = [
           "http://notification-service:3005",
           "http://localhost:3005",
+          `http://${FRONT_IP}:3005`,
         ];
 
         for (const user of users) {

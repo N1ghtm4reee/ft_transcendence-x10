@@ -7,14 +7,17 @@ import {
   notificationRoutes,
   notificationSocket,
 } from "./routes/notification.routes.js";
+import env from 'dotenv'
 
 const app = Fastify({ logger: true });
+
+env.config();
 
 app.decorate("prisma", prisma);
 
 // Register CORS support
 app.register(fastifyCors, {
-  origin: 'http://138.197.30.182:4000',
+  origin: `http://${process.env.FRONT_IP}:4000`,
   credentials: true,
 });
 
