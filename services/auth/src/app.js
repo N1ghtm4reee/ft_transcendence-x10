@@ -11,7 +11,7 @@ import twoFactorRoutes from "./routes/2fa.js";
 import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifyMetrics from "fastify-metrics";
-import fastifyEnv from "@fastify/env";
+// import fastifyEnv from "@fastify/env";
 import env from 'dotenv'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,7 +28,7 @@ const app = fastify({
 });
 
 // env
-await app.register(fastifyEnv, options).after();
+// await app.register(fastifyEnv, options).after();
 env.config();
 
 // metrics
@@ -72,7 +72,8 @@ const start = async () => {
   try {
     await app.listen({ port: process.env.AUTH_PORT || 3001, host: "0.0.0.0" });
     console.log(
-      `Server listening on http://138.197.30.182:${process.env.AUTH_PORT || 3001}`
+      `Server listening on http://138.197.30.182:${process.env.AUTH_PORT || 3001}`,
+      `origin: http://${process.env.FRONT_IP}:4000`,
     );
   } catch (err) {
     app.log.error(err);
