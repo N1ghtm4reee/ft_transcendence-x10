@@ -2,6 +2,8 @@ export const NOTIFICATION_TYPES = {
   MESSAGE: "message",
   FRIEND_REQUEST: "friend_request",
   GAME_INVITE: "game_invite",
+  TOURNAMENT_MATCH: "tournament_match",
+  TOURNAMENT_UPDATE: "tournament_update",
   SYSTEM: "system",
 };
 
@@ -22,6 +24,17 @@ export const NOTIFICATION_TEMPLATES = {
       `${data.senderName || "Someone"} invited you to play ${
         data.gameName || "a game"
       }`,
+  },
+  [NOTIFICATION_TYPES.TOURNAMENT_MATCH]: {
+    title: "Tournament Match Ready",
+    getContent: (data) =>
+      `Your tournament match is ready! Face off against ${
+        data.opponentName || "your opponent"
+      } in ${data.tournamentName || "the tournament"}`,
+  },
+  [NOTIFICATION_TYPES.TOURNAMENT_UPDATE]: {
+    title: "Tournament Update",
+    getContent: (data) => data.message || "Tournament status has been updated",
   },
   [NOTIFICATION_TYPES.SYSTEM]: {
     title: "System Notification",

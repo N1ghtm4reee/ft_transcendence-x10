@@ -31,13 +31,19 @@ const PADDLE_SPEED = 0.5;
 const RECONNECT_TIMEOUT = 30000; // 30 seconds
 const GAME_PAUSE_TIMEOUT = 3000; // 3 seconds grace period before pausing
 
-function createGameSession(playerId1, playerId2, mode = "classic") {
+function createGameSession(
+  playerId1,
+  playerId2,
+  mode = "classic",
+  matchId = null
+) {
   const gameId = randomUUID();
   const session = {
     gameId,
     playerId1,
     playerId2,
     mode,
+    matchId, // Store tournament match ID
     player1Sock: null,
     player2Sock: null,
     gameBoard: {
@@ -151,6 +157,7 @@ fastify.post("/api/game/challenge", async (request, reply) => {
     const playerId1 = request.headers["x-user-id"];
     const playerId2 = request.query.opponentId;
     const mode = request.query.mode || "classic";
+    const matchId = request.query.matchId || null; // Get tournament match ID
 
     // get both players profiles
     const [player1Profile, player2Profile] = await Promise.all([
@@ -198,7 +205,7 @@ fastify.post("/api/game/challenge", async (request, reply) => {
     const gameMode = validModes.includes(mode) ? mode : "classic";
 
     // Create the game session
-    const gameId = createGameSession(playerId1, playerId2, gameMode);
+    const gameId = createGameSession(playerId1, playerId2, gameMode, matchId);
 
     // Check if players are already connected via websocket (but not in any game)
     const player1Connection = playerConnections.get(playerId1);
@@ -557,6 +564,36 @@ async function updateBall(session, gameId) {
       }
     } catch (error) {
       console.error("Error updating game:", error);
+    }
+
+    // Report tournament match result if this is a tournament game
+    if (session.mode === "tournament" && session.matchId) {
+      try {
+        const tournamentResponse = await fetch(
+          `http://tournament-service:3007/api/matches/${session.matchId}/report`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              winnerId: winner,
+              score: JSON.stringify(session.score),
+            }),
+          }
+        );
+
+        if (!tournamentResponse.ok) {
+          console.error(
+            "Failed to report tournament match result:",
+            await tournamentResponse.text()
+          );
+        } else {
+          console.log("Tournament match result reported successfully");
+        }
+      } catch (error) {
+        console.error("Error reporting tournament match result:", error);
+      }
     }
 
     // Update achievements

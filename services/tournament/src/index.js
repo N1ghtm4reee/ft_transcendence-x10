@@ -5,7 +5,6 @@ import swaggerUI from "@fastify/swagger-ui";
 
 const fastify = Fastify({ logger: true });
 
-
 fastify.register(swagger, {
   openapi: {
     info: {

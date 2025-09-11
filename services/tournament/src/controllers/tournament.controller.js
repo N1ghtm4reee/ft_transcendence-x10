@@ -8,22 +8,18 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      const userServiceUrls = "http://user-service:3002";
+      const userServiceUrl = "http://user-service:3002";
 
       let userData = null;
-      for (const baseUrl of userServiceUrls) {
-        try {
-          const response = await fetch(
-            `${baseUrl}/api/user-management/users/${userId}`
-          );
-          if (response.ok) {
-            userData = await response.json();
-            break;
-          }
-        } catch (err) {
-          console.log(`Failed to connect to ${baseUrl}:`, err.message);
-          continue;
+      try {
+        const response = await fetch(
+          `${userServiceUrl}/api/user-management/users/${userId}`
+        );
+        if (response.ok) {
+          userData = await response.json();
         }
+      } catch (err) {
+        console.log(`Failed to connect to ${userServiceUrl}:`, err.message);
       }
 
       if (!userData || !userData.id) {
@@ -84,22 +80,18 @@ export const tournamentControllers = {
     const userId = req.headers["x-user-id"];
 
     try {
-      const userServiceUrls = "http://user-service:3002";
+      const userServiceUrl = "http://user-service:3002";
 
       let userData = null;
-      for (const baseUrl of userServiceUrls) {
-        try {
-          const response = await fetch(
-            `${baseUrl}/api/user-management/users/${userId}`
-          );
-          if (response.ok) {
-            userData = await response.json();
-            break;
-          }
-        } catch (err) {
-          console.log(`Failed to connect to ${baseUrl}:`, err.message);
-          continue;
+      try {
+        const response = await fetch(
+          `${userServiceUrl}/api/user-management/users/${userId}`
+        );
+        if (response.ok) {
+          userData = await response.json();
         }
+      } catch (err) {
+        console.log(`Failed to connect to ${userServiceUrl}:`, err.message);
       }
 
       if (!userData || !userData.id) {
@@ -169,7 +161,9 @@ export const tournamentControllers = {
         },
       });
 
-      res.send({ message: "Player joined tournament successfully" });
+      res
+        .status(200)
+        .send({ message: "Player joined tournament successfully" });
     } catch (error) {
       console.error("Error joining tournament:", error);
       return res.status(500).send({ error: "Internal server error" });
@@ -182,22 +176,18 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      const userServiceUrls = "http://user-service:3002";
+      const userServiceUrl = "http://user-service:3002";
 
       let userData = null;
-      for (const baseUrl of userServiceUrls) {
-        try {
-          const response = await fetch(
-            `${baseUrl}/api/user-management/users/${userId}`
-          );
-          if (response.ok) {
-            userData = await response.json();
-            break;
-          }
-        } catch (err) {
-          console.log(`Failed to connect to ${baseUrl}:`, err.message);
-          continue;
+      try {
+        const response = await fetch(
+          `${userServiceUrl}/api/user-management/users/${userId}`
+        );
+        if (response.ok) {
+          userData = await response.json();
         }
+      } catch (err) {
+        console.log(`Failed to connect to ${userServiceUrl}:`, err.message);
       }
 
       if (!userData || !userData.id) {
@@ -247,7 +237,7 @@ export const tournamentControllers = {
         where: { id: player.id },
       });
 
-      res.send({ message: "Player left tournament successfully" });
+      res.status(200).send({ message: "Player left tournament successfully" });
     } catch (error) {
       console.error("Error leaving tournament:", error);
       return res.status(500).send({ error: "Internal server error" });
@@ -260,22 +250,18 @@ export const tournamentControllers = {
       return res.status(400).send({ error: "Missing user ID" });
     }
     try {
-      const userServiceUrls = "http://user-service:3002";
+      const userServiceUrl = "http://user-service:3002";
 
       let userData = null;
-      for (const baseUrl of userServiceUrls) {
-        try {
-          const response = await fetch(
-            `${baseUrl}/api/user-management/users/${userId}`
-          );
-          if (response.ok) {
-            userData = await response.json();
-            break;
-          }
-        } catch (err) {
-          console.log(`Failed to connect to ${baseUrl}:`, err.message);
-          continue;
+      try {
+        const response = await fetch(
+          `${userServiceUrl}/api/user-management/users/${userId}`
+        );
+        if (response.ok) {
+          userData = await response.json();
         }
+      } catch (err) {
+        console.log(`Failed to connect to ${userServiceUrl}:`, err.message);
       }
 
       if (!userData || !userData.id) {
@@ -335,7 +321,9 @@ export const tournamentControllers = {
         data: { status: "started" },
       });
 
-      res.send({ message: "Tournament started and matches generated" });
+      res
+        .status(200)
+        .send({ message: "Tournament started and matches generated" });
     } catch (error) {
       console.error("Error starting tournament:", error);
       res.status(500).send({ error: "Internal server error" });
@@ -354,7 +342,7 @@ export const tournamentControllers = {
         return res.status(404).send({ error: "Tournament not found" });
       }
 
-      res.send({
+      res.status(200).send({
         message: "Tournament status retrieved successfully",
         tournament,
       });
@@ -368,6 +356,8 @@ export const tournamentControllers = {
     const { id: tournamentId } = req.params;
 
     try {
+      const userServiceUrl = "http://user-service:3002";
+
       const tournament = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
       });
@@ -381,7 +371,57 @@ export const tournamentControllers = {
         orderBy: [{ round: "asc" }],
       });
 
-      const matchesByRound = matches.reduce((acc, match) => {
+      // Fetch player details for each match
+      const matchesWithPlayers = await Promise.all(
+        matches.map(async (match) => {
+          let player1 = null;
+          let player2 = null;
+
+          // Fetch player1 details if exists
+          if (match.player1Id) {
+            try {
+              const response = await fetch(
+                `${userServiceUrl}/api/user-management/users/${match.player1Id}`
+              );
+              if (response.ok) {
+                player1 = await response.json();
+              }
+            } catch (error) {
+              console.error(
+                `Failed to fetch player1 ${match.player1Id}:`,
+                error
+              );
+            }
+          }
+
+          // Fetch player2 details if exists
+          if (match.player2Id) {
+            try {
+              const response = await fetch(
+                `${userServiceUrl}/api/user-management/users/${match.player2Id}`
+              );
+              if (response.ok) {
+                player2 = await response.json();
+              }
+            } catch (error) {
+              console.error(
+                `Failed to fetch player2 ${match.player2Id}:`,
+                error
+              );
+            }
+          }
+
+          return {
+            ...match,
+            player1,
+            player2,
+            player1Score: match.score ? JSON.parse(match.score).player1 : null,
+            player2Score: match.score ? JSON.parse(match.score).player2 : null,
+          };
+        })
+      );
+
+      const matchesByRound = matchesWithPlayers.reduce((acc, match) => {
         if (!acc[match.round]) {
           acc[match.round] = [];
         }
@@ -389,12 +429,12 @@ export const tournamentControllers = {
         return acc;
       }, {});
 
-      res.send({
+      res.status(200).send({
         message: "Tournament matches retrieved successfully",
         tournamentId,
-        totalMatches: matches.length,
+        totalMatches: matchesWithPlayers.length,
         totalRounds: Object.keys(matchesByRound).length,
-        matches: matches,
+        matches: matchesWithPlayers,
         matchesByRound: matchesByRound,
       });
     } catch (error) {
@@ -410,7 +450,7 @@ export const tournamentControllers = {
           players: true,
         },
       });
-      res.send({
+      res.status(200).send({
         message: "List of tournaments retrieved successfully",
         tournaments,
       });
@@ -466,7 +506,7 @@ export const tournamentControllers = {
         );
       }
 
-      res.send({ message: "Match result recorded successfully" });
+      res.status(200).send({ message: "Match result recorded successfully" });
     } catch (error) {
       console.error("Error reporting match result:", error);
       res.status(500).send({ error: "Internal server error" });
@@ -499,7 +539,7 @@ export const tournamentControllers = {
         data: { status: "cancelled" },
       });
 
-      res.send({ message: "Tournament stopped successfully" });
+      res.status(200).send({ message: "Tournament stopped successfully" });
     } catch (error) {
       console.error("Error stopping tournament:", error);
       res.status(500).send({ error: "Internal server error" });
@@ -530,12 +570,100 @@ export const tournamentControllers = {
         },
       });
 
-      res.send({
+      res.status(200).send({
         message:
           "Tournament reset successfully. All matches cleared and status set to pending.",
       });
     } catch (error) {
       console.error("Error resetting tournament:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  },
+
+  startTournamentMatch: async (req, res) => {
+    const userId = req.headers["x-user-id"];
+    if (!userId) {
+      return res.status(400).send({ error: "Missing user ID" });
+    }
+
+    const { matchId } = req.params;
+    const { opponentId } = req.body;
+
+    try {
+      // Get the match details
+      const match = await prisma.Match.findUnique({
+        where: { id: matchId },
+        include: { Tournament: true },
+      });
+
+      if (!match) {
+        return res.status(404).send({ error: "Match not found" });
+      }
+
+      // Verify that the requesting user is part of this match
+      if (match.player1Id !== userId && match.player2Id !== userId) {
+        return res
+          .status(403)
+          .send({ error: "You are not part of this match" });
+      }
+
+      // Verify that the opponent is the other player in the match
+      const expectedOpponent =
+        match.player1Id === userId ? match.player2Id : match.player1Id;
+      if (expectedOpponent !== opponentId) {
+        return res
+          .status(400)
+          .send({ error: "Invalid opponent for this match" });
+      }
+
+      if (match.status !== "pending") {
+        return res
+          .status(400)
+          .send({ error: "Match is not in pending status" });
+      }
+
+      // Create a game challenge with tournament mode
+      try {
+        const gameResponse = await fetch(
+          "http://game-service:3006/api/game/challenge",
+          {
+            method: "POST",
+            headers: {
+              "x-user-id": userId,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              opponentId: opponentId,
+              mode: "tournament",
+              matchId: matchId,
+            }),
+          }
+        );
+
+        if (!gameResponse.ok) {
+          const errorText = await gameResponse.text();
+          throw new Error(`Failed to create game: ${errorText}`);
+        }
+
+        const gameResult = await gameResponse.json();
+
+        // Update match status to indicate game has started
+        await prisma.Match.update({
+          where: { id: matchId },
+          data: { status: "ongoing" },
+        });
+
+        res.status(200).send({
+          message: "Tournament match game created successfully",
+          gameId: gameResult.gameId,
+          match: match,
+        });
+      } catch (error) {
+        console.error("Error creating tournament game:", error);
+        res.status(500).send({ error: "Failed to create tournament game" });
+      }
+    } catch (error) {
+      console.error("Error starting tournament match:", error);
       res.status(500).send({ error: "Internal server error" });
     }
   },

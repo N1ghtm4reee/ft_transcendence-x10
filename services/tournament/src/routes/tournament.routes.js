@@ -49,4 +49,8 @@ export default async function tournamentRoutes(fastify, opts) {
     "/matches/:matchId/report",
     tournamentControllers.reportMatchResult
   );
+
+  fastify.post("/match/:matchId/challenge", {
+    handler: tournamentControllers.startTournamentMatch,
+  });
 }

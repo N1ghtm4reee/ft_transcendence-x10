@@ -3,7 +3,6 @@ import { prisma } from "../config/database.js";
 const socketConnections = new Map();
 
 function broadcastToUser(userId, data) {
-  
   const userConnections = socketConnections.get(parseInt(userId));
   if (userConnections && userConnections.size > 0) {
     console.log(
@@ -40,86 +39,84 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-        } else if (data.type === "GAME_INVITE"){
-            console.log(
-              `Sending game invite notification to user ${userId}:`,
-              data
+        } else if (data.type === "GAME_INVITE") {
+          console.log(
+            `Sending game invite notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "GAME_INVITE",
+                content: data.content,
+                title: data.title,
+                gameId: data.gameId,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
             );
-            try {
-              connection.send(
-                JSON.stringify({
-                  type: "GAME_INVITE",
-                  content: data.content,
-                  title: data.title,
-                  gameId: data.gameId,
-                  user: {
-                    id: data.user.id,
-                    displayName: data.user.displayName,
-                    avatar: data.user.avatar,
-                  },
-                })
-              );
-            } catch (error) {
-              console.error(
-                `Error sending game invite notification to user ${userId}:`,
-                error
-              );
-              userConnections.delete(connection);
-            }
-        }
-        else if (data.type === "GAME_ACCEPTED"){
-            console.log(
-              `Sending game invite notification to user ${userId}:`,
-              data
+          } catch (error) {
+            console.error(
+              `Error sending game invite notification to user ${userId}:`,
+              error
             );
-            try {
-              connection.send(
-                JSON.stringify({
-                  type: "GAME_ACCEPTED",
-                  content: data.content,
-                  title: data.title,
-                  gameId: data.gameId,
-                  user: {
-                    id: data.user.id,
-                    displayName: data.user.displayName,
-                    avatar: data.user.avatar,
-                  },
-                })
-              );
-            } catch (error) {
-              console.error(
-                `Error sending game invite notification to user ${userId}:`,
-                error
-              );
-              userConnections.delete(connection);
-            }
-        }
-        else if (data.type === "GAME_REJECTED"){
-            console.log(
-              `Sending game invite notification to user ${userId}:`,
-              data
+            userConnections.delete(connection);
+          }
+        } else if (data.type === "GAME_ACCEPTED") {
+          console.log(
+            `Sending game invite notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "GAME_ACCEPTED",
+                content: data.content,
+                title: data.title,
+                gameId: data.gameId,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
             );
-            try {
-              connection.send(
-                JSON.stringify({
-                  type: "GAME_REJECTED",
-                  content: data.content,
-                  title: data.title,
-                  gameId: data.gameId,
-                  user: {
-                    id: data.user.id,
-                    displayName: data.user.displayName,
-                    avatar: data.user.avatar,
-                  },
-                })
-              );
-            } catch (error) {
-              console.error(
-                `Error sending game invite notification to user ${userId}:`,
-                error
-              );
-              userConnections.delete(connection);
-            }
+          } catch (error) {
+            console.error(
+              `Error sending game invite notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
+        } else if (data.type === "GAME_REJECTED") {
+          console.log(
+            `Sending game invite notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "GAME_REJECTED",
+                content: data.content,
+                title: data.title,
+                gameId: data.gameId,
+                user: {
+                  id: data.user.id,
+                  displayName: data.user.displayName,
+                  avatar: data.user.avatar,
+                },
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending game invite notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         } else if (data.type === "FRIEND_REQUEST_ACCEPTED") {
           console.log(
             `Sending friend request accepted notification to user ${userId}:`,
@@ -171,6 +168,58 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+        } else if (data.type === "TOURNAMENT_MATCH") {
+          console.log(
+            `Sending tournament match notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "TOURNAMENT_MATCH",
+                content: data.content,
+                title: data.title,
+                matchId: data.matchId,
+                tournamentId: data.tournamentId,
+                tournamentName: data.tournamentName,
+                opponent: {
+                  id: data.opponent.id,
+                  displayName: data.opponent.displayName,
+                  avatar: data.opponent.avatar,
+                },
+                round: data.round,
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending tournament match notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
+        } else if (data.type === "TOURNAMENT_UPDATE") {
+          console.log(
+            `Sending tournament update notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: "TOURNAMENT_UPDATE",
+                content: data.content,
+                title: data.title,
+                tournamentId: data.tournamentId,
+                tournamentName: data.tournamentName,
+                message: data.message,
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending tournament update notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         } else if (data.type === "STATUS_UPDATE") {
           console.log(`Sending status update to user ${userId}:`, data);
 
@@ -192,8 +241,7 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-        } 
-        else if (data.type === "FRIEND_REMOVED") {
+        } else if (data.type === "FRIEND_REMOVED") {
           console.log(
             `Sending friend removed notification to user ${userId}:`,
             data
@@ -321,7 +369,7 @@ export const notificationControllers = {
           type,
           title,
           content,
-          sourceId: String(sourceId)
+          sourceId: String(sourceId),
         },
       });
       const notificationData = {
@@ -541,7 +589,7 @@ export const notificationControllers = {
       });
 
       return res.send({
-        totalOnline: onlineUsers.length
+        totalOnline: onlineUsers.length,
       });
     } catch (error) {
       console.error("Error getting online users:", error);
@@ -661,7 +709,7 @@ export const notificationControllers = {
             headers: {
               "Content-Type": "application/json",
               "x-user-id": userId,
-            }
+            },
           }
         )
           .then((res) => res.json())
@@ -673,8 +721,7 @@ export const notificationControllers = {
           });
         if (response) {
           console.log("Last seen updated successfully for user:", userId);
-        }
-        else {
+        } else {
           console.error("Failed to update last seen for user:", userId);
         }
       }
