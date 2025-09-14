@@ -738,6 +738,7 @@ function handleReconnection(connection, playerId) {
           type: "reconnection",
           gameId: gameId,
           playerNumber: playerNumber,
+          opponent: playerNumber === 1 ? session.playerId2 : session.playerId1,
           gameBoard: session.gameBoard,
           score: session.score,
           mode: session.mode,
