@@ -9,19 +9,23 @@ export const signupSchema = {
         type: "string",
         minLength: 2,
         maxLength: 50,
+        pattern: "^[a-zA-Z0-9\\s\\-_\\.]+$",
         description: "User full name",
       },
       password: {
         type: "string",
-        minLength: 6,
-        description: "User password (minimum 6 characters)",
+        minLength: 8,
+        maxLength: 128,
+        description: "User password (minimum 8 characters)",
       },
       email: {
         type: "string",
         format: "email",
+        maxLength: 255,
         description: "User email address",
       },
     },
+    additionalProperties: false,
   },
   response: {
     201: {
@@ -50,7 +54,53 @@ export const signupSchema = {
     400: {
       type: "object",
       properties: {
-        error: { type: "string", example: "User already exists" },
+        error: { type: "string", example: "Validation failed" },
+        message: {
+          type: "string",
+          example: "Request data does not match the required schema",
+        },
+        details: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              field: { type: "string", example: "email" },
+              message: {
+                type: "string",
+                example: "Please provide a valid email address",
+              },
+              value: { description: "The invalid value that was provided" },
+              constraint: { type: "string", example: "format" },
+            },
+          },
+        },
+        statusCode: { type: "integer", example: 400 },
+      },
+    },
+    422: {
+      type: "object",
+      properties: {
+        error: { type: "string", example: "Validation failed" },
+        message: {
+          type: "string",
+          description: "Detailed validation error message",
+        },
+        details: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              field: {
+                type: "string",
+                description: "Field that failed validation",
+              },
+              message: {
+                type: "string",
+                description: "Validation error message",
+              },
+            },
+          },
+        },
       },
     },
     500: {
@@ -70,15 +120,22 @@ export const loginSchema = {
       email: {
         type: "string",
         format: "email",
+        maxLength: 255,
         description: "User email address",
       },
-      password: { type: "string", description: "User password" },
+      password: {
+        type: "string",
+        minLength: 1,
+        maxLength: 128,
+        description: "User password",
+      },
       twoFactorToken: {
         type: "string",
         pattern: "^[0-9]{6}$",
         description: "6-digit 2FA code (if 2FA is enabled)",
       },
     },
+    additionalProperties: false,
   },
   response: {
     200: {
@@ -118,7 +175,27 @@ export const loginSchema = {
     400: {
       type: "object",
       properties: {
-        error: { type: "string", example: "Email and password are required" },
+        error: { type: "string", example: "Validation failed" },
+        message: {
+          type: "string",
+          example: "Request data does not match the required schema",
+        },
+        details: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              field: { type: "string", example: "email" },
+              message: {
+                type: "string",
+                example: "Please provide a valid email address",
+              },
+              value: { description: "The invalid value that was provided" },
+              constraint: { type: "string", example: "format" },
+            },
+          },
+        },
+        statusCode: { type: "integer", example: 400 },
       },
     },
     401: {

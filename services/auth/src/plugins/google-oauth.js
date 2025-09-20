@@ -6,13 +6,13 @@ async function googleOAuthPlugin(fastify, options) {
     name: "googleOAuth2",
     credentials: {
       client: {
-        id: process.env.GOOGLE_CLIENT_ID,
-        secret: process.env.GOOGLE_CLIENT_SECRET,
+        id: process.env.GOOGLE_CLIENT_ID || "",
+        secret: process.env.GOOGLE_CLIENT_SECRET || "",
       },
       auth: oauth2.GOOGLE_CONFIGURATION,
     },
     startRedirectPath: "/google",
-    callbackUri: process.env.GOOGLE_REDIRECT_URI,
+    callbackUri: process.env.GOOGLE_REDIRECT_URI || "http://localhost:3001/google/callback",
     scope: ["profile", "email"],
   });
 }
