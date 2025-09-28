@@ -645,25 +645,25 @@ async function updateBall(session, gameId) {
     }
 
     // Update achievements
-    // try{
-    //   const response = await fetch('http://localhost:3006/api/game/achievements', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       winner: winner
-    //     })
-    //   });
+    try {
+    const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        winner: winner
+      })
+    });
 
-    //   if (!response.ok) {
-    //     console.error('Failed to update achievements:', await response.text());
-    //   } else {
-    //     console.log('Achievements updated successfully');
-    //   }
-    // } catch(error) {
-    //   console.error('Error updating achievements:', error);
-    // }
+    if (!achievementResponse.ok) {
+      console.error('Failed to update achievements:', await achievementResponse.text());
+    } else {
+      console.log('Achievements updated successfully for winner:', winner);
+    }
+  } catch(error) {
+    console.error('Error updating achievements:', error);
+  }
 
     sessions.delete(gameId);
   }
@@ -727,6 +727,9 @@ function broadcastGameEnd(gameId, winner) {
 
   sendToPlayer(session.player1Sock, endMessage);
   sendToPlayer(session.player2Sock, endMessage);
+
+  // check for achievements for both users
+  // /game/achievement
 }
 
 function sendToPlayer(socket, message) {
@@ -1133,6 +1136,27 @@ async function updateAndEndGame(gameId, session, winner) {
   }
 
   stopGameLoop(gameId);
+
+  try {
+  const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      winner: winner
+    })
+  });
+
+  if (!achievementResponse.ok) {
+    console.error('Failed to update achievements in disconnect scenario:', await achievementResponse.text());
+  } else {
+    console.log('Achievements updated successfully for disconnect winner:', winner);
+  }
+} catch(error) {
+  console.error('Error updating achievements in disconnect scenario:', error);
+}
+
   sessions.delete(gameId);
   disconnected.delete(gameId);
 }
