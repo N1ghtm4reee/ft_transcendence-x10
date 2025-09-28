@@ -5,4 +5,8 @@ export async function internalRoutes(app) {
         schema: internalSchemas.getChatPermissions,
         handler: internalControllers.getChatPermissions
     })
+
+    app.post('achievements/:id', {
+        handler: internalControllers.addAchievements
+    })
 }

@@ -82,4 +82,8 @@ export const internalControllers = {
             );
         }
     },
+    addAchievements: async (req, res) => {
+        // implement adding achievements  and sending notifications of unlocking new achievements
+
+    }
 }

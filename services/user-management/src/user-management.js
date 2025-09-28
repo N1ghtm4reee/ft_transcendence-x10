@@ -91,6 +91,7 @@ app.register(blocksRoutes, { prefix: '/api/user-management' });
 
 app.register(internalRoutes, { prefix: '/internal/user-management' })
 
+// post /internal/user-management/achievements/:id
 
 app.get('/health', () => {
   app.log.info('health request, healthy response !!');

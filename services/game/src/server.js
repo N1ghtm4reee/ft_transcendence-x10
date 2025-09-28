@@ -70,6 +70,7 @@ function createGameSession(
     isPaused: false,
     pauseReason: null,
     lastUpdateTime: Date.now(),
+    invitationTimeout: null,
   };
 
   sessions.set(gameId, session);
@@ -142,6 +143,11 @@ fastify.post("/api/game/accepted/:gameId", async (request, reply) => {
     } else {
       console.log("Game accepted notification sent successfully");
     }
+    if (session.invitationTimeout) {
+      clearTimeout(session.invitationTimeout);
+      session.invitationTimeout = null;
+      console.log(`Cleared invitation timeout for game ${gameId}`);
+    }
   } catch (error) {
     console.error("Error in accept game endpoint:", error);
   }
@@ -149,7 +155,41 @@ fastify.post("/api/game/accepted/:gameId", async (request, reply) => {
     error: "Failed to accept game invitation",
     details: error.message,
   });
+
 });
+
+function clearGameId(gameId) {
+  console.log(`Cleaning up expired game invitation: ${gameId}`);
+  const session = sessions.get(gameId);
+  if (session) {
+    // Stop any game loop if it exists
+    stopGameLoop(gameId);
+    
+    // Notify connected players that the invitation expired
+    if (session.player1Sock) {
+      sendToPlayer(session.player1Sock, JSON.stringify({
+        type: "gameExpired",
+        gameId: gameId,
+        message: "Game invitation has expired"
+      }));
+      session.player1Sock.gameId = null;
+    }
+    
+    if (session.player2Sock) {
+      sendToPlayer(session.player2Sock, JSON.stringify({
+        type: "gameExpired", 
+        gameId: gameId,
+        message: "Game invitation has expired"
+      }));
+      session.player2Sock.gameId = null;
+    }
+    
+    // Clean up the session
+    sessions.delete(gameId);
+    disconnected.delete(gameId);
+  }
+}
+
 
 // POST /challenge endpoint to create a new game
 fastify.post("/api/game/challenge", async (request, reply) => {
@@ -240,6 +280,14 @@ fastify.post("/api/game/challenge", async (request, reply) => {
 
     // send in notification service game invite (TODO)
     try {
+      // add timeout for invitation and clear game session
+      const timeoutID = setTimeout(() => {
+        clearGameId(gameId);
+      }, 5000);
+      
+      // store the timeout id so i can clear it if accpeted or rejected
+      session.invitationTimeout = timeoutID;
+
       const notificationResponse = await fetch(
         "http://notification-service:3005/api/notifications",
         {
@@ -1201,6 +1249,12 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
       );
       // Clear the gameId from the connection
       session.player2Sock.gameId = null;
+      if (session.invitationTimeout) {
+      clearTimeout(session.invitationTimeout);
+      session.invitationTimeout = null;
+      console.log(`Cleared invitation timeout for game ${gameId}`);
+    }
+
     }
 
     return reply.send({
