@@ -579,6 +579,10 @@ async function updateBall(session, gameId) {
       session.score.player1 >= winningScore
         ? session.playerId1
         : session.playerId2;
+    // const loser =
+    //   session.score.player1 >= winningScore
+    //     ? session.playerId2
+    //     : session.playerId1;
     pauseGameWin(gameId);
     stopGameLoop(gameId);
 

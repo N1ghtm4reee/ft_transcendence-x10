@@ -24,4 +24,8 @@ export default async function profileRoutes(app) {
     handler: gameController.addAchievements
   })
 
+  app.get('/leaderboard', {
+    // schema: gameSchemas.leaderboard,
+    handler: gameController.leaderboard
+  })
 }
