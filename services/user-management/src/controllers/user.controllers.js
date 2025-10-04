@@ -535,6 +535,7 @@ export const userController = {
           bio: true,
           avatar: true,
           createdAt: true,
+          rank: true,
         },
       });
 

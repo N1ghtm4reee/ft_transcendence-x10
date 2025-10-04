@@ -1129,6 +1129,7 @@ async function updateAndEndGame(gameId, session, winner) {
         gameId,
       }),
     });
+    // updateRanks 
 
     if (!response.ok) {
       console.error("Failed to update game:", await response.text());
@@ -1138,6 +1139,20 @@ async function updateAndEndGame(gameId, session, winner) {
   } catch (error) {
     console.error("Error updating game:", error);
   }
+  try {
+      const response = await fetch("http://localhost:3006/api/game/updateRanks", {
+        method: "PUT",
+      });
+
+      if (!response.ok) {
+        console.error("Failed to update game:", await response.text());
+      } else {
+        console.log("Game updated successfully with walkover score.");
+      }
+    } catch (error) {
+      console.error("Error updating game:", error);
+    }
+
 
   stopGameLoop(gameId);
 

@@ -308,6 +308,35 @@ export const gameController = {
     console.log("\n\ntop 100 users :" + topPlayers + "\n\n");
 
     res.code(200).send(topPlayers);
+  },
+
+  updateRanks: async (req, res) => {
+    try {
+      const players = await prisma.gameStats.findMany({
+        orderBy: { score: 'desc' },
+        include: { user: true },
+      });
+
+      if (!players.length) {
+        return res.code(200).send({ message: "No players found to rank." });
+      }
+
+      await prisma.$transaction(
+        players.map((player, index) =>
+          prisma.userProfile.update({
+            where: { id: player.userId },
+            data: { rank: index + 1 },
+          })
+        )
+      );
+
+      console.log("Ranks updated successfully");
+      return res.code(200).send({ message: "Ranks updated successfully" });
+
+    } catch (error) {
+      console.error("Error updating ranks:", error);
+      return res.code(500).send({ error: "Internal server error" });
+    }
   }
 
 };

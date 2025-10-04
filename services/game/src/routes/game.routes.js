@@ -28,4 +28,9 @@ export default async function profileRoutes(app) {
     // schema: gameSchemas.leaderboard,
     handler: gameController.leaderboard
   })
+
+  app.put('/updateRanks', {
+    // schema: gameSchemas.updateRanks,
+    handler: gameController.updateRanks
+  })
 }

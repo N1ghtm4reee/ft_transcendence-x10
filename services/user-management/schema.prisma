@@ -16,16 +16,17 @@ enum FriendshipStatus {
 }
 
 model UserProfile {
-  id       Int    @id // Same ID as auth service user
+  id          Int    @id // Same ID as auth service user
  
   displayName String     @unique @map("display_name")
   avatar      String?
   bio         String?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  rank        Int?   @map("rank")
 
-  lastSeen DateTime @default(now()) @updatedAt @map("last_seen")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  lastSeen    DateTime @default(now()) @updatedAt @map("last_seen")
 
   sentFriendRequests     Friendship[] @relation("FriendshipRequester")
   receivedFriendRequests Friendship[] @relation("FriendshipReceiver")
