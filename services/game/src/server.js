@@ -510,6 +510,277 @@ function stopGameLoop(gameId) {
   }
 }
 
+// async function updateBall(session, gameId) {
+//   const ball = session.gameBoard.ball;
+
+//   ball.x += ball.vx;
+//   ball.y += ball.vy;
+
+//   if (ball.y <= 0 || ball.y >= GAME_HEIGHT) {
+//     ball.vy = -ball.vy;
+//     ball.y = Math.max(0, Math.min(GAME_HEIGHT, ball.y));
+//     ball.vy += (Math.random() - 0.5) * 0.01;
+//   }
+
+//   const paddleWidth = 0.5;
+//   const ballRadius = 0.2; // Define ball radius for server collision detection
+
+//   // Left paddle collision (Player 1)
+//   if (ball.x - ballRadius <= paddleWidth && ball.vx < 0) {
+//     const p1Y = session.gameBoard.player1.paddleY;
+//     if (
+//       ball.y + ballRadius >= p1Y - PADDLE_HEIGHT / 2 &&
+//       ball.y - ballRadius <= p1Y + PADDLE_HEIGHT / 2
+//     ) {
+//       ball.vx = -ball.vx;
+//       ball.x = paddleWidth + ballRadius;
+//       const hitPos = (ball.y - p1Y) / (PADDLE_HEIGHT / 2);
+//       ball.vy += hitPos * 0.05;
+//       const speedMultiplier = 1.02;
+//       ball.vx *= speedMultiplier;
+//       ball.vy *= speedMultiplier;
+//     }
+//   }
+
+//   // Right paddle collision (Player 2)
+//   if (ball.x + ballRadius >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
+//     const p2Y = session.gameBoard.player2.paddleY;
+//     if (
+//       ball.y + ballRadius >= p2Y - PADDLE_HEIGHT / 2 &&
+//       ball.y - ballRadius <= p2Y + PADDLE_HEIGHT / 2
+//     ) {
+//       ball.vx = -ball.vx;
+//       ball.x = GAME_WIDTH - paddleWidth - ballRadius;
+//       const hitPos = (ball.y - p2Y) / (PADDLE_HEIGHT / 2);
+//       ball.vy += hitPos * 0.05;
+//       const speedMultiplier = 1.02;
+//       ball.vx *= speedMultiplier;
+//       ball.vy *= speedMultiplier;
+//     }
+//   }
+
+//   if (ball.x < 0) {
+//     session.score.player2++;
+//     resetBall(session);
+//     broadcastScoreUpdate(gameId);
+//   } else if (ball.x > GAME_WIDTH) {
+//     session.score.player1++;
+//     resetBall(session);
+//     broadcastScoreUpdate(gameId);
+//   }
+
+//   const winningScore = session.mode === "tournament" ? 3 : 5;
+
+//   if (
+//     session.score.player1 >= winningScore ||
+//     session.score.player2 >= winningScore
+//   ) {
+//     const winner =
+//       session.score.player1 >= winningScore
+//         ? session.playerId1
+//         : session.playerId2;
+//     // const loser =
+//     //   session.score.player1 >= winningScore
+//     //     ? session.playerId2
+//     //     : session.playerId1;
+//     pauseGameWin(gameId);
+//     stopGameLoop(gameId);
+
+//     // Broadcast game end
+//     broadcastGameEnd(gameId, winner);
+
+//     try {
+//       const cleanSession = {
+//         player1Id: session.playerId1,
+//         player2Id: session.playerId2,
+//         score: session.score,
+//         createdAt: session.createdAt,
+//         gameType: session.mode,
+//       };
+
+//       const response = await fetch("http://localhost:3006/api/game/update", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           session: cleanSession,
+//           gameId,
+//         }),
+//       });
+
+//       if (!response.ok) {
+//         console.error("Failed to update game:", await response.text());
+//       } else {
+//         console.log("Game updated successfully");
+//       }
+//     } catch (error) {
+//       console.error("Error updating game:", error);
+//     }
+
+//     // Report tournament match result if this is a tournament game
+//     if (session.mode === "tournament" && session.matchId) {
+//       try {
+//         const tournamentResponse = await fetch(
+//           `http://tournament-service:3007/api/matches/${session.matchId}/report`,
+//           {
+//             method: "POST",
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify({
+//               winnerId: winner,
+//               score: JSON.stringify(session.score),
+//             }),
+//           }
+//         );
+
+//         if (!tournamentResponse.ok) {
+//           console.error(
+//             "Failed to report tournament match result:",
+//             await tournamentResponse.text()
+//           );
+//         } else {
+//           console.log("Tournament match result reported successfully");
+//         }
+//       } catch (error) {
+//         console.error("Error reporting tournament match result:", error);
+//       }
+//     }
+
+//     // Update achievements
+//     try {
+//     const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({
+//         winner: winner
+//       })
+//     });
+
+//     if (!achievementResponse.ok) {
+//       console.error('Failed to update achievements:', await achievementResponse.text());
+//     } else {
+//       console.log('Achievements updated successfully for winner:', winner);
+//     }
+//   } catch(error) {
+//     console.error('Error updating achievements:', error);
+//   }
+
+//     sessions.delete(gameId);
+//   }
+
+//   const maxSpeed = 0.4;
+//   if (Math.abs(ball.vx) > maxSpeed) ball.vx = maxSpeed * Math.sign(ball.vx);
+//   if (Math.abs(ball.vy) > maxSpeed) ball.vy = maxSpeed * Math.sign(ball.vy);
+
+//   const minSpeed = 0.1;
+//   if (Math.abs(ball.vx) < minSpeed) ball.vx = minSpeed * Math.sign(ball.vx);
+//   if (Math.abs(ball.vy) < minSpeed) ball.vy = minSpeed * Math.sign(ball.vy);
+// }
+
+async function handleGameCompletion(gameId, session, winner) {
+  try {
+    // Update game in database
+    const cleanSession = {
+      player1Id: session.playerId1,
+      player2Id: session.playerId2,
+      score: session.score,
+      createdAt: session.createdAt,
+      gameType: session.mode,
+    };
+
+    const response = await fetch("http://localhost:3006/api/game/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        session: cleanSession,
+        gameId,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to update game:", await response.text());
+    } else {
+      console.log("Game updated successfully");
+    }
+  } catch (error) {
+    console.error("Error updating game:", error);
+  }
+
+  // Report tournament match result if this is a tournament game
+  if (session.mode === "tournament" && session.matchId) {
+    try {
+      const tournamentResponse = await fetch(
+        `http://tournament-service:3007/api/matches/${session.matchId}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            winnerId: winner,
+            score: JSON.stringify(session.score),
+          }),
+        }
+      );
+
+      if (!tournamentResponse.ok) {
+        console.error(
+          "Failed to report tournament match result:",
+          await tournamentResponse.text()
+        );
+      } else {
+        console.log("Tournament match result reported successfully");
+      }
+    } catch (error) {
+      console.error("Error reporting tournament match result:", error);
+    }
+  }
+
+  // Update achievements
+  try {
+    const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        winner: winner
+      })
+    });
+
+    if (!achievementResponse.ok) {
+      console.error('Failed to update achievements:', await achievementResponse.text());
+    } else {
+      console.log('Achievements updated successfully for winner:', winner);
+    }
+  } catch(error) {
+    console.error('Error updating achievements:', error);
+  }
+
+  // Update ranks
+  try {
+    const rankResponse = await fetch("http://localhost:3006/api/game/updateRanks", {
+      method: "PUT",
+    });
+
+    if (!rankResponse.ok) {
+      console.error("Failed to update ranks:", await rankResponse.text());
+    } else {
+      console.log("Ranks updated successfully");
+    }
+  } catch (error) {
+    console.error("Error updating ranks:", error);
+  }
+}
+
+
+
 async function updateBall(session, gameId) {
   const ball = session.gameBoard.ball;
 
@@ -523,7 +794,7 @@ async function updateBall(session, gameId) {
   }
 
   const paddleWidth = 0.5;
-  const ballRadius = 0.2; // Define ball radius for server collision detection
+  const ballRadius = 0.2;
 
   // Left paddle collision (Player 1)
   if (ball.x - ballRadius <= paddleWidth && ball.vx < 0) {
@@ -579,95 +850,13 @@ async function updateBall(session, gameId) {
       session.score.player1 >= winningScore
         ? session.playerId1
         : session.playerId2;
-    // const loser =
-    //   session.score.player1 >= winningScore
-    //     ? session.playerId2
-    //     : session.playerId1;
+    
     pauseGameWin(gameId);
     stopGameLoop(gameId);
 
-    // Broadcast game end
     broadcastGameEnd(gameId, winner);
 
-    try {
-      const cleanSession = {
-        player1Id: session.playerId1,
-        player2Id: session.playerId2,
-        score: session.score,
-        createdAt: session.createdAt,
-        gameType: session.mode,
-      };
-
-      const response = await fetch("http://localhost:3006/api/game/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          session: cleanSession,
-          gameId,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error("Failed to update game:", await response.text());
-      } else {
-        console.log("Game updated successfully");
-      }
-    } catch (error) {
-      console.error("Error updating game:", error);
-    }
-
-    // Report tournament match result if this is a tournament game
-    if (session.mode === "tournament" && session.matchId) {
-      try {
-        const tournamentResponse = await fetch(
-          `http://tournament-service:3007/api/matches/${session.matchId}/report`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              winnerId: winner,
-              score: JSON.stringify(session.score),
-            }),
-          }
-        );
-
-        if (!tournamentResponse.ok) {
-          console.error(
-            "Failed to report tournament match result:",
-            await tournamentResponse.text()
-          );
-        } else {
-          console.log("Tournament match result reported successfully");
-        }
-      } catch (error) {
-        console.error("Error reporting tournament match result:", error);
-      }
-    }
-
-    // Update achievements
-    try {
-    const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        winner: winner
-      })
-    });
-
-    if (!achievementResponse.ok) {
-      console.error('Failed to update achievements:', await achievementResponse.text());
-    } else {
-      console.log('Achievements updated successfully for winner:', winner);
-    }
-  } catch(error) {
-    console.error('Error updating achievements:', error);
-  }
+    await handleGameCompletion(gameId, session, winner);
 
     sessions.delete(gameId);
   }
@@ -680,6 +869,7 @@ async function updateBall(session, gameId) {
   if (Math.abs(ball.vx) < minSpeed) ball.vx = minSpeed * Math.sign(ball.vx);
   if (Math.abs(ball.vy) < minSpeed) ball.vy = minSpeed * Math.sign(ball.vy);
 }
+
 
 function resetBall(session) {
   const ball = session.gameBoard.ball;
@@ -731,9 +921,6 @@ function broadcastGameEnd(gameId, winner) {
 
   sendToPlayer(session.player1Sock, endMessage);
   sendToPlayer(session.player2Sock, endMessage);
-
-  // check for achievements for both users
-  // /game/achievement
 }
 
 function sendToPlayer(socket, message) {
@@ -1121,64 +1308,55 @@ async function updateAndEndGame(gameId, session, winner) {
   try {
     const response = await fetch("http://localhost:3006/api/game/update", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        session: cleanSession,
-        gameId,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session: cleanSession, gameId }),
     });
-    // updateRanks 
 
     if (!response.ok) {
-      console.error("Failed to update game:", await response.text());
+      console.error("❌ Failed to update game:", await response.text());
     } else {
-      console.log("Game updated successfully with walkover score.");
+      console.log("✅ Game updated successfully with walkover score.");
     }
   } catch (error) {
-    console.error("Error updating game:", error);
+    console.error("⚠️ Error updating game:", error);
   }
+
   try {
-      const response = await fetch("http://localhost:3006/api/game/updateRanks", {
-        method: "PUT",
-      });
+    const rankResponse = await fetch("http://localhost:3006/api/game/updateRanks", {
+      method: "PUT",
+    });
 
-      if (!response.ok) {
-        console.error("Failed to update game:", await response.text());
-      } else {
-        console.log("Game updated successfully with walkover score.");
-      }
-    } catch (error) {
-      console.error("Error updating game:", error);
+    if (!rankResponse.ok) {
+      console.error("❌ Failed to update rank:", await rankResponse.text());
+    } else {
+      console.log("✅ Rank updated successfully.");
     }
-
+  } catch (error) {
+    console.error("⚠️ Error updating rank:", error);
+  }
 
   stopGameLoop(gameId);
 
   try {
-  const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      winner: winner
-    })
-  });
+    const achievementResponse = await fetch("http://localhost:3006/api/game/achievements", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ winner }),
+    });
 
-  if (!achievementResponse.ok) {
-    console.error('Failed to update achievements in disconnect scenario:', await achievementResponse.text());
-  } else {
-    console.log('Achievements updated successfully for disconnect winner:', winner);
+    if (!achievementResponse.ok) {
+      console.error("❌ Failed to update achievements:", await achievementResponse.text());
+    } else {
+      console.log("🏆 Achievements updated successfully for disconnect winner:", winner);
+    }
+  } catch (error) {
+    console.error("⚠️ Error updating achievements:", error);
   }
-} catch(error) {
-  console.error('Error updating achievements in disconnect scenario:', error);
-}
 
   sessions.delete(gameId);
   disconnected.delete(gameId);
 }
+
 
 // Health check endpoint
 fastify.get("/health", async (request, reply) => {
