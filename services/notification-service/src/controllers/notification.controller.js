@@ -264,14 +264,11 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-        } else {
+        }
+        else {
+          // ACHIEVEMENT_UNLOCKED
           try {
-            connection.send(
-              JSON.stringify({
-                type: "notification",
-                data: data,
-              })
-            );
+            connection.send(JSON.stringify(data));
             console.log(`Notification sent to user ${userId}`);
           } catch (error) {
             console.error(
@@ -280,6 +277,7 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+
         }
       } else {
         console.log(`Removing closed connection for user ${userId}`);
