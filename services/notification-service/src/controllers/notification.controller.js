@@ -264,8 +264,7 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-        }
-        else {
+        } else {
           // ACHIEVEMENT_UNLOCKED
           try {
             connection.send(JSON.stringify(data));
@@ -277,7 +276,6 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-
         }
       } else {
         console.log(`Removing closed connection for user ${userId}`);
@@ -336,7 +334,8 @@ async function broadcastToAllUsers(userId, connectionType) {
 export const notificationControllers = {
   createNotification: async (req, res) => {
     try {
-      const { userId, type, title, content, sourceId, requestId } = req.body;
+      const { userId, type, title, content, sourceId, requestId, gameResult } =
+        req.body;
       let user;
       try {
         const userResponse = await fetch(
@@ -387,6 +386,11 @@ export const notificationControllers = {
           avatar: user.avatar,
         },
       };
+
+      // Add gameResult for GAME_FINISHED notifications
+      if (type === "GAME_FINISHED" && gameResult) {
+        notificationData.gameResult = gameResult;
+      }
 
       broadcastToUser(notification.userId, notificationData);
 

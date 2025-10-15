@@ -12,6 +12,7 @@ export const notificationSchemas = {
             "FRIEND_REQUEST_ACCEPTED",
             "FRIEND_REQUEST_DECLINED",
             "FRIEND_REMOVED",
+            "GAME_FINISHED",
             "system",
           ],
         },

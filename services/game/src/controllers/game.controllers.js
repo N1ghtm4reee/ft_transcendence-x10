@@ -3,7 +3,6 @@ import prisma from "../prisma/prisma.js";
 export const gameController = {
   // rejectGameRequest: async function (request, reply) {
 
-
   // },
   addGameHistory: async function (request, reply) {
     const { session, gameId } = request.body;
@@ -17,18 +16,18 @@ export const gameController = {
     ]);
 
     if (!player1 || !player2) {
-      console.log('error finding one of the players');
+      console.log("error finding one of the players");
       return reply.code(404).send({ error: "One or both players not found." });
     }
 
-    let result1 = 'draw';
-    let result2 = 'draw';
+    let result1 = "draw";
+    let result2 = "draw";
     if (session.score.player1 > session.score.player2) {
-      result1 = 'win';
-      result2 = 'loss';
+      result1 = "win";
+      result2 = "loss";
     } else if (session.score.player1 < session.score.player2) {
-      result1 = 'loss';
-      result2 = 'win';
+      result1 = "loss";
+      result2 = "win";
     }
 
     const duration = Math.floor((Date.now() - session.createdAt) / 1000);
@@ -40,23 +39,27 @@ export const gameController = {
       ]);
 
       // --- update streaks ---
-      const newCurrentStreak1 = result1 === 'win'
-        ? (currentStats1?.currentStreak || 0) + 1
-        : 0;
-      const newBestStreak1 = Math.max(newCurrentStreak1, currentStats1?.bestStreak || 0);
+      const newCurrentStreak1 =
+        result1 === "win" ? (currentStats1?.currentStreak || 0) + 1 : 0;
+      const newBestStreak1 = Math.max(
+        newCurrentStreak1,
+        currentStats1?.bestStreak || 0
+      );
 
-      const newCurrentStreak2 = result2 === 'win'
-        ? (currentStats2?.currentStreak || 0) + 1
-        : 0;
-      const newBestStreak2 = Math.max(newCurrentStreak2, currentStats2?.bestStreak || 0);
+      const newCurrentStreak2 =
+        result2 === "win" ? (currentStats2?.currentStreak || 0) + 1 : 0;
+      const newBestStreak2 = Math.max(
+        newCurrentStreak2,
+        currentStats2?.bestStreak || 0
+      );
 
       // --- score calculation helper ---
       const calculateScore = (stats, result, newBestStreak) => {
         const wins = stats?.wins || 0;
         const losses = stats?.losses || 0;
         const totalGames = (stats?.totalGames || 0) + 1;
-        const updatedWins = result === 'win' ? wins + 1 : wins;
-        const updatedLosses = result === 'loss' ? losses + 1 : losses;
+        const updatedWins = result === "win" ? wins + 1 : wins;
+        const updatedLosses = result === "loss" ? losses + 1 : losses;
 
         const winRate = totalGames > 0 ? updatedWins / totalGames : 0;
         const score = updatedWins * 3 + newBestStreak;
@@ -74,24 +77,24 @@ export const gameController = {
             userId: player1Id,
             gameId: String(gameId),
             opponentId: player2Id,
-            gameType: 'classic',
+            gameType: "classic",
             result: result1,
             playerScore: session.score.player1,
             opponentScore: session.score.player2,
-            duration: duration
-          }
+            duration: duration,
+          },
         }),
         prisma.gameHistory.create({
           data: {
             userId: player2Id,
             gameId: String(gameId),
             opponentId: player1Id,
-            gameType: 'classic',
+            gameType: "classic",
             result: result2,
             playerScore: session.score.player2,
             opponentScore: session.score.player1,
-            duration: duration
-          }
+            duration: duration,
+          },
         }),
 
         // update player1 stats
@@ -110,15 +113,15 @@ export const gameController = {
             id: player1Id,
             userId: player1Id,
             totalGames: 1,
-            wins: result1 === 'win' ? 1 : 0,
-            losses: result1 === 'loss' ? 1 : 0,
+            wins: result1 === "win" ? 1 : 0,
+            losses: result1 === "loss" ? 1 : 0,
             tournaments: 0,
             tournamentsWins: 0,
             bestStreak: newBestStreak1,
             currentStreak: newCurrentStreak1,
-            winRate: result1 === 'win' ? 1 : 0,
-            score: result1 === 'win' ? 3 : 0,
-          }
+            winRate: result1 === "win" ? 1 : 0,
+            score: result1 === "win" ? 3 : 0,
+          },
         }),
 
         // update player2 stats
@@ -137,23 +140,114 @@ export const gameController = {
             id: player2Id,
             userId: player2Id,
             totalGames: 1,
-            wins: result2 === 'win' ? 1 : 0,
-            losses: result2 === 'loss' ? 1 : 0,
+            wins: result2 === "win" ? 1 : 0,
+            losses: result2 === "loss" ? 1 : 0,
             tournaments: 0,
             tournamentsWins: 0,
             bestStreak: newBestStreak2,
             currentStreak: newCurrentStreak2,
-            winRate: result2 === 'win' ? 1 : 0,
-            score: result2 === 'win' ? 3 : 0,
-          }
-        })
+            winRate: result2 === "win" ? 1 : 0,
+            score: result2 === "win" ? 3 : 0,
+          },
+        }),
       ]);
 
-      console.log('Game results stored:', { results });
-      return reply.code(200).send({ message: "Game history added successfully." });
+      console.log("Game results stored:", { results });
 
+      // Send GAME_FINISHED notifications to both players
+      try {
+        // Send notification to player1
+        await fetch("http://notification-service:3005/api/notifications/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: player1Id,
+            type: "GAME_FINISHED",
+            title:
+              result1 === "win"
+                ? "Game Won!"
+                : result1 === "loss"
+                ? "Game Lost"
+                : "Game Draw",
+            content: `${session.gameType || "Game"} against ${
+              player2.displayName
+            } finished: ${session.score.player1}-${session.score.player2}`,
+            sourceId: player2Id,
+            gameResult: {
+              id: gameId,
+              playedAt: new Date().toISOString(),
+              result: result1,
+              playerScore: session.score.player1,
+              opponentScore: session.score.player2,
+              opponent: {
+                id: player2.id,
+                displayName: player2.displayName,
+                avatar: player2.avatar,
+                bio: player2.bio,
+                status: "offline",
+                rank: player2.rank,
+                createdAt: player2.createdAt,
+              },
+              opponentName: player2.displayName,
+            },
+          }),
+        });
+
+        // Send notification to player2
+        await fetch("http://notification-service:3005/api/notifications/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: player2Id,
+            type: "GAME_FINISHED",
+            title:
+              result2 === "win"
+                ? "Game Won!"
+                : result2 === "loss"
+                ? "Game Lost"
+                : "Game Draw",
+            content: `${session.gameType || "Game"} against ${
+              player1.displayName
+            } finished: ${session.score.player2}-${session.score.player1}`,
+            sourceId: player1Id,
+            gameResult: {
+              id: gameId,
+              playedAt: new Date().toISOString(),
+              result: result2,
+              playerScore: session.score.player2,
+              opponentScore: session.score.player1,
+              opponent: {
+                id: player1.id,
+                displayName: player1.displayName,
+                avatar: player1.avatar,
+                bio: player1.bio,
+                status: "offline",
+                rank: player1.rank,
+                createdAt: player1.createdAt,
+              },
+              opponentName: player1.displayName,
+            },
+          }),
+        });
+
+        console.log("Game finished notifications sent successfully");
+      } catch (notificationError) {
+        console.error(
+          "Error sending game finished notifications:",
+          notificationError
+        );
+        // Don't fail the game update if notifications fail
+      }
+
+      return reply
+        .code(200)
+        .send({ message: "Game history added successfully." });
     } catch (error) {
-      console.error('Error storing game results:', error);
+      console.error("Error storing game results:", error);
       throw error;
     }
   },
@@ -166,24 +260,24 @@ export const gameController = {
 
       // Find winner profile by ID (assuming winner is the user ID)
       const winnerProfile = await prisma.userProfile.findUnique({
-        where: { id: parseInt(winner) }
+        where: { id: parseInt(winner) },
       });
 
       if (!winnerProfile) {
-        console.log('Error: winnerProfile not found for ID:', winner);
+        console.log("Error: winnerProfile not found for ID:", winner);
         return reply.code(404).send({ error: "Winner profile not found." });
       }
 
       const winnerId = winnerProfile.id;
-      console.log('winnerId:', winnerId);
+      console.log("winnerId:", winnerId);
 
       // Get current stats
       const stats = await prisma.gameStats.findUnique({
-        where: { userId: winnerId }
+        where: { userId: winnerId },
       });
 
       if (!stats) {
-        console.log('No game stats found for user:', winnerId);
+        console.log("No game stats found for user:", winnerId);
         return reply.send({ message: "No game stats found for user." });
       }
 
@@ -195,9 +289,9 @@ export const gameController = {
           where: { id: winnerId },
           select: {
             achievements: {
-              where: { id: 1 }
-            }
-          }
+              where: { id: 1 },
+            },
+          },
         });
 
         if (!hasFirstWinAchievement.achievements.length) {
@@ -205,15 +299,15 @@ export const gameController = {
             where: { id: winnerId },
             data: {
               achievements: {
-                connect: { id: 1 }
-              }
-            }
+                connect: { id: 1 },
+              },
+            },
           });
-          console.log('Added First Win achievement to player:', winnerId);
+          console.log("Added First Win achievement to player:", winnerId);
 
           // Get achievement details for notification
           const achievement = await prisma.achievements.findUnique({
-            where: { id: 1 }
+            where: { id: 1 },
           });
           newAchievements.push(achievement);
         }
@@ -225,9 +319,9 @@ export const gameController = {
           where: { id: winnerId },
           select: {
             achievements: {
-              where: { id: 2 }
-            }
-          }
+              where: { id: 2 },
+            },
+          },
         });
 
         if (!hasMasterAchievement.achievements.length) {
@@ -235,15 +329,15 @@ export const gameController = {
             where: { id: winnerId },
             data: {
               achievements: {
-                connect: { id: 2 }
-              }
-            }
+                connect: { id: 2 },
+              },
+            },
           });
-          console.log('Added Master achievement to player:', winnerId);
+          console.log("Added Master achievement to player:", winnerId);
 
           // Get achievement details for notification
           const achievement = await prisma.achievements.findUnique({
-            where: { id: 2 }
+            where: { id: 2 },
           });
           newAchievements.push(achievement);
         }
@@ -276,35 +370,37 @@ export const gameController = {
               await notificationResponse.text()
             );
           } else {
-            console.log(`Achievement unlock notification sent for: ${achievement.title}`);
+            console.log(
+              `Achievement unlock notification sent for: ${achievement.title}`
+            );
           }
         } catch (error) {
-          console.error(`Error sending achievement notification for ${achievement.title}:`, error);
+          console.error(
+            `Error sending achievement notification for ${achievement.title}:`,
+            error
+          );
         }
       }
 
       return reply.send({
         message: "Achievement check completed successfully.",
         newAchievements: newAchievements.length,
-        achievements: newAchievements.map(a => a.title)
+        achievements: newAchievements.map((a) => a.title),
       });
-
     } catch (error) {
-      console.error('Error in addAchievements:', error);
+      console.error("Error in addAchievements:", error);
       return reply.code(500).send({ error: "Internal server error" });
     }
   },
 
   leaderboard: async (req, res) => {
     // get top 100 users by top points
-    const userId = req.headers['x-user-id'];
+    const userId = req.headers["x-user-id"];
     const topPlayers = await prisma.gameStats.findMany({
-      orderBy: [
-        { score: 'desc' },
-      ],
+      orderBy: [{ score: "desc" }],
       take: 100,
       include: { user: true },
-    })
+    });
     console.log("\n\ntop 100 users :" + topPlayers + "\n\n");
 
     res.code(200).send(topPlayers);
@@ -313,7 +409,7 @@ export const gameController = {
   updateRanks: async (req, res) => {
     try {
       const players = await prisma.gameStats.findMany({
-        orderBy: { score: 'desc' },
+        orderBy: { score: "desc" },
         include: { user: true },
       });
 
@@ -332,11 +428,9 @@ export const gameController = {
 
       console.log("Ranks updated successfully");
       return res.code(200).send({ message: "Ranks updated successfully" });
-
     } catch (error) {
       console.error("Error updating ranks:", error);
       return res.code(500).send({ error: "Internal server error" });
     }
-  }
-
+  },
 };
