@@ -39,134 +39,88 @@ export const userController = {
       return reply.status(500).send({ error: "Failed to fetch profiles" });
     }
   },
+getProfile: async function (request, reply) {
+  try {
+    const userName = request.params.username;
+    const requesterId = parseInt(request.headers["x-user-id"]);
 
-  getProfile: async function (request, reply) {
-    // convert username to userId
+    // Fetch profile
+    const user = await prisma.userProfile.findUnique({
+      where: { displayName: userName },
+    });
 
-    // const user = await prisma.userProfile.findFirst({
-    //     where: { displayName: userName },
-    // });
-
-    try {
-      // get username from params
-      const userName = request.params.username;
-      console.log("userName: ", userName);
-      // get the requester userId from headers to get h2h vs you
-      const requesterId = parseInt(request.headers["x-user-id"]);
-
-      // get user profile (name, bio, avatar)
-      const user = await prisma.userProfile.findUnique({
-        where: {
-          displayName: userName,
-        },
-      });
-
-      if (!user) {
-        console.log("user not found");
-        return reply.status(404).send({ error: "User profile not found" });
-      }
-      console.log("user: ", user);
-      // get user game history h2h
-      const gamesH2h = await prisma.gameHistory.findMany({
-        where: {
-          userId: user.id,
-          opponentId: requesterId,
-        },
-        orderBy: {
-          playedAt: "desc",
-        },
-        take: 5,
-      });
-      console.log("gamesH2h: ", gamesH2h);
-      // get user overall game history
-      const games = await prisma.gameHistory.findMany({
-        where: {
-          userId: user.id,
-        },
-        orderBy: {
-          playedAt: "desc",
-        },
-        take: 10,
-      });
-
-
-      // const user = await prisma.userProfile.findUnique({
-      //   where: { id: userId },
-      //   select: {
-      //     id: true,
-      //     displayName: true,
-      //     avatar: true,
-      //     bio: true,
-      //   },
-      // });
-
-      console.log("games: ", games);
-      const gamesWithOpponents = await Promise.all(
-        games.map(async (game) => {
-          const opponent = await prisma.userProfile.findUnique({
-            where: { id: game.opponentId },
-            select: {
-              id: true,
-              displayName: true,
-              avatar: true,
-              bio: true,
-            },
-          });
-          return {
-            ...game,
-            opponentName: opponent?.displayName || "Unknown",
-          };
-        })
-      );
-
-      console.log("gamesWithOpponents: ", gamesWithOpponents);
-      // ?
-      // if (games.length === 0)
-      //     return reply.send('No games played')
-      // get user achievements
-      const userAchievements = await prisma.userProfile.findUnique({
-        where: { id: user.id },
-        include: {
-          achievements: {
-            select: { id: true },
-          },
-        },
-      });
-      console.log("achievements: ", userAchievements.achievements);
-      // get game stats (streak and tournament wins) included
-      const stats = await prisma.gameStats.findUnique({
-        where: { id: user.id },
-      });
-      console.log("stats: ", stats);
-      // overall record
-      const totalWins = gamesH2h.reduce((sum, game) => {
-        return sum + (game.result === 'win' ? 1 : 0);
-      }, 0);
-
-      const totalGames = gamesH2h.length;
-
-      const isOnline = await getOnlineStatus(user.id);
-      console.log("isOnline: ", isOnline);
-
-      return reply.send({
-        profile: {
-          ...user,
-          status: isOnline ? "online" : "offline",
-        },
-        gameHistory: gamesWithOpponents,
-        gamesH2h,
-        achievements: userAchievements.achievements.map((a) => a.id),
-        gameStats: stats,
-        overallRecord: {
-        wins: totalWins,
-        losses: totalGames - totalWins,
-      },
-      });
-    } catch (error) {
-      console.log("error: ", error);
-      return reply.status(500).send({ error: "Failed to fetch user profile" });
+    if (!user) {
+      return reply.status(404).send({ error: "User profile not found" });
     }
-  },
+
+    // Fetch games between the profile user and the requester (both directions)
+    const gamesH2h = await prisma.gameHistory.findMany({
+      where: {
+        OR: [
+          { userId: user.id, opponentId: requesterId },
+          { userId: requesterId, opponentId: user.id },
+        ],
+      },
+      orderBy: { playedAt: "desc" },
+      take: 5,
+    });
+
+    // Fetch latest games of that user
+    const games = await prisma.gameHistory.findMany({
+      where: { userId: user.id },
+      orderBy: { playedAt: "desc" },
+      take: 10,
+    });
+
+    // Attach opponent info
+    const gamesWithOpponents = await Promise.all(
+      games.map(async (game) => {
+        const opponent = await prisma.userProfile.findUnique({
+          where: { id: game.opponentId },
+          select: { id: true, displayName: true, avatar: true, bio: true },
+        });
+        return { ...game, opponentName: opponent?.displayName || "Unknown" };
+      })
+    );
+
+    // Achievements
+    const userAchievements = await prisma.userProfile.findUnique({
+      where: { id: user.id },
+      include: { achievements: { select: { id: true } } },
+    });
+
+    // Stats
+    const stats = await prisma.gameStats.findUnique({
+      where: { id: user.id },
+    });
+
+    // Compute overall head-to-head record
+    const totalWins = gamesH2h.reduce(
+      (sum, game) =>
+        sum + (game.userId === user.id && game.result === "win" ? 1 : 0),
+      0
+    );
+    const totalLosses = gamesH2h.length - totalWins;
+
+    const isOnline = await getOnlineStatus(user.id);
+
+    // Final response
+    return reply.send({
+      profile: { ...user, status: isOnline ? "online" : "offline" },
+      gameHistory: gamesWithOpponents,
+      gamesH2h,
+      achievements: userAchievements.achievements.map((a) => a.id),
+      gameStats: stats,
+      overallRecord: {
+        wins: totalWins,
+        losses: totalLosses,
+      },
+    });
+  } catch (error) {
+    console.error("error: ", error);
+    return reply.status(500).send({ error: "Failed to fetch user profile" });
+  }
+},
 
   // internal
   createProfile: async function (request, reply) {
