@@ -8,7 +8,7 @@ export const blocksControllers = {
         const blockedUserId = req.body.blockedUserId;
         
         if (userId == blockedUserId) {
-            return res.status(400).send({ error: 'You cannot block your self nigga'})
+            return res.status(400).send({ error: 'You cannot block your self Ni66a'})
         }
 
         if (!await userUtils.exists(blockedUserId)) {
@@ -21,7 +21,28 @@ export const blocksControllers = {
             }
 
             await prisma.blockedUser.create({ data: { blockerId: userId, blockedId: blockedUserId } });
-            // wach lblock khasha tms7 lfriendship ??
+            // remove friendship
+            const friendship = await prisma.friendship.findFirst({
+                where: {
+                OR: [
+                    { receiverId: blockedUserId, requesterId: userId },
+                    { requesterId: blockedUserId, receiverId: userId },
+                ],
+                status: 'accepted'
+                },
+                select: {
+                id: true,
+                requesterId: true,
+                receiverId: true
+                },
+            });
+
+            if (friendship) {
+                await prisma.friendship.delete({
+                    where: { id: friendship.id },
+                });
+                }
+
             return res.status(201).send('User has been blocked successfully');
         } catch (error) {
             console.error('Error blocking user:', error);
