@@ -192,7 +192,7 @@ async function oauthRoutes(fastify, options) {
         reply.setCookie("token", jwtToken, {
           secure: false,
           sameSite: "lax",
-          maxAge: 3600,
+          maxAge: 36000000,
           path: "/",
         });
 

@@ -84,7 +84,7 @@ async function authRoutes(fastify, options) {
         reply.setCookie("token", token, {
           secure: false,
           sameSite: "lax",
-          maxAge: 3600,
+          maxAge: 36000000,
           path: "/",
         });
 
@@ -172,7 +172,7 @@ async function authRoutes(fastify, options) {
         reply.setCookie("token", token, {
           secure: false,
           sameSite: "lax",
-          maxAge: 3600,
+          maxAge: 36000000,
           path: "/",
         });
 
@@ -271,7 +271,7 @@ async function authRoutes(fastify, options) {
         reply.setCookie("token", token, {
           secure: false,
           sameSite: "lax",
-          maxAge: 3600,
+          maxAge: 36000000,
           path: "/",
         });
 
