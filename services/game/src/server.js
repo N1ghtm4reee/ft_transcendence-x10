@@ -191,31 +191,17 @@ function clearGameId(gameId) {
 }
 
 
-const getBlockedStatus = async (userId, blockedId) => {
-  try {
-    const res = await fetch("http://user-service:3002/api/user-management/blocks/", {
-      method: "GET",
-      headers: {
-        "x-user-id": userId
-      },
-    });
 
-    if (!res.ok) {
-      console.error("Failed to fetch blocked users:", res.status);
-      return false;
-    }
-
-    const data = await res.json();
-    console.log("Blocked list response for", userId, "=>", data);
-
-    const isBlocked = data.some(item => item.blocked?.id === blockedId);
-
-    console.log(`User ${userId} blocked ${blockedId}?`, isBlocked);
-    return isBlocked;
-  } catch (err) {
-    console.error("Error checking blocked status:", err);
-    return false;
-  }
+const getBlockedStatus = async (userId1, userId2) => {
+        return await prisma.blockedUser.findFirst({
+            where: {
+                OR: [
+                    { blockerId: Number(userId1), blockedId: Number(userId2) },
+                    { blockerId: Number(userId2), blockedId: Number(userId1) }
+                ]
+            },
+            select: { id: true, blockerId: true, blockedId: true }
+        });
 };
 
 // POST /challenge endpoint to create a new game
