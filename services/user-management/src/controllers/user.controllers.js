@@ -203,128 +203,111 @@ getProfile: async function (request, reply) {
   const userId = parseInt(request.headers["x-user-id"]);
   if (!userId || isNaN(userId))
     return reply.status(400).send({ error: "Invalid user ID" });
-  
+
   console.log("Updating profile for user:", userId);
-  
+
   try {
     let fields = {};
     let avatarPath = null;
-    
-    // Verify user exists
+
     const userProfile = await prisma.userProfile.findUnique({
       where: { id: userId },
     });
-    
+
     if (!userProfile)
       return reply.status(404).send({ error: "User profile not found" });
-    
+
     const oldAvatar = userProfile.avatar;
-    
-    // Handle multipart file upload
+
+    // Handle multipart (with file upload)
     if (request.isMultipart()) {
       const data = await request.file();
-      
-      // Extract form fields
+
       if (data && data.fields) {
         for (const [key, value] of Object.entries(data.fields)) {
-          if (value && value.value) {
-            fields[key] = value.value;
-          }
+          if (value && value.value) fields[key] = value.value;
         }
       }
-      
-      // Handle file upload
+
       if (data && data.file) {
         console.log("Processing file upload for user:", userId);
-        
-        try {
-          const uploadDir = path.join(process.cwd(), "src", "assets");
-          
-          // Create upload directory if it doesn't exist
-          if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-          }
-          
-          const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
-          const fileExtension = path.extname(data.filename).toLowerCase();
-          
-          if (!allowedExtensions.includes(fileExtension)) {
-            return reply.status(400).send({
-              error: "Invalid file type. Allowed: " + allowedExtensions.join(", "),
-            });
-          }
-          
-          const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
-          avatarPath = path.join(uploadDir, filename);
-          const buffer = await data.toBuffer();
-          
-          fs.writeFileSync(avatarPath, buffer);
-          fields.avatar = `assets/${filename}`;
-          
-          // Delete old avatar if it exists
-          if (oldAvatar && oldAvatar !== "assets/default.png") {
-            const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
-            try {
-              if (fs.existsSync(oldAvatarPath)) {
-                fs.unlinkSync(oldAvatarPath);
-                console.log("Deleted old avatar:", oldAvatarPath);
-              }
-            } catch (deleteError) {
-              console.error("Error deleting old avatar:", deleteError);
-              // Don't fail the operation if old file deletion fails
-            }
-          }
-        } catch (fileError) {
-          console.error("File processing error:", fileError);
-          // Clean up failed upload
-          if (avatarPath && fs.existsSync(avatarPath)) {
-            try {
-              fs.unlinkSync(avatarPath);
-            } catch (cleanupError) {
-              console.error("Error cleaning up file:", cleanupError);
-            }
-          }
+        const uploadDir = path.join(process.cwd(), "src", "assets");
+
+        if (!fs.existsSync(uploadDir))
+          fs.mkdirSync(uploadDir, { recursive: true });
+
+        const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+        const fileExtension = path.extname(data.filename).toLowerCase();
+
+        if (!allowedExtensions.includes(fileExtension)) {
           return reply.status(400).send({
-            error: "File upload failed",
-            details: process.env.NODE_ENV === "development" ? fileError.message : undefined,
+            error: "Invalid file type. Allowed: " + allowedExtensions.join(", "),
           });
+        }
+
+        const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
+        avatarPath = path.join(uploadDir, filename);
+
+        const buffer = await data.toBuffer();
+        fs.writeFileSync(avatarPath, buffer);
+
+        fields.avatar = `assets/${filename}`;
+
+        // Delete old avatar if not default
+        if (oldAvatar && oldAvatar !== "assets/default.png") {
+          const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
+          try {
+            if (fs.existsSync(oldAvatarPath)) {
+              fs.unlinkSync(oldAvatarPath);
+              console.log("Deleted old avatar:", oldAvatarPath);
+            }
+          } catch (deleteError) {
+            console.error("Error deleting old avatar:", deleteError);
+          }
         }
       }
     } else {
-      // Handle JSON body
-      const body = request.body;
-      if (!body) {
-        return reply.status(400).send({ error: "Request body is required" });
-      }
-      
-      const { avatar, displayName, bio } = body;
+      // Handle JSON body (no file)
+      const { avatar, displayName, bio } = request.body || {};
       if (avatar) fields.avatar = avatar;
       if (displayName) fields.displayName = displayName;
       if (bio) fields.bio = bio;
     }
-    
-    // Validate that at least one field is being updated
-    if (Object.keys(fields).length === 0) {
-      return reply.status(400).send({ error: "No fields to update" });
+
+    // ✅ Pre-check for duplicate displayName (username)
+    if (fields.displayName) {
+      const existingUser = await prisma.userProfile.findUnique({
+        where: { displayName: fields.displayName },
+      });
+
+      if (existingUser && existingUser.id !== userId) {
+        // Remove uploaded avatar if conflict occurs
+        if (avatarPath && fs.existsSync(avatarPath)) {
+          fs.unlinkSync(avatarPath);
+        }
+
+        return reply.status(409).send({
+          error: "Display name already taken. Choose another one.",
+        });
+      }
     }
-    
+
     // Update user profile
     const updatedUser = await prisma.userProfile.update({
       where: { id: userId },
       data: fields,
     });
-    
+
     return reply.send({
       success: true,
       avatarUrl: fields.avatar || userProfile.avatar,
       user: updatedUser,
       message: "User profile updated successfully",
     });
-    
   } catch (error) {
     console.error("Update error:", error);
-    
-    // Clean up uploaded file if update failed
+
+    // Cleanup failed uploads
     if (avatarPath && fs.existsSync(avatarPath)) {
       try {
         fs.unlinkSync(avatarPath);
@@ -333,20 +316,26 @@ getProfile: async function (request, reply) {
         console.error("Error cleaning up file:", cleanupError);
       }
     }
-    
-    // Handle specific Prisma errors
+
+    // Prisma unique constraint violation (fallback)
     if (error.code === "P2002") {
-      return reply.status(409).send({ error: "Duplicate entry" });
+      const target =
+        error.meta && error.meta.target ? error.meta.target.join(", ") : "field";
+      return reply.status(409).send({
+        error: `Duplicate ${target}. This value is already taken.`,
+      });
     }
-    
+
+    // Prisma record not found
     if (error.code === "P2025") {
       return reply.status(404).send({ error: "User not found" });
     }
-    
-    // Generic error response
+
+    // General error
     return reply.status(500).send({
       error: "Failed to update user profile",
-      details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 },
