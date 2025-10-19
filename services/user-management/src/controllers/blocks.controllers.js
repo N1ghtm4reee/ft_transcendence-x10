@@ -6,7 +6,8 @@ export const blocksControllers = {
     blockUser: async (req, res) => {
         const userId = req.headers['x-user-id'];
         const blockedUserId = req.body.blockedUserId;
-        
+        console.log(`called blockuser controller with userId : ${userId} and blockedUserId: ${blockedUserId}`);
+
         if (userId == blockedUserId) {
             return res.status(400).send({ error: 'You cannot block your self Ni66a'})
         }
