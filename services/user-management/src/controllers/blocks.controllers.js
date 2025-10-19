@@ -78,7 +78,7 @@ export const blocksControllers = {
         }
     },
     getBlockedUsers: async (req, res) => {
-        const userId = req.headers['x-user-id'];
+        const userId = parseInt(req.headers['x-user-id']);
 
         try {
             const blockedUsers = await prisma.blockedUser.findMany({
