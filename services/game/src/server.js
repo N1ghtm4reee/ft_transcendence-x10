@@ -191,6 +191,33 @@ function clearGameId(gameId) {
 }
 
 
+const getBlockedStatus = async (userId, blockedId) => {
+  try {
+    const res = await fetch("http://user-service:3002/api/user-management/blocks/", {
+      method: "GET",
+      headers: {
+        "x-user-id": userId
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch blocked users:", res.status);
+      return false;
+    }
+
+    const data = await res.json();
+    console.log("Blocked list response for", userId, "=>", data);
+
+    const isBlocked = data.some(item => item.blocked?.id === blockedId);
+
+    console.log(`User ${userId} blocked ${blockedId}?`, isBlocked);
+    return isBlocked;
+  } catch (err) {
+    console.error("Error checking blocked status:", err);
+    return false;
+  }
+};
+
 // POST /challenge endpoint to create a new game
 fastify.post("/api/game/challenge", async (request, reply) => {
   try {
@@ -217,6 +244,13 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       });
     }
 
+
+    const isBlocked = getBlockedStatus(playerId1, playerId2);
+    if (isBlocked) {
+      return reply.status(401).send({
+        error: "cannot play with a blocked user"
+      })
+    }
     // Check if players are already in active games
     for (const [existingGameId, existingSession] of sessions.entries()) {
       if (
