@@ -220,6 +220,43 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
+        } else if (
+          data.type === "TOURNAMENT_CREATED" ||
+          data.type === "TOURNAMENT_JOINED" ||
+          data.type === "TOURNAMENT_LEFT" ||
+          data.type === "TOURNAMENT_STARTED" ||
+          data.type === "TOURNAMENT_CANCELLED" ||
+          data.type === "TOURNAMENT_MATCH_READY"
+        ) {
+          console.log(
+            `Sending tournament notification to user ${userId}:`,
+            data
+          );
+          try {
+            connection.send(
+              JSON.stringify({
+                type: data.type,
+                content: data.content,
+                title: data.title,
+                tournamentId: data.tournamentId,
+                tournamentName: data.tournamentName,
+                tournamentData: data.tournamentData,
+                user: data.user
+                  ? {
+                      id: data.user.id,
+                      displayName: data.user.displayName,
+                      avatar: data.user.avatar,
+                    }
+                  : undefined,
+              })
+            );
+          } catch (error) {
+            console.error(
+              `Error sending tournament notification to user ${userId}:`,
+              error
+            );
+            userConnections.delete(connection);
+          }
         } else if (data.type === "STATUS_UPDATE") {
           console.log(`Sending status update to user ${userId}:`, data);
 

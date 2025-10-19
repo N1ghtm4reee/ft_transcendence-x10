@@ -1,6 +1,118 @@
 import brackets from "../utils/bracket.js";
 import prisma from "../plugins/prisma.js";
 
+// Helper function to send tournament notifications
+const sendTournamentNotification = async (
+  userId,
+  type,
+  tournamentData,
+  customData = {}
+) => {
+  try {
+    const notification = await fetch(
+      "http://notification-service:3005/api/notifications",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          type,
+          title: customData.title || getTournamentNotificationTitle(type),
+          content:
+            customData.content ||
+            getTournamentNotificationContent(type, tournamentData, customData),
+          sourceId: customData.sourceId || tournamentData.createdBy?.toString(),
+          tournamentId: tournamentData.id,
+          tournamentName: tournamentData.name,
+          tournamentData: tournamentData,
+          ...customData,
+        }),
+      }
+    );
+
+    if (!notification.ok) {
+      console.error(
+        "Failed to send tournament notification:",
+        await notification.text()
+      );
+    } else {
+      console.log(
+        `Tournament notification sent successfully: ${type} for user ${userId}`
+      );
+    }
+  } catch (error) {
+    console.error("Error sending tournament notification:", error);
+  }
+};
+
+// Helper function to get notification titles
+const getTournamentNotificationTitle = (type) => {
+  const titles = {
+    TOURNAMENT_CREATED: "Tournament Created",
+    TOURNAMENT_JOINED: "Player Joined Tournament",
+    TOURNAMENT_LEFT: "Player Left Tournament",
+    TOURNAMENT_STARTED: "Tournament Started",
+    TOURNAMENT_CANCELLED: "Tournament Cancelled",
+    TOURNAMENT_MATCH_READY: "Tournament Match Ready",
+  };
+  return titles[type] || "Tournament Notification";
+};
+
+// Helper function to get notification content
+const getTournamentNotificationContent = (type, tournamentData, customData) => {
+  switch (type) {
+    case "TOURNAMENT_CREATED":
+      return `New tournament "${tournamentData.name}" has been created`;
+    case "TOURNAMENT_JOINED":
+      return `${customData.playerName || "Someone"} joined tournament "${
+        tournamentData.name
+      }"`;
+    case "TOURNAMENT_LEFT":
+      return `${customData.playerName || "Someone"} left tournament "${
+        tournamentData.name
+      }"`;
+    case "TOURNAMENT_STARTED":
+      return `Tournament "${tournamentData.name}" has started!`;
+    case "TOURNAMENT_CANCELLED":
+      return `Tournament "${tournamentData.name}" has been cancelled`;
+    case "TOURNAMENT_MATCH_READY":
+      return `Your tournament match is ready in "${tournamentData.name}"`;
+    default:
+      return "Tournament update";
+  }
+};
+
+// Helper function to notify all tournament players
+const notifyTournamentPlayers = async (
+  tournamentId,
+  type,
+  tournamentData,
+  customData = {},
+  excludeUserId = null
+) => {
+  try {
+    const players = await prisma.Player.findMany({
+      where: { tournamentId },
+      select: { userId: true, username: true },
+    });
+
+    for (const player of players) {
+      if (excludeUserId && player.userId === excludeUserId) {
+        continue; // Skip the user who triggered the action
+      }
+
+      await sendTournamentNotification(player.userId, type, tournamentData, {
+        ...customData,
+        playerName: customData.playerName || player.username,
+      });
+    }
+  } catch (error) {
+    console.error("Error notifying tournament players:", error);
+  }
+};
+
 export const tournamentControllers = {
   createTournament: async (req, res) => {
     const userId = req.headers["x-user-id"];
@@ -64,6 +176,17 @@ export const tournamentControllers = {
 
         return { tournament, player };
       });
+
+      // Send notification about tournament creation
+      await sendTournamentNotification(
+        userId,
+        "TOURNAMENT_CREATED",
+        result.tournament,
+        {
+          sourceId: userId,
+          creatorName: username,
+        }
+      );
 
       res.status(201).send({
         message: "Tournament created successfully and creator added as player",
@@ -152,7 +275,7 @@ export const tournamentControllers = {
         },
       });
 
-      await prisma.Tournament.update({
+      const updatedTournament = await prisma.Tournament.update({
         where: { id: tournamentId },
         data: {
           playersCount: {
@@ -160,6 +283,18 @@ export const tournamentControllers = {
           },
         },
       });
+
+      // Send notification to all existing tournament players about new player joining
+      await notifyTournamentPlayers(
+        tournamentId,
+        "TOURNAMENT_JOINED",
+        { id: tournamentId, name: tournament.name },
+        {
+          playerName: username,
+          sourceId: userId,
+        },
+        userId // Exclude the player who just joined from receiving their own notification
+      );
 
       res
         .status(200)
@@ -236,6 +371,18 @@ export const tournamentControllers = {
       await prisma.Player.delete({
         where: { id: player.id },
       });
+
+      // Send notification to all remaining tournament players about player leaving
+      await notifyTournamentPlayers(
+        tournamentId,
+        "TOURNAMENT_LEFT",
+        { id: tournamentId, name: tournament.name },
+        {
+          playerName: player.username,
+          sourceId: userId,
+        },
+        userId // Exclude the player who left from receiving notification
+      );
 
       res.status(200).send({ message: "Player left tournament successfully" });
     } catch (error) {
@@ -320,6 +467,16 @@ export const tournamentControllers = {
         where: { id: tournamentId },
         data: { status: "started" },
       });
+
+      // Send notification to all tournament players that tournament has started
+      await notifyTournamentPlayers(
+        tournamentId,
+        "TOURNAMENT_STARTED",
+        { id: tournamentId, name: tournament.name },
+        {
+          sourceId: userId,
+        }
+      );
 
       res
         .status(200)
@@ -539,6 +696,16 @@ export const tournamentControllers = {
         data: { status: "cancelled" },
       });
 
+      // Send notification to all tournament players that tournament has been cancelled
+      await notifyTournamentPlayers(
+        tournamentId,
+        "TOURNAMENT_CANCELLED",
+        { id: tournamentId, name: tournament.name },
+        {
+          sourceId: tournament.createdBy?.toString(),
+        }
+      );
+
       res.status(200).send({ message: "Tournament stopped successfully" });
     } catch (error) {
       console.error("Error stopping tournament:", error);
@@ -652,6 +819,54 @@ export const tournamentControllers = {
           where: { id: matchId },
           data: { status: "ongoing" },
         });
+
+        // Send notification to both players that their tournament match is ready
+        try {
+          // Get player details
+          const player1 = await prisma.Player.findFirst({
+            where: {
+              userId: match.player1Id,
+              tournamentId: match.tournamentId,
+            },
+          });
+          const player2 = await prisma.Player.findFirst({
+            where: {
+              userId: match.player2Id,
+              tournamentId: match.tournamentId,
+            },
+          });
+
+          // Notify both players
+          if (player1 && player2) {
+            await sendTournamentNotification(
+              match.player1Id,
+              "TOURNAMENT_MATCH_READY",
+              { id: match.tournamentId, name: match.Tournament.name },
+              {
+                opponentName: player2.username,
+                sourceId: match.player2Id.toString(),
+                matchId: matchId,
+              }
+            );
+
+            await sendTournamentNotification(
+              match.player2Id,
+              "TOURNAMENT_MATCH_READY",
+              { id: match.tournamentId, name: match.Tournament.name },
+              {
+                opponentName: player1.username,
+                sourceId: match.player1Id.toString(),
+                matchId: matchId,
+              }
+            );
+          }
+        } catch (notificationError) {
+          console.error(
+            "Error sending tournament match notifications:",
+            notificationError
+          );
+          // Don't fail the match creation if notifications fail
+        }
 
         res.status(200).send({
           message: "Tournament match game created successfully",
