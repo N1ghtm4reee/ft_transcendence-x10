@@ -29,7 +29,7 @@ export const blocksControllers = {
                         { receiverId: blockedUserId, requesterId: userId },
                         { requesterId: blockedUserId, receiverId: userId },
                     ],
-                    status: 'accepted'
+                    status : ("pending" || "accepted")
                 },
                 select: {
                     id: true,
