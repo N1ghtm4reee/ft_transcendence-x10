@@ -21,15 +21,24 @@ const getOnlineStatus = async (userId) => {
 export const userController = {
   getProfiles: async function (request, reply) {
     const name = request.query.name || "";
+    const limit = request.query.limit;
+
     try {
-      const users = await prisma.userProfile.findMany({
+      const queryOptions = {
         where: {
           displayName: {
             contains: name,
           },
         },
-        take: 10,
-      });
+      };
+
+      // Only add take limit if limit is specified
+      if (limit !== undefined && limit !== "all") {
+        queryOptions.take = parseInt(limit) || 10;
+      }
+
+      const users = await prisma.userProfile.findMany(queryOptions);
+
       if (!users) {
         return reply.status(404).send({ error: "No profiles found" });
       }
@@ -39,88 +48,88 @@ export const userController = {
       return reply.status(500).send({ error: "Failed to fetch profiles" });
     }
   },
-getProfile: async function (request, reply) {
-  try {
-    const userName = request.params.username;
-    const requesterId = parseInt(request.headers["x-user-id"]);
+  getProfile: async function (request, reply) {
+    try {
+      const userName = request.params.username;
+      const requesterId = parseInt(request.headers["x-user-id"]);
 
-    // Fetch profile
-    const user = await prisma.userProfile.findUnique({
-      where: { displayName: userName },
-    });
+      // Fetch profile
+      const user = await prisma.userProfile.findUnique({
+        where: { displayName: userName },
+      });
 
-    if (!user) {
-      return reply.status(404).send({ error: "User profile not found" });
+      if (!user) {
+        return reply.status(404).send({ error: "User profile not found" });
+      }
+
+      // Fetch games between the profile user and the requester (both directions)
+      const gamesH2h = await prisma.gameHistory.findMany({
+        where: {
+          OR: [
+            { userId: user.id, opponentId: requesterId },
+            { userId: requesterId, opponentId: user.id },
+          ],
+        },
+        orderBy: { playedAt: "desc" },
+        take: 5,
+      });
+
+      // Fetch latest games of that user
+      const games = await prisma.gameHistory.findMany({
+        where: { userId: user.id },
+        orderBy: { playedAt: "desc" },
+        take: 10,
+      });
+
+      // Attach opponent info
+      const gamesWithOpponents = await Promise.all(
+        games.map(async (game) => {
+          const opponent = await prisma.userProfile.findUnique({
+            where: { id: game.opponentId },
+            select: { id: true, displayName: true, avatar: true, bio: true },
+          });
+          return { ...game, opponentName: opponent?.displayName || "Unknown" };
+        })
+      );
+
+      // Achievements
+      const userAchievements = await prisma.userProfile.findUnique({
+        where: { id: user.id },
+        include: { achievements: { select: { id: true } } },
+      });
+
+      // Stats
+      const stats = await prisma.gameStats.findUnique({
+        where: { id: user.id },
+      });
+
+      // Compute overall head-to-head record
+      const totalWins = gamesH2h.reduce(
+        (sum, game) =>
+          sum + (game.userId === user.id && game.result === "win" ? 1 : 0),
+        0
+      );
+      const totalLosses = gamesH2h.length - totalWins;
+
+      const isOnline = await getOnlineStatus(user.id);
+
+      // Final response
+      return reply.send({
+        profile: { ...user, status: isOnline ? "online" : "offline" },
+        gameHistory: gamesWithOpponents,
+        gamesH2h,
+        achievements: userAchievements.achievements.map((a) => a.id),
+        gameStats: stats,
+        overallRecord: {
+          wins: totalWins,
+          losses: totalLosses,
+        },
+      });
+    } catch (error) {
+      console.error("error: ", error);
+      return reply.status(500).send({ error: "Failed to fetch user profile" });
     }
-
-    // Fetch games between the profile user and the requester (both directions)
-    const gamesH2h = await prisma.gameHistory.findMany({
-      where: {
-        OR: [
-          { userId: user.id, opponentId: requesterId },
-          { userId: requesterId, opponentId: user.id },
-        ],
-      },
-      orderBy: { playedAt: "desc" },
-      take: 5,
-    });
-
-    // Fetch latest games of that user
-    const games = await prisma.gameHistory.findMany({
-      where: { userId: user.id },
-      orderBy: { playedAt: "desc" },
-      take: 10,
-    });
-
-    // Attach opponent info
-    const gamesWithOpponents = await Promise.all(
-      games.map(async (game) => {
-        const opponent = await prisma.userProfile.findUnique({
-          where: { id: game.opponentId },
-          select: { id: true, displayName: true, avatar: true, bio: true },
-        });
-        return { ...game, opponentName: opponent?.displayName || "Unknown" };
-      })
-    );
-
-    // Achievements
-    const userAchievements = await prisma.userProfile.findUnique({
-      where: { id: user.id },
-      include: { achievements: { select: { id: true } } },
-    });
-
-    // Stats
-    const stats = await prisma.gameStats.findUnique({
-      where: { id: user.id },
-    });
-
-    // Compute overall head-to-head record
-    const totalWins = gamesH2h.reduce(
-      (sum, game) =>
-        sum + (game.userId === user.id && game.result === "win" ? 1 : 0),
-      0
-    );
-    const totalLosses = gamesH2h.length - totalWins;
-
-    const isOnline = await getOnlineStatus(user.id);
-
-    // Final response
-    return reply.send({
-      profile: { ...user, status: isOnline ? "online" : "offline" },
-      gameHistory: gamesWithOpponents,
-      gamesH2h,
-      achievements: userAchievements.achievements.map((a) => a.id),
-      gameStats: stats,
-      overallRecord: {
-        wins: totalWins,
-        losses: totalLosses,
-      },
-    });
-  } catch (error) {
-    console.error("error: ", error);
-    return reply.status(500).send({ error: "Failed to fetch user profile" });
-  }
-},
+  },
 
   // internal
   createProfile: async function (request, reply) {
@@ -200,145 +209,148 @@ getProfile: async function (request, reply) {
   //     }
   // },
   updateProfile: async function (request, reply) {
-  const userId = parseInt(request.headers["x-user-id"]);
-  if (!userId || isNaN(userId))
-    return reply.status(400).send({ error: "Invalid user ID" });
+    const userId = parseInt(request.headers["x-user-id"]);
+    if (!userId || isNaN(userId))
+      return reply.status(400).send({ error: "Invalid user ID" });
 
-  console.log("Updating profile for user:", userId);
+    console.log("Updating profile for user:", userId);
 
-  try {
-    let fields = {};
-    let avatarPath = null;
+    try {
+      let fields = {};
+      let avatarPath = null;
 
-    const userProfile = await prisma.userProfile.findUnique({
-      where: { id: userId },
-    });
+      const userProfile = await prisma.userProfile.findUnique({
+        where: { id: userId },
+      });
 
-    if (!userProfile)
-      return reply.status(404).send({ error: "User profile not found" });
+      if (!userProfile)
+        return reply.status(404).send({ error: "User profile not found" });
 
-    const oldAvatar = userProfile.avatar;
+      const oldAvatar = userProfile.avatar;
 
-    // Handle multipart (with file upload)
-    if (request.isMultipart()) {
-      const data = await request.file();
+      // Handle multipart (with file upload)
+      if (request.isMultipart()) {
+        const data = await request.file();
 
-      if (data && data.fields) {
-        for (const [key, value] of Object.entries(data.fields)) {
-          if (value && value.value) fields[key] = value.value;
-        }
-      }
-
-      if (data && data.file) {
-        console.log("Processing file upload for user:", userId);
-        const uploadDir = path.join(process.cwd(), "src", "assets");
-
-        if (!fs.existsSync(uploadDir))
-          fs.mkdirSync(uploadDir, { recursive: true });
-
-        const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
-        const fileExtension = path.extname(data.filename).toLowerCase();
-
-        if (!allowedExtensions.includes(fileExtension)) {
-          return reply.status(400).send({
-            error: "Invalid file type. Allowed: " + allowedExtensions.join(", "),
-          });
-        }
-
-        const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
-        avatarPath = path.join(uploadDir, filename);
-
-        const buffer = await data.toBuffer();
-        fs.writeFileSync(avatarPath, buffer);
-
-        fields.avatar = `assets/${filename}`;
-
-        // Delete old avatar if not default
-        if (oldAvatar && oldAvatar !== "assets/default.png") {
-          const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
-          try {
-            if (fs.existsSync(oldAvatarPath)) {
-              fs.unlinkSync(oldAvatarPath);
-              console.log("Deleted old avatar:", oldAvatarPath);
-            }
-          } catch (deleteError) {
-            console.error("Error deleting old avatar:", deleteError);
+        if (data && data.fields) {
+          for (const [key, value] of Object.entries(data.fields)) {
+            if (value && value.value) fields[key] = value.value;
           }
         }
-      }
-    } else {
-      // Handle JSON body (no file)
-      const { avatar, displayName, bio } = request.body || {};
-      if (avatar) fields.avatar = avatar;
-      if (displayName) fields.displayName = displayName;
-      if (bio) fields.bio = bio;
-    }
 
-    // ✅ Pre-check for duplicate displayName (username)
-    if (fields.displayName) {
-      const existingUser = await prisma.userProfile.findUnique({
-        where: { displayName: fields.displayName },
+        if (data && data.file) {
+          console.log("Processing file upload for user:", userId);
+          const uploadDir = path.join(process.cwd(), "src", "assets");
+
+          if (!fs.existsSync(uploadDir))
+            fs.mkdirSync(uploadDir, { recursive: true });
+
+          const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+          const fileExtension = path.extname(data.filename).toLowerCase();
+
+          if (!allowedExtensions.includes(fileExtension)) {
+            return reply.status(400).send({
+              error:
+                "Invalid file type. Allowed: " + allowedExtensions.join(", "),
+            });
+          }
+
+          const filename = `avatar_${userId}_${Date.now()}${fileExtension}`;
+          avatarPath = path.join(uploadDir, filename);
+
+          const buffer = await data.toBuffer();
+          fs.writeFileSync(avatarPath, buffer);
+
+          fields.avatar = `assets/${filename}`;
+
+          // Delete old avatar if not default
+          if (oldAvatar && oldAvatar !== "assets/default.png") {
+            const oldAvatarPath = path.join(process.cwd(), "src", oldAvatar);
+            try {
+              if (fs.existsSync(oldAvatarPath)) {
+                fs.unlinkSync(oldAvatarPath);
+                console.log("Deleted old avatar:", oldAvatarPath);
+              }
+            } catch (deleteError) {
+              console.error("Error deleting old avatar:", deleteError);
+            }
+          }
+        }
+      } else {
+        // Handle JSON body (no file)
+        const { avatar, displayName, bio } = request.body || {};
+        if (avatar) fields.avatar = avatar;
+        if (displayName) fields.displayName = displayName;
+        if (bio) fields.bio = bio;
+      }
+
+      // ✅ Pre-check for duplicate displayName (username)
+      if (fields.displayName) {
+        const existingUser = await prisma.userProfile.findUnique({
+          where: { displayName: fields.displayName },
+        });
+
+        if (existingUser && existingUser.id !== userId) {
+          // Remove uploaded avatar if conflict occurs
+          if (avatarPath && fs.existsSync(avatarPath)) {
+            fs.unlinkSync(avatarPath);
+          }
+
+          return reply.status(409).send({
+            error: "Display name already taken. Choose another one.",
+          });
+        }
+      }
+
+      // Update user profile
+      const updatedUser = await prisma.userProfile.update({
+        where: { id: userId },
+        data: fields,
       });
 
-      if (existingUser && existingUser.id !== userId) {
-        // Remove uploaded avatar if conflict occurs
-        if (avatarPath && fs.existsSync(avatarPath)) {
-          fs.unlinkSync(avatarPath);
-        }
+      return reply.send({
+        success: true,
+        avatarUrl: fields.avatar || userProfile.avatar,
+        user: updatedUser,
+        message: "User profile updated successfully",
+      });
+    } catch (error) {
+      console.error("Update error:", error);
 
+      // Cleanup failed uploads
+      if (avatarPath && fs.existsSync(avatarPath)) {
+        try {
+          fs.unlinkSync(avatarPath);
+          console.log("Cleaned up failed upload:", avatarPath);
+        } catch (cleanupError) {
+          console.error("Error cleaning up file:", cleanupError);
+        }
+      }
+
+      // Prisma unique constraint violation (fallback)
+      if (error.code === "P2002") {
+        const target =
+          error.meta && error.meta.target
+            ? error.meta.target.join(", ")
+            : "field";
         return reply.status(409).send({
-          error: "Display name already taken. Choose another one.",
+          error: `Duplicate ${target}. This value is already taken.`,
         });
       }
-    }
 
-    // Update user profile
-    const updatedUser = await prisma.userProfile.update({
-      where: { id: userId },
-      data: fields,
-    });
-
-    return reply.send({
-      success: true,
-      avatarUrl: fields.avatar || userProfile.avatar,
-      user: updatedUser,
-      message: "User profile updated successfully",
-    });
-  } catch (error) {
-    console.error("Update error:", error);
-
-    // Cleanup failed uploads
-    if (avatarPath && fs.existsSync(avatarPath)) {
-      try {
-        fs.unlinkSync(avatarPath);
-        console.log("Cleaned up failed upload:", avatarPath);
-      } catch (cleanupError) {
-        console.error("Error cleaning up file:", cleanupError);
+      // Prisma record not found
+      if (error.code === "P2025") {
+        return reply.status(404).send({ error: "User not found" });
       }
-    }
 
-    // Prisma unique constraint violation (fallback)
-    if (error.code === "P2002") {
-      const target =
-        error.meta && error.meta.target ? error.meta.target.join(", ") : "field";
-      return reply.status(409).send({
-        error: `Duplicate ${target}. This value is already taken.`,
+      // General error
+      return reply.status(500).send({
+        error: "Failed to update user profile",
+        details:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
-
-    // Prisma record not found
-    if (error.code === "P2025") {
-      return reply.status(404).send({ error: "User not found" });
-    }
-
-    // General error
-    return reply.status(500).send({
-      error: "Failed to update user profile",
-      details:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-},
+  },
 
   getHistory: async function (request, reply) {
     const id = parseInt(request.params.id, 10);
@@ -579,10 +591,20 @@ getProfile: async function (request, reply) {
         },
         include: {
           requester: {
-            select: { id: true, displayName: true, avatar: true, lastSeen: true },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              lastSeen: true,
+            },
           },
           receiver: {
-            select: { id: true, displayName: true, avatar: true, lastSeen: true },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              lastSeen: true,
+            },
           },
         },
       });
@@ -610,7 +632,12 @@ getProfile: async function (request, reply) {
         where: { receiverId: id, status: "pending" },
         include: {
           requester: {
-            select: { id: true, displayName: true, avatar: true, lastSeen: true },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              lastSeen: true,
+            },
           },
         },
       });
@@ -619,7 +646,12 @@ getProfile: async function (request, reply) {
         where: { requesterId: id, status: "pending" },
         include: {
           receiver: {
-            select: { id: true, displayName: true, avatar: true, lastSeen: true },
+            select: {
+              id: true,
+              displayName: true,
+              avatar: true,
+              lastSeen: true,
+            },
           },
         },
       });

@@ -113,6 +113,54 @@ const notifyTournamentPlayers = async (
   }
 };
 
+// Helper function to broadcast tournament notifications to all users
+const broadcastTournamentToAllUsers = async (
+  type,
+  tournamentData,
+  customData = {}
+) => {
+  try {
+    // Get all users from user service (using profiles endpoint with limit=all)
+    const userResponse = await fetch(
+      "http://user-service:3002/api/user-management/profiles?name=&limit=all",
+      {
+        method: "GET",
+      }
+    );
+
+    if (!userResponse.ok) {
+      console.error("Failed to fetch users for tournament broadcast");
+      return;
+    }
+
+    const users = await userResponse.json();
+
+    // Send notification to all users
+    for (const user of users) {
+      await sendTournamentNotification(
+        user.id,
+        type,
+        tournamentData,
+        customData
+      );
+    }
+
+    console.log(`Broadcasted ${type} notification to ${users.length} users`);
+  } catch (error) {
+    console.error(
+      "Error broadcasting tournament notification to all users:",
+      error
+    );
+  }
+};
+
+// Example usage for TOURNAMENT_UPDATE broadcasts (can be called from other functions):
+// await broadcastTournamentToAllUsers(
+//   "TOURNAMENT_UPDATE",
+//   tournamentData,
+//   { message: "Custom update message" }
+// );
+
 export const tournamentControllers = {
   createTournament: async (req, res) => {
     const userId = req.headers["x-user-id"];
@@ -177,9 +225,8 @@ export const tournamentControllers = {
         return { tournament, player };
       });
 
-      // Send notification about tournament creation
-      await sendTournamentNotification(
-        userId,
+      // Broadcast tournament creation notification to all users
+      await broadcastTournamentToAllUsers(
         "TOURNAMENT_CREATED",
         result.tournament,
         {
@@ -696,9 +743,8 @@ export const tournamentControllers = {
         data: { status: "cancelled" },
       });
 
-      // Send notification to all tournament players that tournament has been cancelled
-      await notifyTournamentPlayers(
-        tournamentId,
+      // Broadcast tournament cancellation notification to all users
+      await broadcastTournamentToAllUsers(
         "TOURNAMENT_CANCELLED",
         { id: tournamentId, name: tournament.name },
         {
@@ -879,6 +925,51 @@ export const tournamentControllers = {
       }
     } catch (error) {
       console.error("Error starting tournament match:", error);
+      res.status(500).send({ error: "Internal server error" });
+    }
+  },
+
+  sendTournamentUpdate: async (req, res) => {
+    const { id: tournamentId } = req.params;
+    const { message, title } = req.body;
+    const userId = req.headers["x-user-id"];
+
+    if (!message) {
+      return res.status(400).send({ error: "Message is required" });
+    }
+
+    try {
+      const tournament = await prisma.Tournament.findUnique({
+        where: { id: tournamentId },
+      });
+
+      if (!tournament) {
+        return res.status(404).send({ error: "Tournament not found" });
+      }
+
+      // Only tournament creator can send updates
+      if (tournament.createdBy !== userId) {
+        return res.status(403).send({
+          error: "Only tournament creator can send updates",
+        });
+      }
+
+      // Broadcast tournament update to all users
+      await broadcastTournamentToAllUsers(
+        "TOURNAMENT_UPDATE",
+        { id: tournamentId, name: tournament.name },
+        {
+          message,
+          title: title || "Tournament Update",
+          sourceId: userId,
+        }
+      );
+
+      res.status(200).send({
+        message: "Tournament update sent successfully",
+      });
+    } catch (error) {
+      console.error("Error sending tournament update:", error);
       res.status(500).send({ error: "Internal server error" });
     }
   },

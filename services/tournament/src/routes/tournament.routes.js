@@ -53,4 +53,8 @@ export default async function tournamentRoutes(fastify, opts) {
   fastify.post("/match/:matchId/challenge", {
     handler: tournamentControllers.startTournamentMatch,
   });
+
+  fastify.post("/tournament/:id/update", {
+    handler: tournamentControllers.sendTournamentUpdate,
+  });
 }
