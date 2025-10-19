@@ -18,6 +18,34 @@ const getOnlineStatus = async (userId) => {
   }
 };
 
+const getBlockedStatus = async (userId, blockedId) => {
+  try {
+    const res = await fetch("http://user-service:3002/api/user-management/blocks/", {
+      method: "GET",
+      headers: {
+        "x-user-id": userId
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch blocked users:", res.status);
+      return false;
+    }
+
+    const data = await res.json();
+    console.log("Blocked list response for", userId, "=>", data);
+
+    const isBlocked = data.some(item => item.blocked?.id === blockedId);
+
+    console.log(`User ${userId} blocked ${blockedId}?`, isBlocked);
+    return isBlocked;
+  } catch (err) {
+    console.error("Error checking blocked status:", err);
+    return false;
+  }
+};
+
+
 export const userController = {
   getProfiles: async function (request, reply) {
     const name = request.query.name || "";
@@ -113,8 +141,11 @@ export const userController = {
 
       const isOnline = await getOnlineStatus(user.id);
 
+      const isBlocked = await getBlockedStatus(requesterId, user.id) //bool
+
       // Final response
       return reply.send({
+        isBlocked: isBlocked,
         profile: { ...user, status: isOnline ? "online" : "offline" },
         gameHistory: gamesWithOpponents,
         gamesH2h,
