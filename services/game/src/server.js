@@ -204,6 +204,28 @@ const getBlockedStatus = async (userId1, userId2) => {
         });
 };
 
+const blocker = async (userId1, userId2) => {
+        const block = await prisma.blockedUser.findFirst({
+            where: {
+                blockerId: Number(userId1), blockedId: Number(userId2)
+            },
+            select: { id: true, blockerId: true, blockedId: true }
+        });
+        console.log(`blocker response : ${block}`);
+        return block;
+    };
+
+const blocked = async (userId1, userId2) => {
+        const blocked = await prisma.blockedUser.findFirst({
+            where: {
+                blockerId: Number(userId2), blockedId: Number(userId1)
+            },
+            select: { id: true, blockerId: true, blockedId: true }
+        });
+        console.log(`blocked response : ${blocked}`);
+        return blocked;
+  };
+
 // POST /challenge endpoint to create a new game
 fastify.post("/api/game/challenge", async (request, reply) => {
   try {
@@ -230,13 +252,17 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       });
     }
 
+    const isBlocker = await blocker(playerId1, playerId2);
+    const isBlocked = await blocked(playerId1, playerId2);
 
-    const isBlocked = getBlockedStatus(playerId1, playerId2);
-    if (isBlocked) {
-      return reply.status(401).send({
-        error: "cannot play with a blocked user"
-      })
+
+    // check if they block each other or not
+    if (isBlocker || isBlocked) {
+      return reply.status(400).send({
+        error: "Both playerId1 and playerId2 are required",
+      });
     }
+
     // Check if players are already in active games
     for (const [existingGameId, existingSession] of sessions.entries()) {
       if (

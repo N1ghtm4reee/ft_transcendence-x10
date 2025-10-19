@@ -1,5 +1,5 @@
 import prisma from "#root/prisma/prisma.js";
-import { userUtils ,blockUtils } from "../utils/user.utils.js";
+import { userUtils, blockUtils } from "../utils/user.utils.js";
 
 
 export const blocksControllers = {
@@ -9,15 +9,15 @@ export const blocksControllers = {
         console.log(`called blockuser controller with userId : ${userId} and blockedUserId: ${blockedUserId}`);
 
         if (userId == blockedUserId) {
-            return res.status(400).send({ error: 'You cannot block your self Ni66a'})
+            return res.status(400).send({ error: 'You cannot block your self Ni66a' })
         }
 
         if (!await userUtils.exists(blockedUserId)) {
-            return res.status(404).send( {error: 'User not found'})
+            return res.status(404).send({ error: 'User not found' })
         }
 
         try {
-            if (await blockUtils.exists(userId, blockedUserId)) {
+            if (await blockUtils.blocker(userId, blockedUserId)) {
                 return res.status(400).send({ error: 'User already blocked' });
             }
 
@@ -25,16 +25,16 @@ export const blocksControllers = {
             // remove friendship
             const friendship = await prisma.friendship.findFirst({
                 where: {
-                OR: [
-                    { receiverId: blockedUserId, requesterId: userId },
-                    { requesterId: blockedUserId, receiverId: userId },
-                ],
-                status: 'accepted'
+                    OR: [
+                        { receiverId: blockedUserId, requesterId: userId },
+                        { requesterId: blockedUserId, receiverId: userId },
+                    ],
+                    status: 'accepted'
                 },
                 select: {
-                id: true,
-                requesterId: true,
-                receiverId: true
+                    id: true,
+                    requesterId: true,
+                    receiverId: true
                 },
             });
 
@@ -42,7 +42,58 @@ export const blocksControllers = {
                 await prisma.friendship.delete({
                     where: { id: friendship.id },
                 });
+                // 
+                // Determine who to notify (the other person)   
+                const notifyUserId = blockedUserId
+
+                // Get the current user's display name for the notification
+                const currentUser = await prisma.userProfile.findUnique({
+                    where: { id: userId },
+                    select: { displayName: true }
+                });
+                // remove chat history with the friend
+                try {
+                    await fetch(
+                        `http://chat-service:3004/api/chat/history/${userId}/${notifyUserId}`,
+                        {
+                            method: "DELETE",
+                        }
+                    );
+                } catch (error) {
+                    console.error("Error removing chat history:", error);
+                    // Don't fail the whole operation if chat history removal fails
                 }
+                // Send notification to the other person
+                try {
+                    const notification = await fetch(
+                        "http://notification-service:3005/api/notifications",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                userId: notifyUserId,
+                                type: "FRIEND_REMOVED",
+                                title: "Friend Removed",
+                                content: `${currentUser?.displayName || 'A user'} removed you from their friends list`,
+                                sourceId: userId.toString(),
+                            }),
+                        }
+                    );
+
+                    if (!notification.ok) {
+                        console.error(
+                            "Failed to send notification:",
+                            await notification.text()
+                        );
+                    }
+                } catch (notificationError) {
+                    console.error("Notification error:", notificationError);
+                    // Don't fail the whole operation if notification fails
+                }
+
+            }
 
             return res.status(201).send('User has been blocked successfully');
         } catch (error) {

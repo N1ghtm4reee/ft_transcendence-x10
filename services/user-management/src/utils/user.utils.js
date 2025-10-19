@@ -116,6 +116,26 @@ export const blockUtils = {
      * @param {number} userId2 - Second user ID
      * @returns {Promise<object|null>} - Block record with blockerId or null
      */
+    blocker: async (userId1, userId2) => {
+        const block = await prisma.blockedUser.findFirst({
+            where: {
+                blockerId: Number(userId1), blockedId: Number(userId2)
+            },
+            select: { id: true, blockerId: true, blockedId: true }
+        });
+        console.log(`blocker response : ${block}`);
+        return block;
+    },
+    blocked: async (userId1, userId2) => {
+        const blocked = await prisma.blockedUser.findFirst({
+            where: {
+                blockerId: Number(userId2), blockedId: Number(userId1)
+            },
+            select: { id: true, blockerId: true, blockedId: true }
+        });
+        console.log(`blocked response : ${blocked}`);
+        return blocked;
+    },
     exists: async (userId1, userId2) => {
         return await prisma.blockedUser.findFirst({
             where: {
