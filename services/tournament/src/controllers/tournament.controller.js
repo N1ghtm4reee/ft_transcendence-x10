@@ -303,6 +303,7 @@ export const tournamentControllers = {
             status,
             startTime,
             createdBy: userId,
+            playersCount: 1, // Initialize with 1 since creator will be added as player
           },
         });
 
@@ -545,6 +546,16 @@ export const tournamentControllers = {
 
       await prisma.Player.delete({
         where: { id: player.id },
+      });
+
+      // Update tournament players count
+      await prisma.Tournament.update({
+        where: { id: tournamentId },
+        data: {
+          playersCount: {
+            decrement: 1,
+          },
+        },
       });
 
       // Fetch complete tournament data with remaining players for notification
