@@ -109,7 +109,7 @@ const formatPlayerToProfileOverview = async (player) => {
         displayName: userData.displayName || player.username,
         avatar: userData.avatar || "assets/default.png",
         bio: userData.bio || "",
-        status: "offline", 
+        status: "offline",
         rank: null, // Can be enhanced with ranking system
         createdAt: userData.createdAt || new Date().toISOString(),
       };
@@ -816,12 +816,25 @@ export const tournamentControllers = {
     try {
       const tournaments = await prisma.Tournament.findMany({
         include: {
-          players: true,
+          players: {
+            select: {
+              userId: true,
+              username: true,
+            },
+          },
         },
       });
+
+      // Format each tournament to match frontend interface
+      const formattedTournaments = await Promise.all(
+        tournaments.map(async (tournament) => {
+          return await formatTournamentData(tournament);
+        })
+      );
+
       res.status(200).send({
         message: "List of tournaments retrieved successfully",
-        tournaments,
+        tournaments: formattedTournaments,
       });
     } catch (error) {
       console.error("Error retrieving tournaments:", error);
