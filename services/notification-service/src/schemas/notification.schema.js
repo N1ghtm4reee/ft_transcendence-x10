@@ -19,6 +19,7 @@ export const notificationSchemas = {
             "TOURNAMENT_STARTED",
             "TOURNAMENT_CANCELLED",
             "TOURNAMENT_MATCH_READY",
+            "TOURNAMENT_UPDATE",
             "system",
           ],
         },

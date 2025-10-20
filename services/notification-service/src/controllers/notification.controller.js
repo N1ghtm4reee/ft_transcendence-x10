@@ -226,30 +226,35 @@ function broadcastToUser(userId, data) {
           data.type === "TOURNAMENT_LEFT" ||
           data.type === "TOURNAMENT_STARTED" ||
           data.type === "TOURNAMENT_CANCELLED" ||
-          data.type === "TOURNAMENT_MATCH_READY"
+          data.type === "TOURNAMENT_MATCH_READY" ||
+          data.type === "TOURNAMENT_UPDATE"
         ) {
           console.log(
             `Sending tournament notification to user ${userId}:`,
             data
           );
+          console.log("Tournament data being sent:", data.tournamentData);
           try {
-            connection.send(
-              JSON.stringify({
-                type: data.type,
-                content: data.content,
-                title: data.title,
-                tournamentId: data.tournamentId,
-                tournamentName: data.tournamentName,
-                tournamentData: data.tournamentData,
-                user: data.user
-                  ? {
-                      id: data.user.id,
-                      displayName: data.user.displayName,
-                      avatar: data.user.avatar,
-                    }
-                  : undefined,
-              })
+            const payload = {
+              type: data.type,
+              content: data.content,
+              title: data.title,
+              tournamentId: data.tournamentId,
+              tournamentName: data.tournamentName,
+              tournamentData: data.tournamentData,
+              user: data.user
+                ? {
+                    id: data.user.id,
+                    displayName: data.user.displayName,
+                    avatar: data.user.avatar,
+                  }
+                : undefined,
+            };
+            console.log(
+              "WebSocket payload being sent:",
+              JSON.stringify(payload, null, 2)
             );
+            connection.send(JSON.stringify(payload));
           } catch (error) {
             console.error(
               `Error sending tournament notification to user ${userId}:`,
@@ -371,8 +376,23 @@ async function broadcastToAllUsers(userId, connectionType) {
 export const notificationControllers = {
   createNotification: async (req, res) => {
     try {
-      const { userId, type, title, content, sourceId, requestId, gameResult } =
-        req.body;
+      console.log(
+        "Received notification request body:",
+        JSON.stringify(req.body, null, 2)
+      );
+
+      const {
+        userId,
+        type,
+        title,
+        content,
+        sourceId,
+        requestId,
+        gameResult,
+        tournamentData,
+        tournamentId,
+        tournamentName,
+      } = req.body;
       let user;
       try {
         const userResponse = await fetch(
@@ -424,11 +444,26 @@ export const notificationControllers = {
         },
       };
 
+      // Add tournament data for tournament notifications
+      if (tournamentData) {
+        notificationData.tournamentData = tournamentData;
+      }
+      if (tournamentId) {
+        notificationData.tournamentId = tournamentId;
+      }
+      if (tournamentName) {
+        notificationData.tournamentName = tournamentName;
+      }
+
       // Add gameResult for GAME_FINISHED notifications
       if (type === "GAME_FINISHED" && gameResult) {
         notificationData.gameResult = gameResult;
       }
 
+      console.log(
+        "Broadcasting notification data:",
+        JSON.stringify(notificationData, null, 2)
+      );
       broadcastToUser(notification.userId, notificationData);
 
       return res.code(201).send({
