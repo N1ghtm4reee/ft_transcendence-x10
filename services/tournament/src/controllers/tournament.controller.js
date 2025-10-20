@@ -91,6 +91,91 @@ const getTournamentNotificationContent = (type, tournamentData, customData) => {
   }
 };
 
+// Helper function to format player data to ProfileOverview format
+const formatPlayerToProfileOverview = async (player) => {
+  try {
+    // Fetch user profile data
+    const userResponse = await fetch(
+      `http://user-service:3002/api/user-management/users/${player.userId}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (userResponse.ok) {
+      const userData = await userResponse.json();
+      return {
+        id: userData.id.toString(),
+        displayName: userData.displayName || player.username,
+        avatar: userData.avatar || "assets/default.png",
+        bio: userData.bio || "",
+        status: "offline", 
+        rank: null, // Can be enhanced with ranking system
+        createdAt: userData.createdAt || new Date().toISOString(),
+      };
+    } else {
+      // Fallback if user service is unavailable
+      return {
+        id: player.userId.toString(),
+        displayName: player.username,
+        avatar: "assets/default.png",
+        bio: "",
+        status: "offline",
+        rank: null,
+        createdAt: new Date().toISOString(),
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching user profile for player:", error);
+    // Fallback data
+    return {
+      id: player.userId.toString(),
+      displayName: player.username,
+      avatar: "assets/default.png",
+      bio: "",
+      status: "offline",
+      rank: null,
+      createdAt: new Date().toISOString(),
+    };
+  }
+};
+
+// Helper function to format tournament data to match frontend interface
+const formatTournamentData = async (tournamentData) => {
+  const players = [];
+
+  if (tournamentData.players && Array.isArray(tournamentData.players)) {
+    for (const player of tournamentData.players) {
+      const profileOverview = await formatPlayerToProfileOverview(player);
+      players.push(profileOverview);
+    }
+  }
+
+  // Map database status to frontend status
+  const statusMapping = {
+    pending: "upcoming",
+    started: "ongoing",
+    completed: "completed",
+    cancelled: "cancelled",
+  };
+
+  return {
+    id: tournamentData.id.toString(),
+    name: tournamentData.name,
+    status: statusMapping[tournamentData.status] || "upcoming",
+    startDate: tournamentData.startTime || new Date().toISOString(),
+    endDate: tournamentData.endTime || new Date().toISOString(),
+    players: players,
+    platerCount: players.length, // Note: keeping your typo "platerCount" as in interface
+    winnerId: tournamentData.winnerId
+      ? tournamentData.winnerId.toString()
+      : null,
+    createdBy: tournamentData.createdBy
+      ? tournamentData.createdBy.toString()
+      : "",
+  };
+};
+
 // Helper function to notify all tournament players
 const notifyTournamentPlayers = async (
   tournamentId,
@@ -245,10 +330,15 @@ export const tournamentControllers = {
         },
       });
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(
+        tournamentWithPlayers
+      );
+
       // Broadcast tournament creation notification to all users
       await broadcastTournamentToAllUsers(
         "TOURNAMENT_CREATED",
-        tournamentWithPlayers,
+        formattedTournamentData,
         {
           sourceId: userId,
           creatorName: username,
@@ -364,11 +454,16 @@ export const tournamentControllers = {
         },
       });
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(
+        tournamentWithPlayers
+      );
+
       // Send notification to all existing tournament players about new player joining
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_JOINED",
-        tournamentWithPlayers,
+        formattedTournamentData,
         {
           playerName: username,
           sourceId: userId,
@@ -465,11 +560,16 @@ export const tournamentControllers = {
         },
       });
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(
+        tournamentWithPlayers
+      );
+
       // Send notification to all remaining tournament players about player leaving
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_LEFT",
-        tournamentWithPlayers,
+        formattedTournamentData,
         {
           playerName: player.username,
           sourceId: userId,
@@ -575,11 +675,16 @@ export const tournamentControllers = {
         },
       });
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(
+        updatedTournament
+      );
+
       // Send notification to all tournament players that tournament has started
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_STARTED",
-        updatedTournament,
+        formattedTournamentData,
         {
           sourceId: userId,
         }
@@ -816,10 +921,15 @@ export const tournamentControllers = {
         },
       });
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(
+        tournamentWithPlayers
+      );
+
       // Broadcast tournament cancellation notification to all users
       await broadcastTournamentToAllUsers(
         "TOURNAMENT_CANCELLED",
-        tournamentWithPlayers,
+        formattedTournamentData,
         {
           sourceId: tournament.createdBy?.toString(),
         }
@@ -970,10 +1080,15 @@ export const tournamentControllers = {
 
           // Notify both players
           if (player1 && player2 && tournamentWithPlayers) {
+            // Format tournament data to match frontend interface
+            const formattedTournamentData = await formatTournamentData(
+              tournamentWithPlayers
+            );
+
             await sendTournamentNotification(
               match.player1Id,
               "TOURNAMENT_MATCH_READY",
-              tournamentWithPlayers,
+              formattedTournamentData,
               {
                 opponentName: player2.username,
                 sourceId: match.player2Id.toString(),
@@ -984,7 +1099,7 @@ export const tournamentControllers = {
             await sendTournamentNotification(
               match.player2Id,
               "TOURNAMENT_MATCH_READY",
-              tournamentWithPlayers,
+              formattedTournamentData,
               {
                 opponentName: player1.username,
                 sourceId: match.player1Id.toString(),
@@ -1048,12 +1163,19 @@ export const tournamentControllers = {
         });
       }
 
+      // Format tournament data to match frontend interface
+      const formattedTournamentData = await formatTournamentData(tournament);
+
       // Broadcast tournament update to all users
-      await broadcastTournamentToAllUsers("TOURNAMENT_UPDATE", tournament, {
-        message,
-        title: title || "Tournament Update",
-        sourceId: userId,
-      });
+      await broadcastTournamentToAllUsers(
+        "TOURNAMENT_UPDATE",
+        formattedTournamentData,
+        {
+          message,
+          title: title || "Tournament Update",
+          sourceId: userId,
+        }
+      );
 
       res.status(200).send({
         message: "Tournament update sent successfully",
