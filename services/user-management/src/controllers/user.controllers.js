@@ -654,6 +654,7 @@ export const userController = {
             avatar: friend.avatar,
             status: (await getOnlineStatus(friend.id)) ? "online" : "offline",
             lastActive: friend.lastSeen,
+            rank: friend.rank,
           };
         })
       );
