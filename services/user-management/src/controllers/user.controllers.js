@@ -627,6 +627,7 @@ export const userController = {
               displayName: true,
               avatar: true,
               lastSeen: true,
+              rank: true,
             },
           },
           receiver: {
@@ -635,6 +636,7 @@ export const userController = {
               displayName: true,
               avatar: true,
               lastSeen: true,
+              rank: true,
             },
           },
         },
