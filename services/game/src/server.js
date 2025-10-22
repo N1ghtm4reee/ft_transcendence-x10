@@ -29,7 +29,7 @@ const BALL_SPEED = 0.15;
 const PADDLE_HEIGHT = 2;
 const PADDLE_SPEED = 0.5;
 const RECONNECT_TIMEOUT = 30000; // 30 seconds
-const GAME_PAUSE_TIMEOUT = 3000; // 3 seconds grace period before pausing
+const GAME_PAUSE_TIMEOUT = 30000; // 30 seconds grace period before pausing
 
 function createGameSession(
   playerId1,
@@ -155,7 +155,6 @@ fastify.post("/api/game/accepted/:gameId", async (request, reply) => {
     error: "Failed to accept game invitation",
     details: error.message,
   });
-
 });
 
 function clearGameId(gameId) {
@@ -164,67 +163,73 @@ function clearGameId(gameId) {
   if (session) {
     // Stop any game loop if it exists
     stopGameLoop(gameId);
-    
+
     // Notify connected players that the invitation expired
     if (session.player1Sock) {
-      sendToPlayer(session.player1Sock, JSON.stringify({
-        type: "gameExpired",
-        gameId: gameId,
-        message: "Game invitation has expired"
-      }));
+      sendToPlayer(
+        session.player1Sock,
+        JSON.stringify({
+          type: "gameExpired",
+          gameId: gameId,
+          message: "Game invitation has expired",
+        })
+      );
       session.player1Sock.gameId = null;
     }
-    
+
     if (session.player2Sock) {
-      sendToPlayer(session.player2Sock, JSON.stringify({
-        type: "gameExpired", 
-        gameId: gameId,
-        message: "Game invitation has expired"
-      }));
+      sendToPlayer(
+        session.player2Sock,
+        JSON.stringify({
+          type: "gameExpired",
+          gameId: gameId,
+          message: "Game invitation has expired",
+        })
+      );
       session.player2Sock.gameId = null;
     }
-    
+
     // Clean up the session
     sessions.delete(gameId);
     disconnected.delete(gameId);
   }
 }
 
-
-
 const getBlockedStatus = async (userId1, userId2) => {
-        return await prisma.blockedUser.findFirst({
-            where: {
-                OR: [
-                    { blockerId: Number(userId1), blockedId: Number(userId2) },
-                    { blockerId: Number(userId2), blockedId: Number(userId1) }
-                ]
-            },
-            select: { id: true, blockerId: true, blockedId: true }
-        });
+  return await prisma.blockedUser.findFirst({
+    where: {
+      OR: [
+        { blockerId: Number(userId1), blockedId: Number(userId2) },
+        { blockerId: Number(userId2), blockedId: Number(userId1) },
+      ],
+    },
+    select: { id: true, blockerId: true, blockedId: true },
+  });
 };
 
 const blocker = async (userId1, userId2) => {
-        const block = await prisma.blockedUser.findFirst({
-            where: {
-                blockerId: Number(userId1), blockedId: Number(userId2)
-            },
-            select: { id: true, blockerId: true, blockedId: true }
-        });
-        console.log(`blocker response : ${block}`);
-        return block;
-    };
+  const block = await prisma.blockedUser.findFirst({
+    where: {
+      blockerId: Number(userId1),
+      blockedId: Number(userId2),
+    },
+    select: { id: true, blockerId: true, blockedId: true },
+  });
+  console.log(`blocker response : ${block}`);
+  return block;
+};
 
 const blocked = async (userId1, userId2) => {
-        const blocked = await prisma.blockedUser.findFirst({
-            where: {
-                blockerId: Number(userId2), blockedId: Number(userId1)
-            },
-            select: { id: true, blockerId: true, blockedId: true }
-        });
-        console.log(`blocked response : ${blocked}`);
-        return blocked;
-  };
+  const blocked = await prisma.blockedUser.findFirst({
+    where: {
+      blockerId: Number(userId2),
+      blockedId: Number(userId1),
+    },
+    select: { id: true, blockerId: true, blockedId: true },
+  });
+  console.log(`blocked response : ${blocked}`);
+  return blocked;
+};
 
 // POST /challenge endpoint to create a new game
 fastify.post("/api/game/challenge", async (request, reply) => {
@@ -254,7 +259,6 @@ fastify.post("/api/game/challenge", async (request, reply) => {
 
     const isBlocker = await blocker(playerId1, playerId2);
     const isBlocked = await blocked(playerId1, playerId2);
-
 
     // check if they block each other or not
     if (isBlocker || isBlocked) {
@@ -330,7 +334,7 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       const timeoutID = setTimeout(() => {
         clearGameId(gameId);
       }, 5000);
-      
+
       // store the timeout id so i can clear it if accpeted or rejected
       session.invitationTimeout = timeoutID;
 
@@ -790,30 +794,39 @@ async function handleGameCompletion(gameId, session, winner) {
 
   // Update achievements
   try {
-    const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        winner: winner
-      })
-    });
+    const achievementResponse = await fetch(
+      "http://localhost:3006/api/game/achievements",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          winner: winner,
+        }),
+      }
+    );
 
     if (!achievementResponse.ok) {
-      console.error('Failed to update achievements:', await achievementResponse.text());
+      console.error(
+        "Failed to update achievements:",
+        await achievementResponse.text()
+      );
     } else {
-      console.log('Achievements updated successfully for winner:', winner);
+      console.log("Achievements updated successfully for winner:", winner);
     }
-  } catch(error) {
-    console.error('Error updating achievements:', error);
+  } catch (error) {
+    console.error("Error updating achievements:", error);
   }
 
   // Update ranks
   try {
-    const rankResponse = await fetch("http://localhost:3006/api/game/updateRanks", {
-      method: "PUT",
-    });
+    const rankResponse = await fetch(
+      "http://localhost:3006/api/game/updateRanks",
+      {
+        method: "PUT",
+      }
+    );
 
     if (!rankResponse.ok) {
       console.error("Failed to update ranks:", await rankResponse.text());
@@ -824,8 +837,6 @@ async function handleGameCompletion(gameId, session, winner) {
     console.error("Error updating ranks:", error);
   }
 }
-
-
 
 async function updateBall(session, gameId) {
   const ball = session.gameBoard.ball;
@@ -896,7 +907,7 @@ async function updateBall(session, gameId) {
       session.score.player1 >= winningScore
         ? session.playerId1
         : session.playerId2;
-    
+
     pauseGameWin(gameId);
     stopGameLoop(gameId);
 
@@ -915,7 +926,6 @@ async function updateBall(session, gameId) {
   if (Math.abs(ball.vx) < minSpeed) ball.vx = minSpeed * Math.sign(ball.vx);
   if (Math.abs(ball.vy) < minSpeed) ball.vy = minSpeed * Math.sign(ball.vy);
 }
-
 
 function resetBall(session) {
   const ball = session.gameBoard.ball;
@@ -987,6 +997,12 @@ function handleReconnection(connection, playerId) {
       const disInfo = disconnected.get(gameId);
       if (disInfo && disInfo.playerId === playerId) {
         clearTimeout(disInfo.timeout);
+        // Clear countdown intervals as well
+        if (disInfo.countdownIntervals) {
+          disInfo.countdownIntervals.forEach((interval) =>
+            clearTimeout(interval)
+          );
+        }
         disconnected.delete(gameId);
         console.log(
           `⏰ Cleared disconnection timeout for ${playerId} in game ${gameId}`
@@ -1183,13 +1199,13 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
     }
   });
 
-  connection.on("close", () => {
-    handlePlayerDisconnection(connection);
+  connection.on("close", async () => {
+    await handlePlayerDisconnection(connection);
   });
 
-  connection.on("error", (error) => {
+  connection.on("error", async (error) => {
     console.error("WebSocket error:", error);
-    handlePlayerDisconnection(connection);
+    await handlePlayerDisconnection(connection);
   });
 
   // Handle explicit reconnection to a specific game
@@ -1234,7 +1250,7 @@ fastify.get("/ws", { websocket: true }, (connection, req) => {
   );
 });
 
-function handlePlayerDisconnection(connection) {
+async function handlePlayerDisconnection(connection) {
   const gameId = connection.gameId;
   const playerId = connection.playerId;
 
@@ -1247,89 +1263,82 @@ function handlePlayerDisconnection(connection) {
 
   const session = sessions.get(gameId);
   let disconnectedPlayerId = null;
+  let remainingPlayerId = null;
   let remainingPlayerSock = null;
 
   if (session.player1Sock === connection) {
     session.player1Sock = null;
     disconnectedPlayerId = session.playerId1;
+    remainingPlayerId = session.playerId2;
     remainingPlayerSock = session.player2Sock;
     console.log(`Player 1 (${playerId}) disconnected from game ${gameId}`);
   } else if (session.player2Sock === connection) {
     session.player2Sock = null;
     disconnectedPlayerId = session.playerId2;
+    remainingPlayerId = session.playerId1;
     remainingPlayerSock = session.player1Sock;
     console.log(`Player 2 (${playerId}) disconnected from game ${gameId}`);
   }
 
   if (disconnectedPlayerId) {
+    console.log(
+      `Player ${disconnectedPlayerId} disconnected from game ${gameId}. Starting 30-second timeout.`
+    );
+
     // Pause the game immediately
     pauseGame(gameId, "disconnection");
 
-    // Notify remaining player about disconnection
+    // Notify remaining player about disconnection and timeout
     if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
       sendToPlayer(
         remainingPlayerSock,
         JSON.stringify({
           type: "playerDisconnected",
-          message: "Opponent disconnected. Waiting for reconnection...",
+          message:
+            "Opponent disconnected. Waiting 30 seconds for reconnection...",
           disconnectedPlayer: disconnectedPlayerId,
+          timeoutSeconds: 30,
         })
       );
     }
 
-    // Check if this is a second disconnection (both players disconnected)
-    const existingDisconnection = disconnected.get(gameId);
-    if (existingDisconnection) {
-      clearTimeout(existingDisconnection.timeout);
-      console.log(
-        `Both players disconnected from game ${gameId}. Ending game.`
-      );
-
-      const winner =
-        existingDisconnection.playerId === session.playerId1
-          ? "player2"
-          : "player1";
-      updateAndEndGame(gameId, session, winner);
-      return;
-    }
-
-    // Set up a new timeout for this disconnection
-    const timeout = setTimeout(async () => {
-      console.log(
-        `${disconnectedPlayerId} did not reconnect to game ${gameId} in time. Ending game.`
-      );
-
-      const winner =
-        disconnectedPlayerId === session.playerId1
-          ? session.playerId2
-          : session.playerId1;
-
-      await updateAndEndGame(gameId, session, winner);
-
-      const remainingSession = sessions.get(gameId);
-      if (
-        remainingSession &&
-        remainingPlayerSock &&
-        remainingPlayerSock.readyState === 1
-      ) {
-        sendToPlayer(
-          remainingPlayerSock,
-          JSON.stringify({
-            type: "gameEnded",
-            reason: "Opponent did not reconnect",
-            winner: winner,
-          })
-        );
-      }
-
-      // Clean up disconnection tracking
-      disconnected.delete(gameId);
-    }, RECONNECT_TIMEOUT);
-
+    // Set up the disconnection tracking
     disconnected.set(gameId, {
-      playerId: disconnectedPlayerId,
-      time: Date.now(),
-      timeout: timeout,
+      disconnectedPlayerId,
+      remainingPlayerId,
+      remainingPlayerSock,
+      timestamp: Date.now(),
+      timeout: setTimeout(async () => {
+        // After 30 seconds, disconnected player loses by forfeit
+        console.log(
+          `Timeout reached for game ${gameId}. Player ${disconnectedPlayerId} loses by forfeit.`
+        );
+
+        // Stop the game loop
+        stopGameLoop(gameId);
+
+        // The remaining player wins
+        const winner = remainingPlayerId;
+
+        // Notify remaining player of victory
+        if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
+          sendToPlayer(
+            remainingPlayerSock,
+            JSON.stringify({
+              type: "playerDisconnected",
+              message: "Opponent disconnected. You win by forfeit!",
+              winner: winner,
+              disconnectedPlayer: disconnectedPlayerId,
+            })
+          );
+        }
+
+        // Update and end the game with the winner
+        await updateAndEndGame(gameId, session, winner);
+
+        // Clean up disconnection tracking
+        disconnected.delete(gameId);
+      }, 30000), // 30 seconds
     });
   }
 }
@@ -1344,8 +1353,8 @@ async function updateAndEndGame(gameId, session, winner) {
   }
 
   const cleanSession = {
-    player1username: session.playerId1,
-    player2username: session.playerId2,
+    player1Id: session.playerId1,
+    player2Id: session.playerId2,
     score: session.score,
     createdAt: session.createdAt,
     gameType: session.mode,
@@ -1368,9 +1377,12 @@ async function updateAndEndGame(gameId, session, winner) {
   }
 
   try {
-    const rankResponse = await fetch("http://localhost:3006/api/game/updateRanks", {
-      method: "PUT",
-    });
+    const rankResponse = await fetch(
+      "http://localhost:3006/api/game/updateRanks",
+      {
+        method: "PUT",
+      }
+    );
 
     if (!rankResponse.ok) {
       console.error("❌ Failed to update rank:", await rankResponse.text());
@@ -1384,25 +1396,105 @@ async function updateAndEndGame(gameId, session, winner) {
   stopGameLoop(gameId);
 
   try {
-    const achievementResponse = await fetch("http://localhost:3006/api/game/achievements", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ winner }),
-    });
+    const achievementResponse = await fetch(
+      "http://localhost:3006/api/game/achievements",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ winner }),
+      }
+    );
 
     if (!achievementResponse.ok) {
-      console.error("❌ Failed to update achievements:", await achievementResponse.text());
+      console.error(
+        "❌ Failed to update achievements:",
+        await achievementResponse.text()
+      );
     } else {
-      console.log("🏆 Achievements updated successfully for disconnect winner:", winner);
+      console.log(
+        "🏆 Achievements updated successfully for disconnect winner:",
+        winner
+      );
     }
   } catch (error) {
     console.error("⚠️ Error updating achievements:", error);
   }
 
+  // Send notifications to both players about the game outcome
+  const disconnectedPlayer =
+    winner === session.playerId1 ? session.playerId2 : session.playerId1;
+
+  // Notify the winner
+  try {
+    const winnerNotificationResponse = await fetch(
+      "http://notification-service:3005/api/notifications",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: winner,
+          type: "GAME_FINISHED",
+          title: "Victory by Forfeit",
+          content: `You won the game! Your opponent disconnected and did not return within 30 seconds.`,
+          sourceId: disconnectedPlayer,
+          gameResult: {
+            result: "win",
+            reason: "opponent_disconnected",
+            score: session.score,
+          },
+        }),
+      }
+    );
+
+    if (!winnerNotificationResponse.ok) {
+      console.error(
+        "❌ Failed to send winner notification:",
+        await winnerNotificationResponse.text()
+      );
+    } else {
+      console.log("🔔 Winner notification sent successfully");
+    }
+  } catch (error) {
+    console.error("⚠️ Error sending winner notification:", error);
+  }
+
+  // Notify the disconnected player
+  try {
+    const loserNotificationResponse = await fetch(
+      "http://notification-service:3005/api/notifications",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: disconnectedPlayer,
+          type: "GAME_FINISHED",
+          title: "Game Lost by Disconnection",
+          content: `You lost the game by disconnection. You had 30 seconds to reconnect but did not return in time.`,
+          sourceId: winner,
+          gameResult: {
+            result: "loss",
+            reason: "disconnection_timeout",
+            score: session.score,
+          },
+        }),
+      }
+    );
+
+    if (!loserNotificationResponse.ok) {
+      console.error(
+        "❌ Failed to send loser notification:",
+        await loserNotificationResponse.text()
+      );
+    } else {
+      console.log("🔔 Loser notification sent successfully");
+    }
+  } catch (error) {
+    console.error("⚠️ Error sending loser notification:", error);
+  }
+
   sessions.delete(gameId);
   disconnected.delete(gameId);
 }
-
 
 // Health check endpoint
 fastify.get("/health", async (request, reply) => {
@@ -1517,11 +1609,10 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
       // Clear the gameId from the connection
       session.player2Sock.gameId = null;
       if (session.invitationTimeout) {
-      clearTimeout(session.invitationTimeout);
-      session.invitationTimeout = null;
-      console.log(`Cleared invitation timeout for game ${gameId}`);
-    }
-
+        clearTimeout(session.invitationTimeout);
+        session.invitationTimeout = null;
+        console.log(`Cleared invitation timeout for game ${gameId}`);
+      }
     }
 
     return reply.send({
