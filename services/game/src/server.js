@@ -1103,7 +1103,7 @@ function cleanupOldSessions() {
 setInterval(cleanupOldSessions, 300000);
 
 // WebSocket connection endpoint - players connect with their playerId
-fastify.get("/ws", { websocket: true }, (connection, req) => {
+fastify.get("/ws/game", { websocket: true }, (connection, req) => {
   const { playerId, gameId: reconnectId } = url.parse(req.url, true).query;
 
   console.log(
@@ -1629,7 +1629,7 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
   }
 });
 
-fastify.get("/game/:gameId", async (request, reply) => {
+fastify.get("/api/game/:gameId", async (request, reply) => {
   const { gameId } = request.params;
   const session = sessions.get(gameId);
 
