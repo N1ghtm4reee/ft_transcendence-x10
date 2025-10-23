@@ -2,9 +2,15 @@ import Fastify from "fastify";
 import tournamentRoutes from "./routes/tournament.routes.js";
 import swagger from "@fastify/swagger";
 import swaggerUI from "@fastify/swagger-ui";
+import fastifyMetrics from "fastify-metrics";
 
 const fastify = Fastify({ logger: true });
 
+// metrics
+await fastify.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  defaultMetrics: true
+});
 
 fastify.register(swagger, {
   openapi: {

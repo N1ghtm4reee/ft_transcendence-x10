@@ -4,6 +4,7 @@ import url from "url";
 import gameRoutes from "./routes/game.routes.js";
 import { PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
+import fastifyMetrics from "fastify-metrics";
 import fastifyCors from "@fastify/cors";
 
 const prisma = new PrismaClient();
@@ -16,6 +17,12 @@ fastify.register(fastifyCors, {
   origin: true,
   credentials: true,
 });
+
+await fastify.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  defaultMetrics: true
+}
+)
 // Use a Map for better performance with object keys
 const sessions = new Map();
 const gameLoops = new Map();

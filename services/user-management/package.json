@@ -15,7 +15,7 @@
     "db:deploy": "npx prisma migrate deploy && npx prisma generate"
   },
   "prisma": {
-    "seed" : "node prisma/seed.js && node prisma/seedTest.js"
+    "seed": "node prisma/seed.js && node prisma/seedTest.js"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",
@@ -26,6 +26,7 @@
     "@fastify/swagger": "^9.5.1",
     "@fastify/swagger-ui": "^5.2.3",
     "@fastify/websocket": "^11.1.0",
+    "@immobiliarelabs/fastify-metrics": "^7.0.0",
     "@prisma/client": "^6.8.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
