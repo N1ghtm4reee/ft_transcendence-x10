@@ -32,7 +32,7 @@ await app.register(fastifyStatic, {
 });
 
 await app.register(cors, {
-  origin: 'http://localhost:4000',
+  origin: `${process.env.HTTP}://${process.env.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -91,8 +91,6 @@ app.register(blocksRoutes, { prefix: '/api/user-management' });
 
 app.register(internalRoutes, { prefix: '/internal/user-management' })
 
-// post /internal/user-management/achievements/:id
-
 app.get('/health', () => {
   app.log.info('health request, healthy response !!');
   return { message: 'healthy' };
@@ -105,11 +103,3 @@ app.listen({ port: process.env.USER_MANAGMENT_PORT || 3002, host: '0.0.0.0'}, (e
   }
   app.log.info(`Server listening at ${address}`);
 });
-
-// try {
-//   await app.listen({ port: 3002, host: '0.0.0.0' });
-//   console.log('Server running at http://127.0.0.1:3002');
-// } catch (err) {
-//   app.log.error(err);
-//   process.exit(1);
-// }
