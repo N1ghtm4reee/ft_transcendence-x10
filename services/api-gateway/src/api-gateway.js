@@ -4,9 +4,15 @@ import dotenv from "dotenv";
 import fastifyMetrics from "fastify-metrics";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import {readFileSync} from "fs"
+import {join} from "path"
 dotenv.config();
 
 const app = fastify({
+  https : {
+    key : readFileSync(join(import.meta.dirname, "server.key")),
+    cert : readFileSync(join(import.meta.dirname, "server.cert"))
+  },
   logger: {
     level: "info",
     transport: {
@@ -31,8 +37,8 @@ app.addHook("onRequest", async (request, reply) => {
 });
 
 await app.register(cors, {
-  origin: `${process.env.HTTP}://${process.env.FRONT_IP}:4000`,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  origin: [`${process.env.HTTP}://${process.env.FRONT_IP}:4000`,"https://localhost", "http://localhost:4000","http://localhost"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 });
@@ -56,6 +62,7 @@ const authenticateUser = async (req, res) => {
     });
 
     if (!authResponse.ok) {
+      console.log("this might be it")
       return res.status(401).send({ error: "Unauthorized" });
     }
 
@@ -103,7 +110,7 @@ const authenticateWs = async (request, reply) => {
 
     const userData = await authResponse.json();
 
-    const url = new URL(request.url, `http://${request.headers.host}`);
+    const url = new URL(request.url, `${process.env.HTTP}://${request.headers.host}`);
     url.searchParams.set("userId", userData.user.id);
     request.raw.url = url.pathname + url.search;
 
@@ -123,6 +130,9 @@ app.addHook("preHandler", async (request, reply) => {
     "/metrics",
     "/assets",
     "/api/auth/auth",
+    "/ws/notifications",
+    "/ws/chat",
+    "/ws/game"
   ];
 
   if (publicRoutes.some((route) => request.url.startsWith(route))) return;
@@ -179,7 +189,7 @@ app.register(
 app.register(
   proxy,
   createProxyWithHeaders(
-    process.env.CHAT_SERVICE_URL || "http://notification-service:3005",
+    process.env.NOTIFICATION_SERVICE_URL || "http://notification-service:3005",
     "/api/notifications"
   )
 );
@@ -215,6 +225,15 @@ app.register(proxy, {
   rewritePrefix: "/ws/notifications",
   websocket: true,
 });
+
+app.register(proxy, {
+  wsUpstream: "ws://game-service:3006",
+  prefix: "/ws/game",
+  http2: false,
+  rewritePrefix: "/ws/game",
+  websocket: true,
+});
+
 
 app.get("/health", () => {
   return { message: "healthy" };

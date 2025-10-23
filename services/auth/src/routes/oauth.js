@@ -171,7 +171,7 @@ async function oauthRoutes(fastify, options) {
                     email: user.email,
                     name: user.name,
                   })}
-                },  "http://localhost:4000");
+                },  "${process.env.HTTP}://${process.env.FRONT_IP}:4000");
                 console.log('OAuth popup: 2FA message sent, closing window');
                 setTimeout(() => {
                   window.close();
@@ -192,7 +192,7 @@ async function oauthRoutes(fastify, options) {
         reply.setCookie("token", jwtToken, {
           secure: false,
           sameSite: "lax",
-          maxAge: 36000000,
+          maxAge: 3600,
           path: "/",
         });
 
@@ -217,7 +217,7 @@ async function oauthRoutes(fastify, options) {
                 email: user.email,
                 name: user.name,
               })}
-						}, "http://localhost:4000");
+						}, "${process.env.HTTP}://${process.env.FRONT_IP}:4000");
 						console.log('OAuth popup: message sent, closing window');
 						setTimeout(() => {
 							window.close();
@@ -243,7 +243,7 @@ async function oauthRoutes(fastify, options) {
 						window.opener.postMessage({ 
 							type: 'GOOGLE_AUTH_ERROR', 
 							error: 'Authentication failed. Please try again.'
-						}, "http://localhost:4000");
+						}, "${process.env.HTTP}://${process.env.FRONT_IP}:4000");
 						window.close();
 					</script>
 					<p>Authentication failed. This window will close automatically.</p>
