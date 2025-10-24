@@ -69,6 +69,7 @@ function createGameSession(
     pauseReason: null,
     lastUpdateTime: Date.now(),
     invitationTimeout: null,
+    isCompleted: false,
   };
 
   sessions.set(gameId, session);
@@ -537,6 +538,15 @@ function stopGameLoop(gameId) {
 }
 
 async function handleGameCompletion(gameId, session, winner) {
+  if (session.isCompleted) {
+    console.log(
+      `Game ${gameId} already completed, skipping duplicate completion`
+    );
+    return;
+  }
+
+  session.isCompleted = true;
+
   try {
     const cleanSession = {
       player1Id: session.playerId1,
@@ -1066,10 +1076,47 @@ async function handlePlayerDisconnection(connection) {
 
   if (disconnectedPlayerId) {
     console.log(
-      `Player ${disconnectedPlayerId} disconnected from game ${gameId}. Starting 30-second timeout.`
+      `Player ${disconnectedPlayerId} disconnected from game ${gameId}.`
     );
 
+    // Check if both players are now disconnected
+    const bothPlayersDisconnected =
+      !session.player1Sock && !session.player2Sock;
+
+    if (bothPlayersDisconnected) {
+      console.log(
+        `Both players disconnected from game ${gameId}. Ending game immediately.`
+      );
+
+      // Clear any existing disconnection timeout
+      const existingDisconnection = disconnected.get(gameId);
+      if (existingDisconnection && existingDisconnection.timeout) {
+        clearTimeout(existingDisconnection.timeout);
+      }
+
+      stopGameLoop(gameId);
+
+      // End game without a winner (draw scenario)
+      await updateAndEndGame(gameId, session, null);
+
+      disconnected.delete(gameId);
+      return;
+    }
+
     pauseGame(gameId, "disconnection");
+
+    // Check if there's already a disconnection timeout for this game
+    const existingDisconnection = disconnected.get(gameId);
+    if (existingDisconnection) {
+      console.log(`Updating existing disconnection timeout for game ${gameId}`);
+      // Update the existing disconnection with new info but keep the original timeout
+      existingDisconnection.disconnectedPlayerId = disconnectedPlayerId;
+      existingDisconnection.remainingPlayerId = remainingPlayerId;
+      existingDisconnection.remainingPlayerSock = remainingPlayerSock;
+      return;
+    }
+
+    console.log(`Starting 30-second timeout for game ${gameId}.`);
 
     if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
       sendToPlayer(
@@ -1119,12 +1166,24 @@ async function handlePlayerDisconnection(connection) {
 }
 
 async function updateAndEndGame(gameId, session, winner) {
+  if (session.isCompleted) {
+    console.log(
+      `Game ${gameId} already completed, skipping duplicate completion`
+    );
+    return;
+  }
+
+  session.isCompleted = true;
+
   if (winner === session.playerId1) {
     session.score.player1 = 3;
     session.score.player2 = 0;
-  } else {
+  } else if (winner === session.playerId2) {
     session.score.player1 = 0;
     session.score.player2 = 3;
+  } else {
+    session.score.player1 = 0;
+    session.score.player2 = 0;
   }
 
   const cleanSession = {
@@ -1195,73 +1254,123 @@ async function updateAndEndGame(gameId, session, winner) {
     console.error(" Error updating achievements:", error);
   }
 
-  const disconnectedPlayer =
-    winner === session.playerId1 ? session.playerId2 : session.playerId1;
+  // Handle notifications based on whether there's a winner or both players disconnected
+  if (winner) {
+    const disconnectedPlayer =
+      winner === session.playerId1 ? session.playerId2 : session.playerId1;
 
-  try {
-    const winnerNotificationResponse = await fetch(
-      "http://notification-service:3005/api/notifications",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: winner,
-          type: "GAME_FINISHED",
-          title: "Victory by Forfeit",
-          content: `You won the game! Your opponent disconnected and did not return within 30 seconds.`,
-          sourceId: disconnectedPlayer,
-          gameResult: {
-            result: "win",
-            reason: "opponent_disconnected",
-            score: session.score,
-          },
-        }),
+    try {
+      const winnerNotificationResponse = await fetch(
+        "http://notification-service:3005/api/notifications",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: winner,
+            type: "GAME_FINISHED",
+            title: "Victory by Forfeit",
+            content: `You won the game! Your opponent disconnected and did not return within 30 seconds.`,
+            sourceId: disconnectedPlayer,
+            gameResult: {
+              result: "win",
+              reason: "opponent_disconnected",
+              score: session.score,
+            },
+          }),
+        }
+      );
+
+      if (!winnerNotificationResponse.ok) {
+        console.error(
+          " Failed to send winner notification:",
+          await winnerNotificationResponse.text()
+        );
+      } else {
+        console.log(" Winner notification sent successfully");
+      }
+    } catch (error) {
+      console.error(" Error sending winner notification:", error);
+    }
+
+    try {
+      const loserNotificationResponse = await fetch(
+        "http://notification-service:3005/api/notifications",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: disconnectedPlayer,
+            type: "GAME_FINISHED",
+            title: "Game Lost by Disconnection",
+            content: `You lost the game by disconnection. You had 30 seconds to reconnect but did not return in time.`,
+            sourceId: winner,
+            gameResult: {
+              result: "loss",
+              reason: "disconnection_timeout",
+              score: session.score,
+            },
+          }),
+        }
+      );
+
+      if (!loserNotificationResponse.ok) {
+        console.error(
+          " Failed to send loser notification:",
+          await loserNotificationResponse.text()
+        );
+      } else {
+        console.log(" Loser notification sent successfully");
+      }
+    } catch (error) {
+      console.error(" Error sending loser notification:", error);
+    }
+  } else {
+    // Both players disconnected - send draw notifications to both
+    console.log(" Both players disconnected - sending draw notifications");
+
+    const notificationPromises = [session.playerId1, session.playerId2].map(
+      async (playerId) => {
+        try {
+          const response = await fetch(
+            "http://notification-service:3005/api/notifications",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: playerId,
+                type: "GAME_FINISHED",
+                title: "Game Ended - Both Players Disconnected",
+                content: `The game ended because both players disconnected.`,
+                sourceId: null,
+                gameResult: {
+                  result: "draw",
+                  reason: "both_players_disconnected",
+                  score: session.score,
+                },
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            console.error(
+              ` Failed to send notification to player ${playerId}:`,
+              await response.text()
+            );
+          } else {
+            console.log(
+              ` Notification sent successfully to player ${playerId}`
+            );
+          }
+        } catch (error) {
+          console.error(
+            ` Error sending notification to player ${playerId}:`,
+            error
+          );
+        }
       }
     );
 
-    if (!winnerNotificationResponse.ok) {
-      console.error(
-        " Failed to send winner notification:",
-        await winnerNotificationResponse.text()
-      );
-    } else {
-      console.log(" Winner notification sent successfully");
-    }
-  } catch (error) {
-    console.error(" Error sending winner notification:", error);
-  }
-
-  try {
-    const loserNotificationResponse = await fetch(
-      "http://notification-service:3005/api/notifications",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: disconnectedPlayer,
-          type: "GAME_FINISHED",
-          title: "Game Lost by Disconnection",
-          content: `You lost the game by disconnection. You had 30 seconds to reconnect but did not return in time.`,
-          sourceId: winner,
-          gameResult: {
-            result: "loss",
-            reason: "disconnection_timeout",
-            score: session.score,
-          },
-        }),
-      }
-    );
-
-    if (!loserNotificationResponse.ok) {
-      console.error(
-        " Failed to send loser notification:",
-        await loserNotificationResponse.text()
-      );
-    } else {
-      console.log(" Loser notification sent successfully");
-    }
-  } catch (error) {
-    console.error(" Error sending loser notification:", error);
+    await Promise.all(notificationPromises);
   }
 
   sessions.delete(gameId);
