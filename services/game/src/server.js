@@ -15,7 +15,7 @@ fastify.register(fastifyCors, {
   origin: true,
   credentials: true,
 });
-// Use a Map for better performance with object keys
+
 const sessions = new Map();
 const gameLoops = new Map();
 const disconnected = new Map();
@@ -79,6 +79,8 @@ function createGameSession(
   return gameId;
 }
 
+// Accept a game invitation - called when a player accepts an incoming game invite
+// This endpoint handles the acceptance of a game invitation and sends notifications to both players
 fastify.post("/api/game/accepted/:gameId", async (request, reply) => {
   try {
     const userId = request.headers["x-user-id"];
@@ -226,6 +228,9 @@ const blocked = async (userId1, userId2) => {
   return blocked;
 };
 
+// Create a new game challenge between two players
+// This endpoint initiates a game invitation and creates a game session
+// It validates players, checks for blocks, sends notifications, and handles WebSocket connections
 fastify.post("/api/game/challenge", async (request, reply) => {
   try {
     const playerId1 = request.headers["x-user-id"];
@@ -905,6 +910,9 @@ function cleanupOldSessions() {
 
 setInterval(cleanupOldSessions, 300000);
 
+// WebSocket endpoint for real-time game communication
+// Handles player connections, game state updates, paddle movements, and reconnections
+// Supports both new connections and reconnections to existing games
 fastify.get("/ws/game", { websocket: true }, (connection, req) => {
   const { playerId, gameId: reconnectId } = url.parse(req.url, true).query;
 
@@ -1377,6 +1385,8 @@ async function updateAndEndGame(gameId, session, winner) {
   disconnected.delete(gameId);
 }
 
+// Health check endpoint for monitoring service status
+// Returns server status, active sessions count, and connection statistics
 fastify.get("/health", async (request, reply) => {
   return {
     status: "ok",
@@ -1387,6 +1397,8 @@ fastify.get("/health", async (request, reply) => {
   };
 });
 
+// Game statistics endpoint for administrative monitoring
+// Returns detailed statistics about active games, sessions, and player connections
 fastify.get("/stats", async (request, reply) => {
   const stats = {
     totalSessions: sessions.size,
@@ -1398,6 +1410,8 @@ fastify.get("/stats", async (request, reply) => {
   return stats;
 });
 
+// Reject a game invitation - called when a player declines an incoming game invite
+// This endpoint handles the rejection of a game invitation, sends notifications, and cleans up the session
 fastify.post("/api/game/reject/:gameId", async (request, reply) => {
   try {
     const gameId = request.params.gameId;
@@ -1501,6 +1515,8 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
   }
 });
 
+// Get game session information by game ID
+// Returns detailed information about a specific game session including players, scores, and connection status
 fastify.get("/api/game/:gameId", async (request, reply) => {
   const { gameId } = request.params;
   const session = sessions.get(gameId);

@@ -166,7 +166,10 @@ function broadcastToUser(userId, data) {
             );
             userConnections.delete(connection);
           }
-        } else if (data.type === "TOURNAMENT_MATCH") {
+        } else if (
+          data.type === "TOURNAMENT_MATCH" ||
+          data.type === "TOURNAMENT_MATCH_READY"
+        ) {
           console.log(
             `Sending tournament match notification to user ${userId}:`,
             data
@@ -181,9 +184,9 @@ function broadcastToUser(userId, data) {
                 tournamentId: data.tournamentId,
                 tournamentName: data.tournamentName,
                 opponent: {
-                  id: data.opponent.id,
-                  displayName: data.opponent.displayName,
-                  avatar: data.opponent.avatar,
+                  id: data.opponent?.id || data.sourceId,
+                  displayName: data.opponent?.displayName || data.opponentName,
+                  avatar: data.opponent?.avatar,
                 },
                 round: data.round,
               })
@@ -389,6 +392,9 @@ export const notificationControllers = {
         tournamentData,
         tournamentId,
         tournamentName,
+        matchId,
+        opponentName,
+        round,
       } = req.body;
       let user;
       try {
@@ -453,6 +459,19 @@ export const notificationControllers = {
 
       if (type === "GAME_FINISHED" && gameResult) {
         notificationData.gameResult = gameResult;
+      }
+
+      // Add tournament match specific data
+      if (type === "TOURNAMENT_MATCH_READY") {
+        notificationData.matchId = matchId;
+        notificationData.opponentName = opponentName;
+        notificationData.round = round;
+        // The opponent data comes from the user fetched via sourceId
+        notificationData.opponent = {
+          id: user.id,
+          displayName: user.displayName,
+          avatar: user.avatar,
+        };
       }
 
       console.log(
