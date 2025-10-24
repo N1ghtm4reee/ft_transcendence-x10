@@ -2,7 +2,6 @@ import argon2 from "argon2";
 import { signupSchema, loginSchema, userInfoSchema } from "./schema.js";
 import TwoFactorService from "../services/TwoFactorService.js";
 
-// controller
 async function createNewProfile(userData) {
   console.log("createNewProfile, createNewProfile");
   const userProfile = {
@@ -12,7 +11,6 @@ async function createNewProfile(userData) {
     bio: "hey there! want to play a game?",
   };
   console.log("userProfile : ", userProfile);
-  // should be internal service call
   const profileResponse = await fetch(
     "http://user-service:3002/api/user-management/profiles",
     {
@@ -51,7 +49,6 @@ async function authRoutes(fastify, options) {
       }
 
       try {
-        // need to add email or username
         const existingUser = await fastify.prisma.user.findUnique({
           where: { email },
         });
@@ -72,8 +69,6 @@ async function authRoutes(fastify, options) {
 
         try {
           await createNewProfile(user);
-          // add user to notifications map to update his status to online
-          // await
         } catch (err) {
           console.error("Error calling user service", err);
         }

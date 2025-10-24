@@ -1,7 +1,6 @@
 import brackets from "../utils/bracket.js";
 import prisma from "../plugins/prisma.js";
 
-// Helper function to send tournament notifications
 const sendTournamentNotification = async (
   userId,
   type,
@@ -54,7 +53,6 @@ const sendTournamentNotification = async (
   }
 };
 
-// Helper function to get notification titles
 const getTournamentNotificationTitle = (type) => {
   const titles = {
     TOURNAMENT_CREATED: "Tournament Created",
@@ -67,7 +65,6 @@ const getTournamentNotificationTitle = (type) => {
   return titles[type] || "Tournament Notification";
 };
 
-// Helper function to get notification content
 const getTournamentNotificationContent = (type, tournamentData, customData) => {
   switch (type) {
     case "TOURNAMENT_CREATED":
@@ -91,10 +88,8 @@ const getTournamentNotificationContent = (type, tournamentData, customData) => {
   }
 };
 
-// Helper function to format player data to ProfileOverview format
 const formatPlayerToProfileOverview = async (player) => {
   try {
-    // Fetch user profile data
     const userResponse = await fetch(
       `http://user-service:3002/api/user-management/users/${player.userId}`,
       {
@@ -110,11 +105,10 @@ const formatPlayerToProfileOverview = async (player) => {
         avatar: userData.avatar || "assets/default.png",
         bio: userData.bio || "",
         status: "offline",
-        rank: null, // Can be enhanced with ranking system
+        rank: null,
         createdAt: userData.createdAt || new Date().toISOString(),
       };
     } else {
-      // Fallback if user service is unavailable
       return {
         id: player.userId.toString(),
         displayName: player.username,
@@ -127,7 +121,6 @@ const formatPlayerToProfileOverview = async (player) => {
     }
   } catch (error) {
     console.error("Error fetching user profile for player:", error);
-    // Fallback data
     return {
       id: player.userId.toString(),
       displayName: player.username,
@@ -140,7 +133,6 @@ const formatPlayerToProfileOverview = async (player) => {
   }
 };
 
-// Helper function to format tournament data to match frontend interface
 const formatTournamentData = async (tournamentData) => {
   const players = [];
 
@@ -151,7 +143,6 @@ const formatTournamentData = async (tournamentData) => {
     }
   }
 
-  // Map database status to frontend status
   const statusMapping = {
     pending: "upcoming",
     started: "ongoing",
@@ -166,7 +157,7 @@ const formatTournamentData = async (tournamentData) => {
     startDate: tournamentData.startTime || new Date().toISOString(),
     endDate: tournamentData.endTime || new Date().toISOString(),
     players: players,
-    platerCount: players.length, // Note: keeping your typo "platerCount" as in interface
+    platerCount: players.length,
     winnerId: tournamentData.winnerId
       ? tournamentData.winnerId.toString()
       : null,
@@ -176,7 +167,6 @@ const formatTournamentData = async (tournamentData) => {
   };
 };
 
-// Helper function to notify all tournament players
 const notifyTournamentPlayers = async (
   tournamentId,
   type,
@@ -192,7 +182,7 @@ const notifyTournamentPlayers = async (
 
     for (const player of players) {
       if (excludeUserId && player.userId === excludeUserId) {
-        continue; // Skip the user who triggered the action
+        continue;
       }
 
       await sendTournamentNotification(player.userId, type, tournamentData, {
@@ -205,14 +195,12 @@ const notifyTournamentPlayers = async (
   }
 };
 
-// Helper function to broadcast tournament notifications to all users
 const broadcastTournamentToAllUsers = async (
   type,
   tournamentData,
   customData = {}
 ) => {
   try {
-    // Get all users from user service (using profiles endpoint with limit=all)
     const userResponse = await fetch(
       "http://user-service:3002/api/user-management/profiles?name=&limit=all",
       {
@@ -227,7 +215,6 @@ const broadcastTournamentToAllUsers = async (
 
     const users = await userResponse.json();
 
-    // Send notification to all users
     for (const user of users) {
       await sendTournamentNotification(
         user.id,
@@ -245,13 +232,6 @@ const broadcastTournamentToAllUsers = async (
     );
   }
 };
-
-// Example usage for TOURNAMENT_UPDATE broadcasts (can be called from other functions):
-// await broadcastTournamentToAllUsers(
-//   "TOURNAMENT_UPDATE",
-//   tournamentData,
-//   { message: "Custom update message" }
-// );
 
 export const tournamentControllers = {
   createTournament: async (req, res) => {
@@ -303,7 +283,7 @@ export const tournamentControllers = {
             status,
             startTime,
             createdBy: userId,
-            playersCount: 1, // Initialize with 1 since creator will be added as player
+            playersCount: 1,
           },
         });
 
@@ -318,7 +298,6 @@ export const tournamentControllers = {
         return { tournament, player };
       });
 
-      // Fetch complete tournament data with players for notification
       const tournamentWithPlayers = await prisma.Tournament.findUnique({
         where: { id: result.tournament.id },
         include: {
@@ -331,12 +310,10 @@ export const tournamentControllers = {
         },
       });
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(
         tournamentWithPlayers
       );
 
-      // Broadcast tournament creation notification to all users
       await broadcastTournamentToAllUsers(
         "TOURNAMENT_CREATED",
         formattedTournamentData,
@@ -399,7 +376,6 @@ export const tournamentControllers = {
         return res.status(404).send({ error: "Tournament not found" });
       }
 
-      // check if tournament full or not
       if (tournament.playersCount >= 4) {
         return res.status(400).send({
           error: "tournament is full !",
@@ -414,8 +390,6 @@ export const tournamentControllers = {
           error: "Cannot join tournament that has already started or completed",
         });
       }
-
-      // check if userID exists or not
 
       const existingPlayer = await prisma.Player.findFirst({
         where: { userId, tournamentId },
@@ -442,7 +416,6 @@ export const tournamentControllers = {
         },
       });
 
-      // Fetch complete tournament data with players for notification
       const tournamentWithPlayers = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
         include: {
@@ -455,12 +428,10 @@ export const tournamentControllers = {
         },
       });
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(
         tournamentWithPlayers
       );
 
-      // Send notification to all existing tournament players about new player joining
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_JOINED",
@@ -469,7 +440,7 @@ export const tournamentControllers = {
           playerName: username,
           sourceId: userId,
         },
-        userId // Exclude the player who just joined from receiving their own notification
+        userId
       );
 
       res
@@ -548,7 +519,6 @@ export const tournamentControllers = {
         where: { id: player.id },
       });
 
-      // Update tournament players count
       await prisma.Tournament.update({
         where: { id: tournamentId },
         data: {
@@ -558,7 +528,6 @@ export const tournamentControllers = {
         },
       });
 
-      // Fetch complete tournament data with remaining players for notification
       const tournamentWithPlayers = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
         include: {
@@ -571,12 +540,10 @@ export const tournamentControllers = {
         },
       });
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(
         tournamentWithPlayers
       );
 
-      // Send notification to all remaining tournament players about player leaving
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_LEFT",
@@ -585,7 +552,7 @@ export const tournamentControllers = {
           playerName: player.username,
           sourceId: userId,
         },
-        userId // Exclude the player who left from receiving notification
+        userId
       );
 
       res.status(200).send({ message: "Player left tournament successfully" });
@@ -672,7 +639,6 @@ export const tournamentControllers = {
         data: { status: "started" },
       });
 
-      // Fetch updated tournament data with players for notification
       const updatedTournament = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
         include: {
@@ -686,12 +652,10 @@ export const tournamentControllers = {
         },
       });
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(
         updatedTournament
       );
 
-      // Send notification to all tournament players that tournament has started
       await notifyTournamentPlayers(
         tournamentId,
         "TOURNAMENT_STARTED",
@@ -751,13 +715,11 @@ export const tournamentControllers = {
         orderBy: [{ round: "asc" }],
       });
 
-      // Fetch player details for each match
       const matchesWithPlayers = await Promise.all(
         matches.map(async (match) => {
           let player1 = null;
           let player2 = null;
 
-          // Fetch player1 details if exists
           if (match.player1Id) {
             try {
               const response = await fetch(
@@ -774,7 +736,6 @@ export const tournamentControllers = {
             }
           }
 
-          // Fetch player2 details if exists
           if (match.player2Id) {
             try {
               const response = await fetch(
@@ -836,7 +797,6 @@ export const tournamentControllers = {
         },
       });
 
-      // Format each tournament to match frontend interface
       const formattedTournaments = await Promise.all(
         tournaments.map(async (tournament) => {
           return await formatTournamentData(tournament);
@@ -932,7 +892,6 @@ export const tournamentControllers = {
         data: { status: "cancelled" },
       });
 
-      // Fetch complete tournament data with players for notification
       const tournamentWithPlayers = await prisma.Tournament.findUnique({
         where: { id: tournamentId },
         include: {
@@ -945,12 +904,10 @@ export const tournamentControllers = {
         },
       });
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(
         tournamentWithPlayers
       );
 
-      // Broadcast tournament cancellation notification to all users
       await broadcastTournamentToAllUsers(
         "TOURNAMENT_CANCELLED",
         formattedTournamentData,
@@ -1010,7 +967,6 @@ export const tournamentControllers = {
     const { opponentId } = req.body;
 
     try {
-      // Get the match details
       const match = await prisma.Match.findUnique({
         where: { id: matchId },
         include: { Tournament: true },
@@ -1020,14 +976,12 @@ export const tournamentControllers = {
         return res.status(404).send({ error: "Match not found" });
       }
 
-      // Verify that the requesting user is part of this match
       if (match.player1Id !== userId && match.player2Id !== userId) {
         return res
           .status(403)
           .send({ error: "You are not part of this match" });
       }
 
-      // Verify that the opponent is the other player in the match
       const expectedOpponent =
         match.player1Id === userId ? match.player2Id : match.player1Id;
       if (expectedOpponent !== opponentId) {
@@ -1042,7 +996,6 @@ export const tournamentControllers = {
           .send({ error: "Match is not in pending status" });
       }
 
-      // Create a game challenge with tournament mode
       try {
         const gameResponse = await fetch(
           "http://game-service:3006/api/game/challenge",
@@ -1067,15 +1020,12 @@ export const tournamentControllers = {
 
         const gameResult = await gameResponse.json();
 
-        // Update match status to indicate game has started
         await prisma.Match.update({
           where: { id: matchId },
           data: { status: "ongoing" },
         });
 
-        // Send notification to both players that their tournament match is ready
         try {
-          // Get player details and complete tournament data
           const player1 = await prisma.Player.findFirst({
             where: {
               userId: match.player1Id,
@@ -1089,7 +1039,6 @@ export const tournamentControllers = {
             },
           });
 
-          // Get complete tournament data with all players
           const tournamentWithPlayers = await prisma.Tournament.findUnique({
             where: { id: match.tournamentId },
             include: {
@@ -1102,9 +1051,7 @@ export const tournamentControllers = {
             },
           });
 
-          // Notify both players
           if (player1 && player2 && tournamentWithPlayers) {
-            // Format tournament data to match frontend interface
             const formattedTournamentData = await formatTournamentData(
               tournamentWithPlayers
             );
@@ -1136,7 +1083,6 @@ export const tournamentControllers = {
             "Error sending tournament match notifications:",
             notificationError
           );
-          // Don't fail the match creation if notifications fail
         }
 
         res.status(200).send({
@@ -1180,17 +1126,14 @@ export const tournamentControllers = {
         return res.status(404).send({ error: "Tournament not found" });
       }
 
-      // Only tournament creator can send updates
       if (tournament.createdBy !== userId) {
         return res.status(403).send({
           error: "Only tournament creator can send updates",
         });
       }
 
-      // Format tournament data to match frontend interface
       const formattedTournamentData = await formatTournamentData(tournament);
 
-      // Broadcast tournament update to all users
       await broadcastTournamentToAllUsers(
         "TOURNAMENT_UPDATE",
         formattedTournamentData,

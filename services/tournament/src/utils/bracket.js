@@ -1,6 +1,5 @@
 import prisma from "../plugins/prisma.js";
 
-// Helper function to send tournament match notifications
 async function sendTournamentMatchNotification(
   player,
   opponent,
@@ -61,12 +60,10 @@ function shuffle(array) {
 export async function generateInitialMatches(players, tournamentId) {
   const shuffledPlayers = shuffle(players);
 
-  // Get tournament details for notifications
   const tournament = await prisma.Tournament.findUnique({
     where: { id: tournamentId },
   });
 
-  // Get user details for all players
   const userServiceUrl = "http://user-service:3002";
   const playerProfiles = {};
 
@@ -86,7 +83,6 @@ export async function generateInitialMatches(players, tournamentId) {
 
   for (let i = 0; i < shuffledPlayers.length; i += 2) {
     if (i + 1 < shuffledPlayers.length) {
-      // Regular match with two players
       try {
         const match = await prisma.Match.create({
           data: {
@@ -98,12 +94,10 @@ export async function generateInitialMatches(players, tournamentId) {
           },
         });
 
-        // Send tournament match notifications to both players
         const player1Profile = playerProfiles[shuffledPlayers[i].userId];
         const player2Profile = playerProfiles[shuffledPlayers[i + 1].userId];
 
         if (player1Profile && player2Profile) {
-          // Notify Player 1
           await sendTournamentMatchNotification(
             player1Profile,
             player2Profile,
@@ -112,7 +106,6 @@ export async function generateInitialMatches(players, tournamentId) {
             1
           );
 
-          // Notify Player 2
           await sendTournamentMatchNotification(
             player2Profile,
             player1Profile,
@@ -126,7 +119,6 @@ export async function generateInitialMatches(players, tournamentId) {
         throw new Error("Failed to create initial matches");
       }
     } else {
-      // Bye match for the last player (odd number of players)
       try {
         await prisma.Match.create({
           data: {
@@ -147,7 +139,6 @@ export async function generateInitialMatches(players, tournamentId) {
 }
 
 export async function generateNextRoundMatches(tournamentId, currentRound) {
-  // Get all matches from the current round
   const completedMatches = await prisma.Match.findMany({
     where: {
       tournamentId,
@@ -159,7 +150,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
   const winners = completedMatches.map((match) => match.winnerId);
 
   if (winners.length <= 1) {
-    // We have a final winner!
     await prisma.Tournament.update({
       where: { id: tournamentId },
       data: {
@@ -170,7 +160,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
     return;
   }
 
-  // Get tournament details and user profiles for notifications
   const tournament = await prisma.Tournament.findUnique({
     where: { id: tournamentId },
   });
@@ -192,7 +181,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
     }
   }
 
-  // Shuffle winners before pairing
   for (let i = winners.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [winners[i], winners[j]] = [winners[j], winners[i]];
@@ -208,7 +196,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
         status: "pending",
       });
     } else {
-      // Auto-advance this player (odd number of winners)
       nextRoundMatches.push({
         player1Id: winners[i],
         player2Id: null,
@@ -219,7 +206,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
     }
   }
 
-  // Create new matches and send notifications
   for (const matchData of nextRoundMatches) {
     const match = await prisma.Match.create({
       data: {
@@ -228,13 +214,11 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
       },
     });
 
-    // Send notifications for matches with two players
     if (matchData.player2Id) {
       const player1Profile = playerProfiles[matchData.player1Id];
       const player2Profile = playerProfiles[matchData.player2Id];
 
       if (player1Profile && player2Profile) {
-        // Notify Player 1
         await sendTournamentMatchNotification(
           player1Profile,
           player2Profile,
@@ -243,7 +227,6 @@ export async function generateNextRoundMatches(tournamentId, currentRound) {
           currentRound + 1
         );
 
-        // Notify Player 2
         await sendTournamentMatchNotification(
           player2Profile,
           player1Profile,

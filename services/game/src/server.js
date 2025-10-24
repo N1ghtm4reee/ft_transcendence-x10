@@ -12,31 +12,28 @@ const prisma = new PrismaClient();
 const fastify = Fastify();
 await fastify.register(websocket);
 
-// Register CORS support
 fastify.register(fastifyCors, {
   origin: true,
   credentials: true,
 });
 
 await fastify.register(fastifyMetrics, {
-  endpoint: '/metrics',
-  defaultMetrics: true
-}
-)
-// Use a Map for better performance with object keys
+  endpoint: "/metrics",
+  defaultMetrics: true,
+});
+
 const sessions = new Map();
 const gameLoops = new Map();
 const disconnected = new Map();
-const playerConnections = new Map(); // Map playerId to websocket connection
+const playerConnections = new Map();
 
-// Game constants
 const GAME_WIDTH = 20;
 const GAME_HEIGHT = 10;
 const BALL_SPEED = 0.15;
 const PADDLE_HEIGHT = 2;
 const PADDLE_SPEED = 0.5;
-const RECONNECT_TIMEOUT = 30000; // 30 seconds
-const GAME_PAUSE_TIMEOUT = 30000; // 30 seconds grace period before pausing
+const RECONNECT_TIMEOUT = 30000;
+const GAME_PAUSE_TIMEOUT = 30000;
 
 function createGameSession(
   playerId1,
@@ -50,7 +47,7 @@ function createGameSession(
     playerId1,
     playerId2,
     mode,
-    matchId, // Store tournament match ID
+    matchId,
     player1Sock: null,
     player2Sock: null,
     gameBoard: {
@@ -97,7 +94,6 @@ fastify.post("/api/game/accepted/:gameId", async (request, reply) => {
       console.log("Session not found for gameId:", gameId);
       return reply.code(404).send({ error: "Session not found." });
     }
-    // send notification to the sender that the game was accepted
     const player1Id = session.playerId1;
 
     const notifResponse = await fetch(
@@ -168,10 +164,8 @@ function clearGameId(gameId) {
   console.log(`Cleaning up expired game invitation: ${gameId}`);
   const session = sessions.get(gameId);
   if (session) {
-    // Stop any game loop if it exists
     stopGameLoop(gameId);
 
-    // Notify connected players that the invitation expired
     if (session.player1Sock) {
       sendToPlayer(
         session.player1Sock,
@@ -196,7 +190,6 @@ function clearGameId(gameId) {
       session.player2Sock.gameId = null;
     }
 
-    // Clean up the session
     sessions.delete(gameId);
     disconnected.delete(gameId);
   }
@@ -238,15 +231,13 @@ const blocked = async (userId1, userId2) => {
   return blocked;
 };
 
-// POST /challenge endpoint to create a new game
 fastify.post("/api/game/challenge", async (request, reply) => {
   try {
     const playerId1 = request.headers["x-user-id"];
     const playerId2 = request.query.opponentId;
     const mode = request.query.mode || "classic";
-    const matchId = request.query.matchId || null; // Get tournament match ID
+    const matchId = request.query.matchId || null;
 
-    // get both players profiles
     const [player1Profile, player2Profile] = await Promise.all([
       prisma.userProfile.findUnique({ where: { id: parseInt(playerId1, 10) } }),
       prisma.userProfile.findUnique({ where: { id: parseInt(playerId2, 10) } }),
@@ -257,7 +248,6 @@ fastify.post("/api/game/challenge", async (request, reply) => {
     if (!player1Profile || !player2Profile) {
       return reply.status(404).send({ error: "One or both players not found" });
     }
-    // Validate required fields
     if (!playerId1 || !playerId2) {
       return reply.status(400).send({
         error: "Both playerId1 and playerId2 are required",
@@ -267,14 +257,12 @@ fastify.post("/api/game/challenge", async (request, reply) => {
     const isBlocker = await blocker(playerId1, playerId2);
     const isBlocked = await blocked(playerId1, playerId2);
 
-    // check if they block each other or not
     if (isBlocker || isBlocked) {
       return reply.status(400).send({
         error: "Both playerId1 and playerId2 are required",
       });
     }
 
-    // Check if players are already in active games
     for (const [existingGameId, existingSession] of sessions.entries()) {
       if (
         existingSession.playerId1 === playerId1 ||
@@ -297,20 +285,16 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       }
     }
 
-    // Validate mode
     const validModes = ["classic", "tournament"];
     const gameMode = validModes.includes(mode) ? mode : "classic";
 
-    // Create the game session
     const gameId = createGameSession(playerId1, playerId2, gameMode, matchId);
 
-    // Check if players are already connected via websocket (but not in any game)
     const player1Connection = playerConnections.get(playerId1);
     const player2Connection = playerConnections.get(playerId2);
 
     const session = sessions.get(gameId);
 
-    // Assign websocket connections if available and not already in a game
     if (
       player1Connection &&
       player1Connection.readyState === 1 &&
@@ -335,14 +319,11 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       );
     }
 
-    // send in notification service game invite (TODO)
     try {
-      // add timeout for invitation and clear game session
       const timeoutID = setTimeout(() => {
         clearGameId(gameId);
       }, 5000);
 
-      // store the timeout id so i can clear it if accpeted or rejected
       session.invitationTimeout = timeoutID;
 
       const notificationResponse = await fetch(
@@ -373,7 +354,6 @@ fastify.post("/api/game/challenge", async (request, reply) => {
     } catch (err) {
       console.error("Error sending game invite notification:", err);
     }
-    // Notify connected players about the game
     if (session.player1Sock) {
       sendToPlayer(
         session.player1Sock,
@@ -406,7 +386,6 @@ fastify.post("/api/game/challenge", async (request, reply) => {
       );
     }
 
-    // Start game if both players are connected
     if (session.player1Sock && session.player2Sock) {
       session.gameStarted = true;
       session.waitingForPlayers = false;
@@ -458,14 +437,13 @@ function startGameLoop(gameId) {
         currentSession.player2Sock &&
         currentSession.player2Sock.readyState === 1;
 
-      // If game is paused due to disconnection, don't update
       if (currentSession.isPaused) {
         return;
       }
 
       if (!p1Connected || !p2Connected) {
         console.log(
-          `⏸️ Game ${gameId} pausing - p1Connected: ${p1Connected}, p2Connected: ${p2Connected}`
+          `Game ${gameId} pausing - p1Connected: ${p1Connected}, p2Connected: ${p2Connected}`
         );
         console.log(
           `   Player1 socket: ${!!currentSession.player1Sock}, readyState: ${
@@ -484,7 +462,7 @@ function startGameLoop(gameId) {
       updateBall(currentSession, gameId);
       broadcastGameState(gameId);
     }, 1000 / 60)
-  ); // 60 FPS
+  );
 }
 function pauseGameWin(gameId) {
   const session = sessions.get(gameId);
@@ -502,9 +480,8 @@ function pauseGame(gameId, reason = "unknown") {
     session.gameStarted = false;
     session.isPaused = true;
     session.pauseReason = reason;
-    console.log(`🛑 Game ${gameId} paused due to ${reason}`);
+    console.log(`Game ${gameId} paused due to ${reason}`);
 
-    // Notify players about game pause
     const message = JSON.stringify({
       type: "gamePaused",
       reason: reason,
@@ -535,9 +512,8 @@ function resumeGame(gameId) {
       session.gameStarted = true;
       session.isPaused = false;
       session.pauseReason = null;
-      console.log(`▶️ Game ${gameId} resumed`);
+      console.log(` Game ${gameId} resumed`);
 
-      // Notify players about game resume
       const message = JSON.stringify({
         type: "gameResumed",
         message: "Game resumed!",
@@ -548,7 +524,6 @@ function resumeGame(gameId) {
       sendToPlayer(session.player1Sock, message);
       sendToPlayer(session.player2Sock, message);
 
-      // Restart game loop if needed
       if (!gameLoops.has(gameId)) {
         startGameLoop(gameId);
       }
@@ -567,180 +542,8 @@ function stopGameLoop(gameId) {
   }
 }
 
-// async function updateBall(session, gameId) {
-//   const ball = session.gameBoard.ball;
-
-//   ball.x += ball.vx;
-//   ball.y += ball.vy;
-
-//   if (ball.y <= 0 || ball.y >= GAME_HEIGHT) {
-//     ball.vy = -ball.vy;
-//     ball.y = Math.max(0, Math.min(GAME_HEIGHT, ball.y));
-//     ball.vy += (Math.random() - 0.5) * 0.01;
-//   }
-
-//   const paddleWidth = 0.5;
-//   const ballRadius = 0.2; // Define ball radius for server collision detection
-
-//   // Left paddle collision (Player 1)
-//   if (ball.x - ballRadius <= paddleWidth && ball.vx < 0) {
-//     const p1Y = session.gameBoard.player1.paddleY;
-//     if (
-//       ball.y + ballRadius >= p1Y - PADDLE_HEIGHT / 2 &&
-//       ball.y - ballRadius <= p1Y + PADDLE_HEIGHT / 2
-//     ) {
-//       ball.vx = -ball.vx;
-//       ball.x = paddleWidth + ballRadius;
-//       const hitPos = (ball.y - p1Y) / (PADDLE_HEIGHT / 2);
-//       ball.vy += hitPos * 0.05;
-//       const speedMultiplier = 1.02;
-//       ball.vx *= speedMultiplier;
-//       ball.vy *= speedMultiplier;
-//     }
-//   }
-
-//   // Right paddle collision (Player 2)
-//   if (ball.x + ballRadius >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
-//     const p2Y = session.gameBoard.player2.paddleY;
-//     if (
-//       ball.y + ballRadius >= p2Y - PADDLE_HEIGHT / 2 &&
-//       ball.y - ballRadius <= p2Y + PADDLE_HEIGHT / 2
-//     ) {
-//       ball.vx = -ball.vx;
-//       ball.x = GAME_WIDTH - paddleWidth - ballRadius;
-//       const hitPos = (ball.y - p2Y) / (PADDLE_HEIGHT / 2);
-//       ball.vy += hitPos * 0.05;
-//       const speedMultiplier = 1.02;
-//       ball.vx *= speedMultiplier;
-//       ball.vy *= speedMultiplier;
-//     }
-//   }
-
-//   if (ball.x < 0) {
-//     session.score.player2++;
-//     resetBall(session);
-//     broadcastScoreUpdate(gameId);
-//   } else if (ball.x > GAME_WIDTH) {
-//     session.score.player1++;
-//     resetBall(session);
-//     broadcastScoreUpdate(gameId);
-//   }
-
-//   const winningScore = session.mode === "tournament" ? 3 : 5;
-
-//   if (
-//     session.score.player1 >= winningScore ||
-//     session.score.player2 >= winningScore
-//   ) {
-//     const winner =
-//       session.score.player1 >= winningScore
-//         ? session.playerId1
-//         : session.playerId2;
-//     // const loser =
-//     //   session.score.player1 >= winningScore
-//     //     ? session.playerId2
-//     //     : session.playerId1;
-//     pauseGameWin(gameId);
-//     stopGameLoop(gameId);
-
-//     // Broadcast game end
-//     broadcastGameEnd(gameId, winner);
-
-//     try {
-//       const cleanSession = {
-//         player1Id: session.playerId1,
-//         player2Id: session.playerId2,
-//         score: session.score,
-//         createdAt: session.createdAt,
-//         gameType: session.mode,
-//       };
-
-//       const response = await fetch("http://localhost:3006/api/game/update", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           session: cleanSession,
-//           gameId,
-//         }),
-//       });
-
-//       if (!response.ok) {
-//         console.error("Failed to update game:", await response.text());
-//       } else {
-//         console.log("Game updated successfully");
-//       }
-//     } catch (error) {
-//       console.error("Error updating game:", error);
-//     }
-
-//     // Report tournament match result if this is a tournament game
-//     if (session.mode === "tournament" && session.matchId) {
-//       try {
-//         const tournamentResponse = await fetch(
-//           `http://tournament-service:3007/api/matches/${session.matchId}/report`,
-//           {
-//             method: "POST",
-//             headers: {
-//               "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({
-//               winnerId: winner,
-//               score: JSON.stringify(session.score),
-//             }),
-//           }
-//         );
-
-//         if (!tournamentResponse.ok) {
-//           console.error(
-//             "Failed to report tournament match result:",
-//             await tournamentResponse.text()
-//           );
-//         } else {
-//           console.log("Tournament match result reported successfully");
-//         }
-//       } catch (error) {
-//         console.error("Error reporting tournament match result:", error);
-//       }
-//     }
-
-//     // Update achievements
-//     try {
-//     const achievementResponse = await fetch('http://localhost:3006/api/game/achievements', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         winner: winner
-//       })
-//     });
-
-//     if (!achievementResponse.ok) {
-//       console.error('Failed to update achievements:', await achievementResponse.text());
-//     } else {
-//       console.log('Achievements updated successfully for winner:', winner);
-//     }
-//   } catch(error) {
-//     console.error('Error updating achievements:', error);
-//   }
-
-//     sessions.delete(gameId);
-//   }
-
-//   const maxSpeed = 0.4;
-//   if (Math.abs(ball.vx) > maxSpeed) ball.vx = maxSpeed * Math.sign(ball.vx);
-//   if (Math.abs(ball.vy) > maxSpeed) ball.vy = maxSpeed * Math.sign(ball.vy);
-
-//   const minSpeed = 0.1;
-//   if (Math.abs(ball.vx) < minSpeed) ball.vx = minSpeed * Math.sign(ball.vx);
-//   if (Math.abs(ball.vy) < minSpeed) ball.vy = minSpeed * Math.sign(ball.vy);
-// }
-
 async function handleGameCompletion(gameId, session, winner) {
   try {
-    // Update game in database
     const cleanSession = {
       player1Id: session.playerId1,
       player2Id: session.playerId2,
@@ -769,7 +572,6 @@ async function handleGameCompletion(gameId, session, winner) {
     console.error("Error updating game:", error);
   }
 
-  // Report tournament match result if this is a tournament game
   if (session.mode === "tournament" && session.matchId) {
     try {
       const tournamentResponse = await fetch(
@@ -799,7 +601,6 @@ async function handleGameCompletion(gameId, session, winner) {
     }
   }
 
-  // Update achievements
   try {
     const achievementResponse = await fetch(
       "http://localhost:3006/api/game/achievements",
@@ -826,7 +627,6 @@ async function handleGameCompletion(gameId, session, winner) {
     console.error("Error updating achievements:", error);
   }
 
-  // Update ranks
   try {
     const rankResponse = await fetch(
       "http://localhost:3006/api/game/updateRanks",
@@ -860,7 +660,6 @@ async function updateBall(session, gameId) {
   const paddleWidth = 0.5;
   const ballRadius = 0.2;
 
-  // Left paddle collision (Player 1)
   if (ball.x - ballRadius <= paddleWidth && ball.vx < 0) {
     const p1Y = session.gameBoard.player1.paddleY;
     if (
@@ -877,7 +676,6 @@ async function updateBall(session, gameId) {
     }
   }
 
-  // Right paddle collision (Player 2)
   if (ball.x + ballRadius >= GAME_WIDTH - paddleWidth && ball.vx > 0) {
     const p2Y = session.gameBoard.player2.paddleY;
     if (
@@ -997,14 +795,11 @@ function sendToPlayer(socket, message) {
 }
 
 function handleReconnection(connection, playerId) {
-  // Look for games where this player is expected
   for (const [gameId, session] of sessions.entries()) {
     if (session.playerId1 === playerId || session.playerId2 === playerId) {
-      // Clear any pending disconnection timeout
       const disInfo = disconnected.get(gameId);
       if (disInfo && disInfo.playerId === playerId) {
         clearTimeout(disInfo.timeout);
-        // Clear countdown intervals as well
         if (disInfo.countdownIntervals) {
           disInfo.countdownIntervals.forEach((interval) =>
             clearTimeout(interval)
@@ -1012,7 +807,7 @@ function handleReconnection(connection, playerId) {
         }
         disconnected.delete(gameId);
         console.log(
-          `⏰ Cleared disconnection timeout for ${playerId} in game ${gameId}`
+          ` Cleared disconnection timeout for ${playerId} in game ${gameId}`
         );
       }
 
@@ -1029,11 +824,10 @@ function handleReconnection(connection, playerId) {
       }
 
       console.log(
-        `✅ ${playerId} reconnected to game ${gameId} as player ${playerNumber}`
+        ` ${playerId} reconnected to game ${gameId} as player ${playerNumber}`
       );
 
-      // Log current connection status
-      console.log(`🔍 Connection status after ${playerId} joined:`, {
+      console.log(` Connection status after ${playerId} joined:`, {
         player1Connected:
           !!session.player1Sock && session.player1Sock.readyState === 1,
         player2Connected:
@@ -1058,19 +852,18 @@ function handleReconnection(connection, playerId) {
         })
       );
 
-      // Resume game if both players are connected
       const p1Connected =
         session.player1Sock && session.player1Sock.readyState === 1;
       const p2Connected =
         session.player2Sock && session.player2Sock.readyState === 1;
 
       console.log(
-        `🎮 Checking if game can start/resume: p1Connected=${p1Connected}, p2Connected=${p2Connected}, waitingForPlayers=${session.waitingForPlayers}, isPaused=${session.isPaused}`
+        ` Checking if game can start/resume: p1Connected=${p1Connected}, p2Connected=${p2Connected}, waitingForPlayers=${session.waitingForPlayers}, isPaused=${session.isPaused}`
       );
 
       if (p1Connected && p2Connected) {
         if (session.waitingForPlayers) {
-          console.log(`🚀 Both players connected - starting game ${gameId}`);
+          console.log(` Both players connected - starting game ${gameId}`);
           session.gameStarted = true;
           session.waitingForPlayers = false;
           session.isPaused = false;
@@ -1079,7 +872,7 @@ function handleReconnection(connection, playerId) {
           session.isPaused &&
           session.pauseReason === "disconnection"
         ) {
-          console.log(`🔄 Both players reconnected - resuming game ${gameId}`);
+          console.log(` Both players reconnected - resuming game ${gameId}`);
           resumeGame(gameId);
         }
       }
@@ -1092,11 +885,10 @@ function handleReconnection(connection, playerId) {
 
 function cleanupOldSessions() {
   const now = Date.now();
-  const maxAge = 1800000; // 30 minutes
+  const maxAge = 1800000;
 
   for (const [id, session] of sessions.entries()) {
     if (session.createdAt && now - session.createdAt > maxAge) {
-      // Clean up sessions with no active players
       if (!session.player1Sock && !session.player2Sock) {
         stopGameLoop(id);
         sessions.delete(id);
@@ -1109,16 +901,15 @@ function cleanupOldSessions() {
 
 setInterval(cleanupOldSessions, 300000);
 
-// WebSocket connection endpoint - players connect with their playerId
 fastify.get("/ws/game", { websocket: true }, (connection, req) => {
   const { playerId, gameId: reconnectId } = url.parse(req.url, true).query;
 
   console.log(
-    `🔗 WebSocket connection attempt - playerId: ${playerId}, gameId: ${reconnectId}`
+    `WebSocket connection attempt - playerId: ${playerId}, gameId: ${reconnectId}`
   );
 
   if (!playerId) {
-    console.log("❌ Connection rejected - no playerId");
+    console.log(" Connection rejected - no playerId");
     connection.close(1008, "playerId required");
     return;
   }
@@ -1126,19 +917,18 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
   connection.playerId = playerId;
   playerConnections.set(playerId, connection);
 
-  console.log(`✅ Player ${playerId} connected via WebSocket`);
+  console.log(`Player ${playerId} connected via WebSocket`);
 
-  // Set up message handler FIRST - before any reconnection logic
   connection.on("message", (msg) => {
     try {
       const message = JSON.parse(msg.toString());
-      console.log("📨 Received message from client:", message);
+      console.log(" Received message from client:", message);
 
       if (message.type === "move") {
-        console.log("🎮 Processing move message:", message);
+        console.log(" Processing move message:", message);
         const session = sessions.get(connection.gameId);
         if (!session) {
-          console.log("❌ No session found for gameId:", connection.gameId);
+          console.log(" No session found for gameId:", connection.gameId);
           return;
         }
 
@@ -1154,10 +944,10 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
           let newY = currentY;
 
           if (message.direction === "up") {
-            console.log("🔼 Moving up for player:", player);
+            console.log(" Moving up for player:", player);
             newY = Math.max(PADDLE_HEIGHT / 2, currentY - PADDLE_SPEED);
           } else if (message.direction === "down") {
-            console.log("🔽 Moving down for player:", player);
+            console.log(" Moving down for player:", player);
             newY = Math.min(
               GAME_HEIGHT - PADDLE_HEIGHT / 2,
               currentY + PADDLE_SPEED
@@ -1166,13 +956,12 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
 
           session.gameBoard[player].paddleY = newY;
           console.log(
-            `✅ Player ${player} moved paddle from ${currentY} to ${newY}`
+            ` Player ${player} moved paddle from ${currentY} to ${newY}`
           );
 
-          // Immediately broadcast the updated paddle position
           broadcastGameState(connection.gameId);
         } else {
-          console.log("❌ Could not identify player for connection");
+          console.log("Could not identify player for connection");
         }
       }
 
@@ -1188,7 +977,6 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
         }
 
         if (player) {
-          // Ensure the position is within valid bounds
           const clampedY = Math.max(
             PADDLE_HEIGHT / 2,
             Math.min(GAME_HEIGHT - PADDLE_HEIGHT / 2, message.y)
@@ -1198,11 +986,10 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
       }
 
       if (message.type === "stop") {
-        console.log("🛑 Processing stop message for player connection");
-        // No need to update paddle position for stop, just log it
+        console.log(" Processing stop message for player connection");
       }
     } catch (error) {
-      console.error("❌ Error parsing message:", error);
+      console.error(" Error parsing message:", error);
     }
   });
 
@@ -1215,10 +1002,9 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
     await handlePlayerDisconnection(connection);
   });
 
-  // Handle explicit reconnection to a specific game
   if (reconnectId) {
     console.log(
-      `🔄 Attempting reconnection to game ${reconnectId} for player ${playerId}`
+      ` Attempting reconnection to game ${reconnectId} for player ${playerId}`
     );
     const session = sessions.get(reconnectId);
     if (
@@ -1226,28 +1012,26 @@ fastify.get("/ws/game", { websocket: true }, (connection, req) => {
       (session.playerId1 === playerId || session.playerId2 === playerId)
     ) {
       console.log(
-        `✅ Reconnection successful for player ${playerId} to game ${reconnectId}`
+        ` Reconnection successful for player ${playerId} to game ${reconnectId}`
       );
       handleReconnection(connection, playerId);
       return;
     } else {
       console.log(
-        `❌ Reconnection failed - no valid session found for player ${playerId} in game ${reconnectId}`
+        ` Reconnection failed - no valid session found for player ${playerId} in game ${reconnectId}`
       );
     }
   }
 
-  // Handle automatic reconnection based on existing games
-  console.log(`🔍 Checking for existing games for player ${playerId}`);
+  console.log(` Checking for existing games for player ${playerId}`);
   if (handleReconnection(connection, playerId)) {
-    console.log(`✅ Auto-reconnection successful for player ${playerId}`);
+    console.log(` Auto-reconnection successful for player ${playerId}`);
     return;
   }
 
   console.log(
-    `📝 No existing game found for player ${playerId} - sending connection confirmation`
+    ` No existing game found for player ${playerId} - sending connection confirmation`
   );
-  // Send connection confirmation
   connection.send(
     JSON.stringify({
       type: "connected",
@@ -1261,7 +1045,6 @@ async function handlePlayerDisconnection(connection) {
   const gameId = connection.gameId;
   const playerId = connection.playerId;
 
-  // Remove from playerConnections
   if (playerId) {
     playerConnections.delete(playerId);
   }
@@ -1292,10 +1075,8 @@ async function handlePlayerDisconnection(connection) {
       `Player ${disconnectedPlayerId} disconnected from game ${gameId}. Starting 30-second timeout.`
     );
 
-    // Pause the game immediately
     pauseGame(gameId, "disconnection");
 
-    // Notify remaining player about disconnection and timeout
     if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
       sendToPlayer(
         remainingPlayerSock,
@@ -1309,25 +1090,20 @@ async function handlePlayerDisconnection(connection) {
       );
     }
 
-    // Set up the disconnection tracking
     disconnected.set(gameId, {
       disconnectedPlayerId,
       remainingPlayerId,
       remainingPlayerSock,
       timestamp: Date.now(),
       timeout: setTimeout(async () => {
-        // After 30 seconds, disconnected player loses by forfeit
         console.log(
           `Timeout reached for game ${gameId}. Player ${disconnectedPlayerId} loses by forfeit.`
         );
 
-        // Stop the game loop
         stopGameLoop(gameId);
 
-        // The remaining player wins
         const winner = remainingPlayerId;
 
-        // Notify remaining player of victory
         if (remainingPlayerSock && remainingPlayerSock.readyState === 1) {
           sendToPlayer(
             remainingPlayerSock,
@@ -1340,12 +1116,10 @@ async function handlePlayerDisconnection(connection) {
           );
         }
 
-        // Update and end the game with the winner
         await updateAndEndGame(gameId, session, winner);
 
-        // Clean up disconnection tracking
         disconnected.delete(gameId);
-      }, 30000), // 30 seconds
+      }, 30000),
     });
   }
 }
@@ -1375,12 +1149,12 @@ async function updateAndEndGame(gameId, session, winner) {
     });
 
     if (!response.ok) {
-      console.error("❌ Failed to update game:", await response.text());
+      console.error(" Failed to update game:", await response.text());
     } else {
-      console.log("✅ Game updated successfully with walkover score.");
+      console.log(" Game updated successfully with walkover score.");
     }
   } catch (error) {
-    console.error("⚠️ Error updating game:", error);
+    console.error(" Error updating game:", error);
   }
 
   try {
@@ -1392,12 +1166,12 @@ async function updateAndEndGame(gameId, session, winner) {
     );
 
     if (!rankResponse.ok) {
-      console.error("❌ Failed to update rank:", await rankResponse.text());
+      console.error(" Failed to update rank:", await rankResponse.text());
     } else {
-      console.log("✅ Rank updated successfully.");
+      console.log(" Rank updated successfully.");
     }
   } catch (error) {
-    console.error("⚠️ Error updating rank:", error);
+    console.error(" Error updating rank:", error);
   }
 
   stopGameLoop(gameId);
@@ -1414,24 +1188,22 @@ async function updateAndEndGame(gameId, session, winner) {
 
     if (!achievementResponse.ok) {
       console.error(
-        "❌ Failed to update achievements:",
+        " Failed to update achievements:",
         await achievementResponse.text()
       );
     } else {
       console.log(
-        "🏆 Achievements updated successfully for disconnect winner:",
+        " Achievements updated successfully for disconnect winner:",
         winner
       );
     }
   } catch (error) {
-    console.error("⚠️ Error updating achievements:", error);
+    console.error(" Error updating achievements:", error);
   }
 
-  // Send notifications to both players about the game outcome
   const disconnectedPlayer =
     winner === session.playerId1 ? session.playerId2 : session.playerId1;
 
-  // Notify the winner
   try {
     const winnerNotificationResponse = await fetch(
       "http://notification-service:3005/api/notifications",
@@ -1455,17 +1227,16 @@ async function updateAndEndGame(gameId, session, winner) {
 
     if (!winnerNotificationResponse.ok) {
       console.error(
-        "❌ Failed to send winner notification:",
+        " Failed to send winner notification:",
         await winnerNotificationResponse.text()
       );
     } else {
-      console.log("🔔 Winner notification sent successfully");
+      console.log(" Winner notification sent successfully");
     }
   } catch (error) {
-    console.error("⚠️ Error sending winner notification:", error);
+    console.error(" Error sending winner notification:", error);
   }
 
-  // Notify the disconnected player
   try {
     const loserNotificationResponse = await fetch(
       "http://notification-service:3005/api/notifications",
@@ -1489,21 +1260,20 @@ async function updateAndEndGame(gameId, session, winner) {
 
     if (!loserNotificationResponse.ok) {
       console.error(
-        "❌ Failed to send loser notification:",
+        " Failed to send loser notification:",
         await loserNotificationResponse.text()
       );
     } else {
-      console.log("🔔 Loser notification sent successfully");
+      console.log(" Loser notification sent successfully");
     }
   } catch (error) {
-    console.error("⚠️ Error sending loser notification:", error);
+    console.error(" Error sending loser notification:", error);
   }
 
   sessions.delete(gameId);
   disconnected.delete(gameId);
 }
 
-// Health check endpoint
 fastify.get("/health", async (request, reply) => {
   return {
     status: "ok",
@@ -1514,7 +1284,6 @@ fastify.get("/health", async (request, reply) => {
   };
 });
 
-// Stats endpoint
 fastify.get("/stats", async (request, reply) => {
   const stats = {
     totalSessions: sessions.size,
@@ -1537,23 +1306,20 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
       return reply.code(404).send({ error: "Session not found." });
     }
 
-    // Use the correct property names from the session object
-    const player1Id = session.playerId1; // Changed from player1Id
-    const player2Id = session.playerId2; // Changed from player2Id
+    const player1Id = session.playerId1;
+    const player2Id = session.playerId2;
     console.log("player1Id:", player1Id);
     console.log("player2Id:", player2Id);
 
-    // Get both players profiles using the correct variable names
     const [player1Profile, player2Profile] = await Promise.all([
-      prisma.userProfile.findUnique({ where: { id: parseInt(player1Id, 10) } }), // Fixed variable name
-      prisma.userProfile.findUnique({ where: { id: parseInt(player2Id, 10) } }), // Fixed variable name
+      prisma.userProfile.findUnique({ where: { id: parseInt(player1Id, 10) } }),
+      prisma.userProfile.findUnique({ where: { id: parseInt(player2Id, 10) } }),
     ]);
 
     if (!player1Profile || !player2Profile) {
       return reply.status(404).send({ error: "One or both players not found" });
     }
 
-    // Notify the inviter (player1) about the rejection
     try {
       const notificationResponse = await fetch(
         "http://notification-service:3005/api/notifications",
@@ -1563,12 +1329,12 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: player1Profile.id, // Use the profile id
+            userId: player1Profile.id,
             type: "GAME_REJECTED",
             title: "Game Invitation Rejected",
             content: `User ${player2Profile.displayName} has rejected your game invitation`,
-            sourceId: player2Profile.id, // Use the profile id
-            requestId: gameId, // Changed from gameId to requestId to match your notification structure
+            sourceId: player2Profile.id,
+            requestId: gameId,
           }),
         }
       );
@@ -1585,12 +1351,10 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
       console.error("Error sending game rejection notification:", err);
     }
 
-    // Clean up the session since the game was rejected
     stopGameLoop(gameId);
     sessions.delete(gameId);
     disconnected.delete(gameId);
 
-    // Also notify any connected players via WebSocket
     if (session.player1Sock) {
       sendToPlayer(
         session.player1Sock,
@@ -1600,7 +1364,6 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
           message: "Your game invitation was rejected",
         })
       );
-      // Clear the gameId from the connection
       session.player1Sock.gameId = null;
     }
 
@@ -1613,7 +1376,6 @@ fastify.post("/api/game/reject/:gameId", async (request, reply) => {
           message: "Game invitation rejected successfully",
         })
       );
-      // Clear the gameId from the connection
       session.player2Sock.gameId = null;
       if (session.invitationTimeout) {
         clearTimeout(session.invitationTimeout);

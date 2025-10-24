@@ -6,7 +6,6 @@ import fastifyMetrics from "fastify-metrics";
 
 const fastify = Fastify({ logger: true });
 
-// metrics
 await fastify.register(fastifyMetrics, {
   endpoint: '/metrics',
   defaultMetrics: true

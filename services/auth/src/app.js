@@ -45,14 +45,12 @@ const app = fastify({
   },
 });
 
-// metrics
 await app.register(fastifyMetrics, {
   endpoint: "/metrics",
   defaultMetrics: true,
 });
 
 
-// health
 app.get("/health", async (request, reply) => {
   return reply.code(200).send({
     status: "ok",
@@ -85,7 +83,6 @@ await app.register(twoFactorRoutes);
 
 app.setErrorHandler(function (error, request, reply) {
   if (error.validation) {
-    // Determine schema type from the route
     let schemaType = "unknown";
     if (request.url.includes("/signup")) {
       schemaType = "signup";
@@ -93,13 +90,11 @@ app.setErrorHandler(function (error, request, reply) {
       schemaType = "login";
     }
 
-    // Use custom error formatter
     const formattedError = formatValidationErrors(error.validation, schemaType);
     reply.status(400).send(formattedError);
     return;
   }
 
-  // Handle other types of errors
   if (error.statusCode) {
     reply.status(error.statusCode).send({
       error: error.message,
@@ -108,7 +103,6 @@ app.setErrorHandler(function (error, request, reply) {
     return;
   }
 
-  // Default error handling
   reply.status(500).send({
     error: "Internal Server Error",
     statusCode: 500,
@@ -137,7 +131,6 @@ const start = async () => {
   }
 };
 
-// Handle graceful shutdown
 process.on("SIGTERM", async () => {
   app.log.info("SIGTERM received, shutting down gracefully");
   try {

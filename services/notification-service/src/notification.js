@@ -13,7 +13,6 @@ import fastifyMetrics from 'fastify-metrics'
 
 const app = Fastify({ logger: true });
 
-// metrics
 await app.register(fastifyMetrics, {
   endpoint: '/metrics',
   defaultMetrics: true
@@ -21,7 +20,6 @@ await app.register(fastifyMetrics, {
 
 app.decorate("prisma", prisma);
 
-// Register CORS support
 await app.register(fastifyCors, {
   origin: `${process.env.HTTP}://${process.env.FRONT_IP}:4000`,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],

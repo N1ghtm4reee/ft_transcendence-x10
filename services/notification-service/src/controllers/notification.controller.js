@@ -9,8 +9,6 @@ function broadcastToUser(userId, data) {
       `Broadcasting to ${userConnections.size} connections for user ${userId}:`,
       data
     );
-    console.log("WAAAAAAAAAAAAAAAAAAAAA : ", data);
-
     userConnections.forEach((connection) => {
       if (connection.readyState === 1) {
         if (data.type === "FRIEND_REQUEST_RECEIVED") {
@@ -307,7 +305,6 @@ function broadcastToUser(userId, data) {
             userConnections.delete(connection);
           }
         } else {
-          // ACHIEVEMENT_UNLOCKED
           try {
             connection.send(JSON.stringify(data));
             console.log(`Notification sent to user ${userId}`);
@@ -669,7 +666,7 @@ export const notificationControllers = {
       });
     }
   },
-  
+
   liveNotifications: async (connection, req) => {
     const token = req.query.token;
     if (!token) {
@@ -771,7 +768,6 @@ export const notificationControllers = {
           console.log(`Cleaned up empty connection set for user ${userId}`);
         }
 
-        // update last seen
         const response = fetch(
           `http://user-service:3002/api/user-management/lastSeen`,
           {

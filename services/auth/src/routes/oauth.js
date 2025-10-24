@@ -7,7 +7,6 @@ async function createNewProfile(userData) {
     bio: "hey there! want to play a game?",
   };
   console.log("userProfile : ", userProfile);
-  // should be internal service call
   const profileResponse = await fetch(
     "http://user-service:3002/api/user-management/profiles",
     {
@@ -255,30 +254,6 @@ async function oauthRoutes(fastify, options) {
       }
     }
   );
-
-  // fastify.post(
-  //   "/auth/logout",
-  //   {
-  //     schema: {
-  //       tags: ["OAuth"],
-  //       summary: "OAuth Logout",
-  //       description: "Clear OAuth authentication cookie",
-  //       security: [{ cookieAuth: [] }],
-  //       response: {
-  //         200: {
-  //           type: "object",
-  //           properties: {
-  //             message: { type: "string" },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  //   async (request, reply) => {
-  //     reply.clearCookie("token");
-  //     return reply.send({ message: "Logged out successfully" });
-  //   }
-  // );
 }
 
 export default oauthRoutes;

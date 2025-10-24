@@ -1,9 +1,6 @@
 import prisma from "../prisma/prisma.js";
 
 export const gameController = {
-  // rejectGameRequest: async function (request, reply) {
-
-  // },
   addGameHistory: async function (request, reply) {
     const { session, gameId } = request.body;
 
@@ -38,7 +35,6 @@ export const gameController = {
         prisma.gameStats.findUnique({ where: { userId: player2Id } }),
       ]);
 
-      // --- update streaks ---
       const newCurrentStreak1 =
         result1 === "win" ? (currentStats1?.currentStreak || 0) + 1 : 0;
       const newBestStreak1 = Math.max(
@@ -53,7 +49,6 @@ export const gameController = {
         currentStats2?.bestStreak || 0
       );
 
-      // --- score calculation helper ---
       const calculateScore = (stats, result, newBestStreak) => {
         const wins = stats?.wins || 0;
         const losses = stats?.losses || 0;
@@ -71,7 +66,6 @@ export const gameController = {
       const stats2 = calculateScore(currentStats2, result2, newBestStreak2);
 
       const results = await prisma.$transaction([
-        // create game history for both players
         prisma.gameHistory.create({
           data: {
             userId: player1Id,
@@ -97,7 +91,6 @@ export const gameController = {
           },
         }),
 
-        // update player1 stats
         prisma.gameStats.upsert({
           where: { userId: player1Id },
           update: {
@@ -124,7 +117,6 @@ export const gameController = {
           },
         }),
 
-        // update player2 stats
         prisma.gameStats.upsert({
           where: { userId: player2Id },
           update: {
@@ -154,9 +146,7 @@ export const gameController = {
 
       console.log("Game results stored:", { results });
 
-      // Send GAME_FINISHED notifications to both players
       try {
-        // Send notification to player1
         await fetch("http://notification-service:3005/api/notifications/", {
           method: "POST",
           headers: {
@@ -195,7 +185,6 @@ export const gameController = {
           }),
         });
 
-        // Send notification to player2
         await fetch("http://notification-service:3005/api/notifications/", {
           method: "POST",
           headers: {
@@ -240,7 +229,6 @@ export const gameController = {
           "Error sending game finished notifications:",
           notificationError
         );
-        // Don't fail the game update if notifications fail
       }
 
       return reply
@@ -258,7 +246,6 @@ export const gameController = {
         return reply.code(400).send({ error: "Winner ID is required." });
       }
 
-      // Find winner profile by ID (assuming winner is the user ID)
       const winnerProfile = await prisma.userProfile.findUnique({
         where: { id: parseInt(winner) },
       });
@@ -271,7 +258,6 @@ export const gameController = {
       const winnerId = winnerProfile.id;
       console.log("winnerId:", winnerId);
 
-      // Get current stats
       const stats = await prisma.gameStats.findUnique({
         where: { userId: winnerId },
       });
@@ -281,9 +267,8 @@ export const gameController = {
         return reply.send({ message: "No game stats found for user." });
       }
 
-      const newAchievements = []; // Track newly unlocked achievements
+      const newAchievements = [];
 
-      // Check for First Win achievement (ID: 1)
       if (stats.wins >= 1) {
         const hasFirstWinAchievement = await prisma.userProfile.findUnique({
           where: { id: winnerId },
@@ -305,7 +290,6 @@ export const gameController = {
           });
           console.log("Added First Win achievement to player:", winnerId);
 
-          // Get achievement details for notification
           const achievement = await prisma.achievements.findUnique({
             where: { id: 1 },
           });
@@ -313,7 +297,6 @@ export const gameController = {
         }
       }
 
-      // Check for Master achievement - win 10 games (ID: 2)
       if (stats.wins >= 10) {
         const hasMasterAchievement = await prisma.userProfile.findUnique({
           where: { id: winnerId },
@@ -335,7 +318,6 @@ export const gameController = {
           });
           console.log("Added Master achievement to player:", winnerId);
 
-          // Get achievement details for notification
           const achievement = await prisma.achievements.findUnique({
             where: { id: 2 },
           });
@@ -343,7 +325,6 @@ export const gameController = {
         }
       }
 
-      // Send notifications for newly unlocked achievements
       for (const achievement of newAchievements) {
         try {
           const notificationResponse = await fetch(
@@ -358,8 +339,8 @@ export const gameController = {
                 type: "ACHIEVEMENT_UNLOCKED",
                 title: "Congratulations, You Unlocked a New Achievement!",
                 content: `${achievement.title} - ${achievement.description}`,
-                sourceId: winnerId, // Use winner's own ID as source for achievement notifications
-                requestId: achievement.id, // No specific request ID for achievements
+                sourceId: winnerId,
+                requestId: achievement.id,
               }),
             }
           );
@@ -394,7 +375,6 @@ export const gameController = {
   },
 
   leaderboard: async (req, res) => {
-    // get top 100 users by top points
     const userId = req.headers["x-user-id"];
     const topPlayers = await prisma.gameStats.findMany({
       orderBy: [{ score: "desc" }],

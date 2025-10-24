@@ -1,4 +1,3 @@
-// Custom error message mappings for schema validation
 export const schemaErrorMessages = {
   signup: {
     name: {
