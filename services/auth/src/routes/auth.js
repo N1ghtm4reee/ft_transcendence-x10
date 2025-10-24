@@ -1,6 +1,5 @@
 import argon2 from "argon2";
 import { signupSchema, loginSchema, userInfoSchema } from "./schema.js";
-import TwoFactorService from "../services/TwoFactorService.js";
 
 async function createNewProfile(userData) {
   console.log("createNewProfile, createNewProfile");

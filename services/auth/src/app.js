@@ -7,7 +7,6 @@ import googleOAuthPlugin from "./plugins/google-oauth.js";
 import swaggerPlugin from "./plugins/swagger.js";
 import authRoutes from "./routes/auth.js";
 import oauthRoutes from "./routes/oauth.js";
-import twoFactorRoutes from "./routes/2fa.js";
 import cors from "@fastify/cors";
 import fastifyCookie from "@fastify/cookie";
 import fastifyMetrics from "fastify-metrics";
@@ -79,7 +78,7 @@ await app.register(cors, {
 
 await app.register(authRoutes);
 await app.register(oauthRoutes);
-await app.register(twoFactorRoutes);
+
 
 app.setErrorHandler(function (error, request, reply) {
   if (error.validation) {

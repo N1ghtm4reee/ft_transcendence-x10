@@ -12,12 +12,6 @@ const app = Fastify({ logger: true });
 
 app.decorate("prisma", prisma);
 
-await app.register(fastifyCors, {
-  origin: `${process.env.HTTP}://${process.env.FRONT_IP}:4000`,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-});
 
 app.register(fastifyWebsocket);
 app.register(notificationRoutes, { prefix: "/api/notifications" });
