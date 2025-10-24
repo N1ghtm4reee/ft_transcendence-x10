@@ -7,16 +7,8 @@ import {
   notificationRoutes,
   notificationSocket,
 } from "./routes/notification.routes.js";
-import fastifyMetrics from 'fastify-metrics'
-
-
 
 const app = Fastify({ logger: true });
-
-await app.register(fastifyMetrics, {
-  endpoint: '/metrics',
-  defaultMetrics: true
-});
 
 app.decorate("prisma", prisma);
 
