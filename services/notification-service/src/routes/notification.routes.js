@@ -27,7 +27,6 @@ export const notificationRoutes = async (app, options) => {
     handler: notificationControllers.getUnreadCount,
   });
 
-  // Online status endpoints
   app.get("/user/:userId/online", {
     schema: {
       params: {

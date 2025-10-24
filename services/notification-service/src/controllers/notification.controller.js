@@ -444,7 +444,6 @@ export const notificationControllers = {
         },
       };
 
-      // Add tournament data for tournament notifications
       if (tournamentData) {
         notificationData.tournamentData = tournamentData;
       }
@@ -455,7 +454,6 @@ export const notificationControllers = {
         notificationData.tournamentName = tournamentName;
       }
 
-      // Add gameResult for GAME_FINISHED notifications
       if (type === "GAME_FINISHED" && gameResult) {
         notificationData.gameResult = gameResult;
       }
@@ -626,7 +624,6 @@ export const notificationControllers = {
     }
   },
 
-  // Check if a specific user is online
   isUserOnline: async (req, res) => {
     try {
       console.log(req.params);
@@ -649,7 +646,6 @@ export const notificationControllers = {
     }
   },
 
-  // Get all online users
   getOnlineUsers: async (req, res) => {
     try {
       const onlineUsers = [];
@@ -673,7 +669,7 @@ export const notificationControllers = {
       });
     }
   },
-  //
+  
   liveNotifications: async (connection, req) => {
     const token = req.query.token;
     if (!token) {
