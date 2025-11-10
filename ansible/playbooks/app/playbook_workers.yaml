@@ -1,0 +1,15 @@
+---
+- name: Join worker nodes to the cluster
+  hosts: workers
+  serial: 1
+  become: true
+  vars:
+    master_ip: "{{ hostvars[groups['master'][0]]['inventory_hostname'] }}"
+  tasks:
+    - name: Copy token file to the cloud machine filesystem
+      ansible.builtin.copy:
+        src: ./token.txt
+        dest: /home/token.txt
+        mode: '0644'
+    - name: execute worker.sh script to join the cluster
+      ansible.builtin.script: ./scripts/worker.sh "{{ master_ip }}"

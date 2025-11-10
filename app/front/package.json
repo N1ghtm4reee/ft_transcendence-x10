@@ -1,0 +1,15 @@
+{
+	"scripts": {
+		"start": "bunx serve -s -l 4000 public",
+		"dev": "bun build --watch ./src/index.tsx --outdir=public",
+		"build": "bunx @tailwindcss/cli -i public/input.css -o public/output.css && bun build --production --minify ./src/index.tsx --outdir=public",
+		"format": "bunx biome format --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.2.6",
+		"@tailwindcss/cli": "^4.1.11",
+		"@types/react": "^19.1.9",
+		"tailwindcss": "^4.1.11",
+		"typescript": "^5.8.3"
+	}
+}

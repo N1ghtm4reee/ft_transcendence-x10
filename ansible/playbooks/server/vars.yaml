@@ -1,0 +1,8 @@
+---
+# .env
+# Variables for the server node playbook
+application_source_dir: "../../../../" #need to modify path
+application_dest_dir: "/home/transcendence"
+sendgrid_api_key: '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'
+smtp_from_email: 'malkmankhafox@gmail.com'
+alert_email_recipient: 'malkmankhafox@gmail.com'

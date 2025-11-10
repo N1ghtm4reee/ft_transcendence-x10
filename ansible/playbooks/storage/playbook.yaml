@@ -1,0 +1,101 @@
+---
+- name: install nfs-common inside all nodes
+  hosts: all:!nfs
+  become: true
+  tasks:
+    - name: install nfs-common
+      ansible.builtin.apt:
+        name: nfs-common
+        state: present
+        update_cache: yes
+
+- name: Configure NFS Server
+  hosts: nfs
+  become: true
+  vars:
+    nfs_export_path1: "/srv/nfs/logs"
+    nfs_export_path2: "/srv/nfs/es-data"
+    nfs_export_path3: "/srv/nfs/prometheus-data"
+    nfs_export_path4: "/srv/nfs/grafana-data"
+    nfs_export_path5: "/srv/nfs/databases"
+    nfs_export_options: "*(rw,sync,no_subtree_check,no_root_squash)"
+
+  tasks:
+    - name: Install NFS packages
+      apt:
+        name:
+          - nfs-kernel-server
+          - nfs-common
+        state: present
+        update_cache: yes
+
+    - name: Create NFS directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0777'
+        recurse: yes
+      loop:
+        - "{{ nfs_export_path1 }}"
+        - "{{ nfs_export_path2 }}"
+        - "{{ nfs_export_path3 }}"
+        - "{{ nfs_export_path4 }}"
+        - "{{ nfs_export_path5 }}"
+
+    - name: Set correct ownership for ES data directory
+      command: chown -R 1000:1000 {{ nfs_export_path2 }}
+
+    - name: Add exports entry for logs
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path1 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Add exports entry for es-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path2 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Add exports entry for prometheus-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path3 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Add exports entry for grafana-data
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path4 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+    
+    - name: Add exports entry for databases
+      lineinfile:
+        path: /etc/exports
+        line: "{{ nfs_export_path5 }} {{ nfs_export_options }}"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Export NFS shares
+      command: exportfs -rav
+
+    - name: Restart and enable NFS server
+      systemd:
+        name: nfs-kernel-server
+        state: restarted
+        enabled: yes
+
+    - name: Ensure NFS server is active
+      command: systemctl is-active nfs-kernel-server
+      register: nfs_status
+      changed_when: false
+      failed_when: nfs_status.stdout != "active"

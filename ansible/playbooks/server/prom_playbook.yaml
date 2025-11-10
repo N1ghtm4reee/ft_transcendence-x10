@@ -1,0 +1,315 @@
+---
+- name: Deploy application and install required packages
+  hosts: server
+  become: true
+  vars_files:
+    - vars.yaml
+  tasks:
+
+    # ///////////////////////////////////////////////////
+    # === Configure Prometheus & Grafana (Simplified) ===
+    # ///////////////////////////////////////////////////
+
+    - name: Create Prometheus config directory
+      file:
+        path: "{{ application_dest_dir }}/app/prometheus/prometheus/config"
+        state: directory
+        mode: '0755'
+
+    - name: Create Alertmanager directory
+      file:
+        path: "{{ application_dest_dir }}/app/prometheus/alertmanager"
+        state: directory
+        mode: '0755'
+
+    - name: Create Nginx config directory for monitoring
+      file:
+        path: "{{ application_dest_dir }}/app/prometheus/nginx"
+        state: directory
+        mode: '0755'
+
+    - name: Create SSL certificates directory
+      file:
+        path: "{{ application_dest_dir }}/app/prometheus/nginx/ssl"
+        state: directory
+        mode: '0755'
+
+    - name: Check if SSL certificate exists
+      stat:
+        path: "{{ application_dest_dir }}/app/prometheus/nginx/ssl/monitoring.crt"
+      register: ssl_cert_check
+
+    - name: Generate self-signed SSL certificate
+      shell: |
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+          -keyout {{ application_dest_dir }}/app/prometheus/nginx/ssl/monitoring.key \
+          -out {{ application_dest_dir }}/app/prometheus/nginx/ssl/monitoring.crt \
+          -subj "/C=US/ST=State/L=City/O=Organization/CN={{ ansible_host }}"
+      when: not ssl_cert_check.stat.exists
+
+    - name: Set SSL certificate permissions
+      file:
+        path: "{{ item }}"
+        mode: '0600'
+      loop:
+        - "{{ application_dest_dir }}/app/prometheus/nginx/ssl/monitoring.key"
+        - "{{ application_dest_dir }}/app/prometheus/nginx/ssl/monitoring.crt"
+
+    - name: Create Nginx configuration for Prometheus and Grafana
+      copy:
+        dest: "{{ application_dest_dir }}/app/prometheus/nginx/nginx.conf"
+        mode: '0644'
+        content: |
+          events {
+              worker_connections 1024;
+          }
+
+          http {
+              # Prometheus HTTPS
+              server {
+                  listen 9091 ssl;
+                  server_name {{ ansible_host }};
+
+                  ssl_certificate /etc/nginx/ssl/monitoring.crt;
+                  ssl_certificate_key /etc/nginx/ssl/monitoring.key;
+
+                  location / {
+                      proxy_pass http://prometheus:9090;
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+              }
+
+              # Grafana HTTPS
+              server {
+                  listen 9998 ssl;
+                  server_name {{ ansible_host }};
+
+                  ssl_certificate /etc/nginx/ssl/monitoring.crt;
+                  ssl_certificate_key /etc/nginx/ssl/monitoring.key;
+
+                  location / {
+                      proxy_pass http://grafana:3000;
+                      proxy_http_version 1.1;
+                      proxy_set_header Upgrade $http_upgrade;
+                      proxy_set_header Connection "upgrade";
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+              }
+
+              # Alertmanager HTTPS
+              server {
+                  listen 9094 ssl;
+                  server_name {{ ansible_host }};
+
+                  ssl_certificate /etc/nginx/ssl/monitoring.crt;
+                  ssl_certificate_key /etc/nginx/ssl/monitoring.key;
+
+                  location / {
+                      proxy_pass http://alertmanager:9093;
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+              }
+          }
+
+    - name: Check if Grafana password file exists
+      stat:
+        path: "{{ application_dest_dir }}/app/prometheus/.grafana_password"
+      register: grafana_password_file
+
+    - name: Generate random password for Grafana
+      set_fact:
+        grafana_password: "{{ lookup('password', '/dev/null length=16 chars=ascii_letters,digits') }}"
+      when: not grafana_password_file.stat.exists
+
+    - name: Save Grafana password to file
+      copy:
+        content: "{{ grafana_password }}"
+        dest: "{{ application_dest_dir }}/app/prometheus/.grafana_password"
+        mode: '0600'
+      when: not grafana_password_file.stat.exists
+
+    - name: Read existing Grafana password from file
+      slurp:
+        src: "{{ application_dest_dir }}/app/prometheus/.grafana_password"
+      register: grafana_password_content
+      when: grafana_password_file.stat.exists
+
+    - name: Set Grafana password from file
+      set_fact:
+        grafana_password: "{{ grafana_password_content.content | b64decode | trim }}"
+      when: grafana_password_file.stat.exists
+
+    - name: Deploy Alertmanager configuration with SendGrid SMTP
+      copy:
+        dest: "{{ application_dest_dir }}/app/prometheus/alertmanager/alertmanager.yml"
+        mode: '0644'
+        content: |
+          global:
+            smtp_smarthost: 'smtp.sendgrid.net:2525'
+            smtp_from: '{{ smtp_from_email }}'
+            smtp_auth_username: 'apikey'
+            smtp_auth_password: '{{ sendgrid_api_key }}'
+            smtp_require_tls: true
+          route:
+            receiver: 'email'
+          receivers:
+            - name: 'email'
+              email_configs:
+                - to: '{{ alert_email_recipient }}'
+
+    - name: Deploy Prometheus docker-compose configuration
+      copy:
+        dest: "{{ application_dest_dir }}/app/prometheus/docker-compose.yml"
+        backup: yes
+        content: |
+          version: "3.9"
+          services:
+            node_exporter:
+              image: quay.io/prometheus/node-exporter:latest
+              container_name: node_exporter
+              command: ['--path.rootfs=/host']
+              pid: host
+              restart: unless-stopped
+              volumes:
+                - '/:/host:ro,rslave'
+              networks: [prometheus]
+
+            es_exporter:
+              image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+              container_name: es_exporter
+              command: ['--es.uri=http://elasticsearch:9200']
+              networks: [prometheus, monitoring_network]
+
+            prometheus:
+              image: prom/prometheus
+              container_name: prometheus
+              volumes:
+                - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+                - ./alertmanager/alertmanager.yml:/etc/prometheus/alertmanager.yml
+                - ./alertmanager/alerts.yml:/etc/prometheus/alerts.yml
+                - prometheus_data:/prometheus
+              command:
+                - '--config.file=/etc/prometheus/prometheus.yml'
+                - '--storage.tsdb.retention.time=5d'
+                - '--storage.tsdb.retention.size=5GB'
+              restart: unless-stopped
+              networks: [prometheus, monitoring_network]
+
+
+            grafana:
+              image: grafana/grafana
+              container_name: grafana
+              environment:
+                - GF_SECURITY_ADMIN_USER=admin
+                - GF_SECURITY_ADMIN_PASSWORD={{ grafana_password }}
+                - GF_USERS_ALLOW_SIGN_UP=false
+                - GF_SERVER_ROOT_URL=https://{{ ansible_host }}:9998
+              volumes:
+                - grafana_data:/var/lib/grafana
+              restart: unless-stopped
+              networks: [prometheus]
+
+            alertmanager:
+              image: prom/alertmanager
+              container_name: alertmanager
+              volumes:
+                - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+              restart: unless-stopped
+              networks: [prometheus]
+
+            nginx:
+              image: nginx:alpine
+              container_name: monitoring_nginx
+              ports:
+                - "9091:9091"
+                - "9998:9998"
+                - "9094:9094"
+              volumes:
+                - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+                - ./nginx/ssl:/etc/nginx/ssl:ro
+              depends_on:
+                - prometheus
+                - grafana
+                - alertmanager
+              restart: unless-stopped
+              networks: [prometheus]
+
+          volumes:
+            grafana_data: {}
+            prometheus_data: {}
+
+          networks:
+            prometheus:
+              driver: bridge
+            monitoring_network:
+              external: true
+              name: monitoring_network
+
+    - name: Deploy Prometheus configuration file
+      copy:
+        dest: "{{ application_dest_dir }}/app/prometheus/prometheus/config/prometheus.yml"
+        mode: '0644'
+        content: |
+          global:
+            scrape_interval: 15s
+
+          scrape_configs:
+            - job_name: 'node_exporter'
+              static_configs:
+                - targets: ['node_exporter:9100']
+
+            - job_name: 'es_exporter'
+              static_configs:
+                - targets: ['es_exporter:9114']
+
+            - job_name: 'health_check'
+              metrics_path: '/metrics'
+              static_configs:
+                - targets:
+                    - 'auth-service:3001'
+                    - 'user-service:3002'
+                    - 'chat-service:3004'
+
+          alerting:
+            alertmanagers:
+              - scheme: https
+                static_configs:
+                  - targets: ["{{ ansible_host }}:9094"]
+                tls_config:
+                  insecure_skip_verify: true
+
+          rule_files:
+            - "/etc/prometheus/alerts.yml"
+
+    - name: Restart monitoring stack
+      shell: docker compose down && docker compose up -d
+      args:
+        chdir: "{{ application_dest_dir }}/app/prometheus"
+      ignore_errors: yes
+
+    - name: Wait for Grafana API to be ready
+      uri:
+        url: "https://localhost:9998/api/health"
+        method: GET
+        validate_certs: no
+        status_code: 200
+      register: grafana_health
+      until: grafana_health.status == 200
+      retries: 30
+      delay: 10
+
+    - name: Display Grafana credentials
+      debug:
+        msg:
+          - "Grafana URL: https://{{ ansible_host }}:9998"
+          - "User: admin"
+          - "Password: {{ grafana_password }}"

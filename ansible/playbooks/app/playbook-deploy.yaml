@@ -1,0 +1,58 @@
+---
+- name: Deploy app to k3s cluster
+  hosts: master
+  become: true
+  tasks:
+    - name: Create namespace app
+      shell: kubectl apply -f /home/kubernetes/app/namespace.yaml
+
+    - name: Load secrets from .env
+      vars:
+        env_file: "../../../../Dev/.env"
+      set_fact:
+        env_vars: "{{ lookup('file', env_file).splitlines() 
+                    | reject('match', '^#') 
+                    | reject('match', '^$') 
+                    | select('match', '^[A-Za-z_][A-Za-z0-9_]*=.*')
+                    | map('split', '=', 1) 
+                    | items2dict(key_name=0, value_name=1) }}"
+
+    - name: Create K8s secret from .env
+      shell: |
+        kubectl delete secret app-secrets -n app --ignore-not-found=true
+        kubectl create secret generic app-secrets -n app \
+        {% for key, value in env_vars.items() %}
+        --from-literal="{{ key }}={{ value }}" \
+        {% endfor %}
+        --dry-run=client -o yaml | kubectl apply -f -
+
+    # - name: Clean up existing PV and PVC (if any)
+    #   shell: |
+    #     kubectl delete pvc shared-logs-pvc -n app --ignore-not-found=true
+    #     kubectl delete pv shared-logs-pv --ignore-not-found=true
+    #     sleep 5
+
+    - name: Create PV for shared logs
+      shell: kubectl apply -f /home/kubernetes/shared-logs-pv-app.yaml
+    
+    - name: Create PV for databases
+      shell: kubectl apply -f /home/kubernetes/db-pv.yaml
+
+    - name: Create PVC for shared logs
+      shell: kubectl apply -f /home/kubernetes/app/app-pvc.yaml
+    
+    - name: Create PVC for databases
+      shell: kubectl apply -f /home/kubernetes/app/db-pvc.yaml
+
+    - name: Apply api-gateway deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/api-gateway.yaml
+    - name: Apply auth-service deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/auth.yaml
+    - name: Apply user-service deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/user-management.yaml
+    - name: Apply chat-service deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/chat.yaml
+    - name: Apply notification-service deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/notification.yaml
+    - name: Apply front deployment and service
+      shell: kubectl apply -f /home/kubernetes/app/front.yaml

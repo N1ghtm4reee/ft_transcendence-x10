@@ -1,0 +1,181 @@
+---
+- name: Install and run Jenkins in Docker with Docker Compose
+  hosts: jenkins
+  become: true
+  vars:
+    jenkins_image: "jenkins/jenkins:lts"
+    jenkins_home: "/var/jenkins_home"
+    jenkins_http_port: "8080"
+    jenkins_agent_port: "50000"
+    tz: "UTC"
+    docker_compose_version: "2.21.0"
+
+  pre_tasks:
+    - name: Wait for apt lock to be released
+      ansible.builtin.shell: |
+        while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+          sleep 5
+        done
+      changed_when: false
+
+    - name: Install Docker (Debian/Ubuntu) and helpers
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - python3-pip
+          - curl
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker service is enabled and running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install Docker SDK for Python (needed by community.docker modules)
+      ansible.builtin.pip:
+        name: docker
+        state: present
+
+    - name: Download and install Docker Compose
+      ansible.builtin.get_url:
+        url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+        owner: root
+        group: root
+
+    - name: Create docker-compose symlink
+      ansible.builtin.file:
+        src: /usr/local/bin/docker-compose
+        dest: /usr/bin/docker-compose
+        state: link
+
+    - name: Verify docker-compose installation
+      ansible.builtin.command: docker-compose --version
+      register: compose_version
+      changed_when: false
+
+    - name: Show docker-compose version
+      ansible.builtin.debug:
+        msg: "Docker Compose version: {{ compose_version.stdout }}"
+
+  tasks:
+    - name: Create persistent Jenkins home directory
+      ansible.builtin.file:
+        path: "{{ jenkins_home }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create Jenkins Dockerfile for custom image with docker-compose
+      ansible.builtin.copy:
+        dest: /tmp/Dockerfile.jenkins
+        content: |
+          FROM jenkins/jenkins:lts
+          
+          USER root
+          
+          # Install Docker CLI
+          RUN apt-get update && \
+              apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release && \
+              curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+              echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+              apt-get update && \
+              apt-get install -y docker-ce-cli && \
+              rm -rf /var/lib/apt/lists/*
+          
+          # Install Docker Compose
+          RUN curl -L "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+              chmod +x /usr/local/bin/docker-compose && \
+              ln -sf /usr/local/bin/docker-compose /usr/bin/docker-compose
+          
+          USER jenkins
+
+    - name: Build custom Jenkins image with Docker Compose
+      community.docker.docker_image:
+        build:
+          path: /tmp
+          dockerfile: Dockerfile.jenkins
+        name: jenkins-with-compose
+        source: build
+        force_source: true
+
+    - name: Stop and remove existing Jenkins container
+      community.docker.docker_container:
+        name: jenkins
+        state: absent
+        force_kill: true
+      ignore_errors: true
+
+    - name: Run Jenkins container with Docker Compose support
+      community.docker.docker_container:
+        name: jenkins
+        image: jenkins-with-compose
+        restart_policy: unless-stopped
+        user: "root"
+        privileged: true
+        env:
+          TZ: "{{ tz }}"
+          DOCKER_HOST: "unix:///var/run/docker.sock"
+        ports:
+          - "{{ jenkins_http_port }}:8080"
+          - "{{ jenkins_agent_port }}:50000"
+        volumes:
+          - "{{ jenkins_home }}:{{ jenkins_home }}"
+          - "/var/run/docker.sock:/var/run/docker.sock"
+        healthcheck:
+          test: ["CMD-SHELL", "curl -fsS http://localhost:8080/login || exit 1"]
+          interval: 30s
+          timeout: 5s
+          retries: 10
+          start_period: 40s
+
+    - name: Wait for Jenkins to start
+      ansible.builtin.wait_for:
+        port: "{{ jenkins_http_port }}"
+        delay: 10
+        timeout: 180
+
+    - name: Test docker-compose in Jenkins container
+      ansible.builtin.command:
+        cmd: docker exec jenkins docker-compose --version
+      register: jenkins_compose_test
+      changed_when: false
+
+    - name: Show docker-compose test result
+      ansible.builtin.debug:
+        msg: "Docker Compose in Jenkins: {{ jenkins_compose_test.stdout }}"
+
+    - name: Test docker command in Jenkins container
+      ansible.builtin.command:
+        cmd: docker exec jenkins docker --version
+      register: jenkins_docker_test
+      changed_when: false
+
+    - name: Show docker test result
+      ansible.builtin.debug:
+        msg: "Docker in Jenkins: {{ jenkins_docker_test.stdout }}"
+
+    - name: Read Jenkins initial admin password
+      ansible.builtin.command:
+        cmd: docker exec jenkins cat {{ jenkins_home }}/secrets/initialAdminPassword
+      register: jenkins_admin_pwd
+      changed_when: false
+      failed_when: false
+
+    - name: Show initial admin password (if available)
+      ansible.builtin.debug:
+        msg: "Initial Jenkins admin password: {{ jenkins_admin_pwd.stdout }}"
+      when: jenkins_admin_pwd.stdout is defined and jenkins_admin_pwd.stdout | length > 0
+
+  post_tasks:
+    - name: Cleanup temporary files
+      ansible.builtin.file:
+        path: /tmp/Dockerfile.jenkins
+        state: absent

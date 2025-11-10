@@ -1,0 +1,8 @@
+---
+- name: Deploy logstash
+  hosts: master
+  tasks:
+    - name: Create ConfigMap
+      shell: kubectl apply -f /home/kubernetes/elk/logstash-config.yaml
+    - name: Deploy logstash
+      shell: kubectl apply -f /home/kubernetes/elk/logstash.yaml

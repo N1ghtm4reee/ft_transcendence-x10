@@ -1,0 +1,18 @@
+global:
+  smtp_smarthost: 'smtp.gmail.com:587'
+  smtp_from: 'malkmankhafox@gmail.com'
+  smtp_auth_username: 'malkmankhafox@gmail.com'
+  smtp_auth_password: 'geum vedk ficz yshf'
+  smtp_require_tls: true
+
+route:
+  receiver: 'email-alert'
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 3h
+
+receivers:
+  - name: 'email-alert'
+    email_configs:
+      - to: 'malkmankhafox@gmail.com'
+        send_resolved: true

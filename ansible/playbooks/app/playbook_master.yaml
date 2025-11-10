@@ -1,0 +1,25 @@
+---
+- name: Installing k3s in master node
+  hosts: master
+  become: true
+  vars_files:
+    - vars.yaml
+  tasks:
+    - name: install k3s in master node
+      ansible.builtin.script: "{{ scripts_dir }}/{{ master_script }}"
+    - name: Copy token to local file system
+      ansible.builtin.fetch:
+        src: "{{ token_file_remote }}"
+        dest: "{{ token_file_local }}"
+        flat: yes
+
+- name: Copy files to master node
+  hosts: master
+  become: true
+  vars_files:
+    - vars.yaml
+  tasks:
+    - name: Copy kubernetes directory to cloud Server
+      ansible.builtin.copy:
+        src: "{{ kubernetes_source_dir }}"
+        dest: "{{ kubernetes_dest_dir }}"

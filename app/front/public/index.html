@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <link href="./output.css" rel="stylesheet">
+    <link rel="preload" href="./miku-icon.png" as="image">
+    <link rel="preload" href="./miku3.png" as="image">
+    <title>Miku</title>
+    <script type="importmap">
+       {
+        "imports": {
+            "Miku": "/Miku/src/index.js",
+            "Miku/Router": "/Miku/src/Router/Router.js"
+        }
+       }
+    </script>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="./index.js" type="module"></script>
+</body>
+</html>

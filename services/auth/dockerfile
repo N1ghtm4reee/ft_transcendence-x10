@@ -1,9 +1,0 @@
-FROM node:alpine3.21
-
-WORKDIR /app
-
-COPY package*.json ./
-
-COPY . .
-
-CMD ["sh", "-c", "npm install && npx prisma generate && npx prisma db push && npm run start"]

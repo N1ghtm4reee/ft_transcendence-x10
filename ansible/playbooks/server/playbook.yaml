@@ -1,0 +1,380 @@
+---
+- name: Deploy ELK Stack
+  hosts: server
+  become: true
+  vars_files:
+    - vars.yaml
+  vars:
+    elk_dir: "{{ application_dest_dir }}/app/elk"
+    nginx_server_name: "aakhrif.site"
+  tasks:
+    # ///////////////////////////////////////////////////
+    # === Wait for apt locks to be released ===
+    # ///////////////////////////////////////////////////
+    - name: Wait for automatic system updates to complete
+      ansible.builtin.shell: while fuser /var/lib/dpkg/{{ item }} >/dev/null 2>&1; do sleep 1; done
+      loop:
+        - lock
+        - lock-frontend
+      changed_when: false
+      failed_when: false
+
+    - name: Wait for apt processes to finish
+      ansible.builtin.wait_for:
+        path: /var/lib/dpkg/lock-frontend
+        state: absent
+        timeout: 300
+      register: apt_lock_wait
+      failed_when: false
+
+    - name: Kill lingering apt processes if stuck (last resort)
+      ansible.builtin.shell: |
+        killall apt apt-get dpkg 2>/dev/null || true
+        dpkg --configure -a
+      when: apt_lock_wait.failed | default(false)
+      changed_when: false
+      failed_when: false
+
+    - name: Remove apt locks if they still exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/dpkg/lock-frontend
+        - /var/lib/dpkg/lock
+        - /var/cache/apt/archives/lock
+      when: apt_lock_wait.failed | default(false)
+      failed_when: false
+
+    # ///////////////////////////////////////////////////
+    # === Copy Application Files ===
+    # ///////////////////////////////////////////////////
+    - name: Copy application directory to cloud Server using synchronize
+      ansible.posix.synchronize:
+        src: "{{ application_source_dir }}"
+        dest: "{{ application_dest_dir }}"
+        recursive: yes
+        delete: no
+      delegate_to: localhost
+      become: false
+
+    # ///////////////////////////////////////////////////
+    # === Install Prerequisites ===
+    # ///////////////////////////////////////////////////
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      retries: 3
+      delay: 10
+      register: apt_update_result
+      until: apt_update_result is success
+
+    - name: Install prerequisites
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - make
+        state: present
+      retries: 3
+      delay: 10
+      register: apt_install_result
+      until: apt_install_result is success
+
+    # ///////////////////////////////////////////////////
+    # === Install Docker ===
+    # ///////////////////////////////////////////////////
+    - name: Add Docker GPG apt key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch={{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker packages
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+      retries: 3
+      delay: 10
+      register: docker_install_result
+      until: docker_install_result is success
+
+    - name: Ensure Docker service is running and enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add current user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+      when: ansible_user != 'root'
+
+    # ///////////////////////////////////////////////////
+    # === Run Application Setup Scripts ===
+    # ///////////////////////////////////////////////////
+
+
+    - name: Run update_dns.sh to update DNS
+      ansible.builtin.shell: ./update_dns.sh
+      args:
+        chdir: /home/transcendence/scripts
+      changed_when: true
+
+    - name: Run application
+      ansible.builtin.shell: make
+      args:
+        chdir: /home/transcendence/app
+      ignore_errors: true
+      changed_when: true
+
+    # ///////////////////////////////////////////////////
+    # === Configure Elasticsearch (HTTP Only) ===
+    # ///////////////////////////////////////////////////
+    - name: Configure Elasticsearch for HTTP-only mode
+      ansible.builtin.copy:
+        dest: "{{ application_dest_dir }}/app/elk/elasticsearch/config/elasticsearch.yml"
+        content: |
+          cluster.name: "docker-cluster"
+          network.host: 0.0.0.0
+          discovery.type: single-node
+          xpack.security.enabled: true
+          xpack.security.enrollment.enabled: false
+          xpack.security.http.ssl.enabled: false
+          xpack.security.transport.ssl.enabled: false
+        mode: '0644'
+        backup: yes
+
+    - name: Ensure Elasticsearch container is running (without restart)
+      ansible.builtin.shell: docker compose -f ./docker-compose.elk.yml up -d --no-build elasticsearch
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      register: es_up
+      changed_when: "'Creating' in es_up.stdout or 'Starting' in es_up.stdout or 'Up' in es_up.stdout"
+
+    - name: Wait for Elasticsearch to be ready
+      ansible.builtin.uri:
+        url: "http://localhost:9200/_cluster/health"
+        method: GET
+        status_code: [200, 401]
+      register: es_health
+      until: es_health.status in [200, 401]
+      retries: 30
+      delay: 5
+      ignore_errors: true
+
+    # ///////////////////////////////////////////////////
+    # === Manage Elasticsearch Password ===
+    # ///////////////////////////////////////////////////
+    - name: Check if elastic password file exists
+      ansible.builtin.stat:
+        path: "{{ application_dest_dir }}/app/elk/.elastic_password"
+      register: elastic_password_file
+
+    - name: Reset elastic user password if missing
+      ansible.builtin.shell: |
+        docker exec elasticsearch /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -b -s
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      register: elastic_password_output
+      when: not elastic_password_file.stat.exists
+      changed_when: true
+
+    - name: Extract and save elastic password
+      when: not elastic_password_file.stat.exists
+      block:
+        - name: Extract elastic password
+          ansible.builtin.set_fact:
+            elastic_password: "{{ elastic_password_output.stdout | trim }}"
+
+        - name: Save elastic password to file
+          ansible.builtin.copy:
+            content: "{{ elastic_password }}"
+            dest: "{{ application_dest_dir }}/app/elk/.elastic_password"
+            mode: '0600'
+
+    - name: Read existing elastic password
+      ansible.builtin.slurp:
+        src: "{{ application_dest_dir }}/app/elk/.elastic_password"
+      register: elastic_password_content
+      when: elastic_password_file.stat.exists
+
+    - name: Set elastic password from file
+      ansible.builtin.set_fact:
+        elastic_password: "{{ elastic_password_content.content | b64decode | trim }}"
+      when: elastic_password_file.stat.exists
+
+    # ///////////////////////////////////////////////////
+    # === Configure Logstash ===
+    # ///////////////////////////////////////////////////
+    - name: Deploy Logstash pipeline configuration
+      ansible.builtin.copy:
+        dest: "{{ application_dest_dir }}/app/elk/logstash/pipeline/logstash.conf"
+        content: |
+          input {
+            beats {
+              port => 5044
+            }
+          }
+          filter {
+            # Map log levels
+            if [level] {
+              translate {
+                field => "level"
+                destination => "level_name"
+                dictionary => {
+                  "10" => "trace"
+                  "20" => "debug"
+                  "30" => "info"
+                  "40" => "warn"
+                  "50" => "error"
+                  "60" => "fatal"
+                }
+                fallback => "unknown"
+              }
+            }
+            # Parse timestamp
+            if [time] {
+              date {
+                match => ["time", "UNIX_MS"]
+                target => "@timestamp"
+                remove_field => ["time"]
+              }
+            }
+            # Rename msg to message
+            if [msg] {
+              mutate {
+                rename => { "msg" => "message" }
+              }
+            }
+            # Clean up unnecessary fields
+            mutate {
+              remove_field => ["pid", "hostname", "ecs", "agent", "log", "host"]
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["http://elasticsearch:9200"]
+              user => "elastic"
+              password => "{{ elastic_password }}"
+              index => "logs-%{+YYYY.MM.dd}"
+              ssl_verification_mode => "none"
+            }
+          }
+        mode: '0644'
+        backup: yes
+
+    - name: Restart Logstash container
+      ansible.builtin.shell: docker compose -f ./docker-compose.elk.yml restart logstash
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      changed_when: true
+
+    # ///////////////////////////////////////////////////
+    # === Configure Kibana ===
+    # ///////////////////////////////////////////////////
+    - name: Check if Kibana token file exists
+      ansible.builtin.stat:
+        path: "{{ application_dest_dir }}/app/elk/.kibana_token"
+      register: kibana_token_file
+
+    - name: Create Kibana service token
+      ansible.builtin.shell: |
+        docker exec elasticsearch /usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana 2>&1 | grep -oP '(?<=\= ).*' || docker exec elasticsearch /usr/share/elasticsearch/bin/elasticsearch-service-tokens list | grep 'elastic/kibana/kibana' | awk '{print $3}'
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      register: kibana_token_output
+      when: not kibana_token_file.stat.exists
+      changed_when: "'SERVICE_TOKEN' in kibana_token_output.stdout"
+
+    - name: Extract and save Kibana token
+      when: not kibana_token_file.stat.exists
+      block:
+        - name: Extract Kibana token
+          ansible.builtin.set_fact:
+            kibana_token: "{{ kibana_token_output.stdout | trim }}"
+
+        - name: Save Kibana token to file
+          ansible.builtin.copy:
+            content: "{{ kibana_token }}"
+            dest: "{{ application_dest_dir }}/app/elk/.kibana_token"
+            mode: '0600'
+
+    - name: Read existing Kibana token
+      ansible.builtin.slurp:
+        src: "{{ application_dest_dir }}/app/elk/.kibana_token"
+      register: kibana_token_content
+      when: kibana_token_file.stat.exists
+
+    - name: Set Kibana token from file
+      ansible.builtin.set_fact:
+        kibana_token: "{{ kibana_token_content.content | b64decode | trim }}"
+      when: kibana_token_file.stat.exists
+
+    - name: Configure Kibana for HTTP-only mode
+      ansible.builtin.copy:
+        dest: "{{ application_dest_dir }}/app/elk/kibana/config/kibana.yml"
+        content: |
+          server.host: "0.0.0.0"
+          server.port: 5601
+          server.name: "kibana"
+          elasticsearch.hosts: ["http://elasticsearch:9200"]
+          elasticsearch.serviceAccountToken: "{{ kibana_token }}"
+          server.ssl.enabled: false
+          elasticsearch.ssl.verificationMode: none
+        mode: '0644'
+        backup: yes
+
+    - name: Restart Kibana container
+      ansible.builtin.shell: docker compose -f ./docker-compose.elk.yml restart kibana
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      changed_when: true
+
+    - name: Wait for Kibana to be ready
+      ansible.builtin.uri:
+        url: "http://localhost:5601/api/status"
+        method: GET
+        status_code: 200
+      register: kibana_health
+      until: kibana_health.status == 200
+      retries: 30
+      delay: 5
+
+    # ///////////////////////////////////////////////////
+    # === Display Access Information ===
+    # ///////////////////////////////////////////////////
+    - name: Display ELK Stack access information
+      ansible.builtin.debug:
+        msg:
+          - "========================================="
+          - "ELK Stack Configuration Complete"
+          - "========================================="
+          - "Elasticsearch:"
+          - "  URL: http://{{ ansible_host }}:9200"
+          - "  Username: elastic"
+          - "  Password: {{ elastic_password }}"
+          - ""
+          - "Kibana:"
+          - "  URL: http://{{ ansible_host }}:5601"
+          - "  Username: elastic"
+          - "  Password: {{ elastic_password }}"
+          - ""
+          - "Logstash:"
+          - "  Beats input: {{ ansible_host }}:5044"
+          - "========================================="

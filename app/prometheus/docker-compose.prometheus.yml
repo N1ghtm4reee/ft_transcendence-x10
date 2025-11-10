@@ -1,0 +1,74 @@
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - prometheus
+
+  es_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: es_exporter
+    command:
+      - '--es.uri=http://elasticsearch:9200'
+    ports:
+      - "9114:9114"
+    networks:
+      - prometheus
+      - monitoring_network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+      - ./alertmanager/alerts.yml:/etc/prometheus/alerts.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    networks:
+      - prometheus
+      - monitoring_network
+      # - elk-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "9999:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # - ./grafana/data:/var/lib/grafana
+    networks:
+      - prometheus
+  
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    networks:
+      - prometheus
+
+volumes:
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+
+
+networks:
+  prometheus:
+    driver: bridge
+  monitoring_network:
+    external: true
+    name: monitoring_network

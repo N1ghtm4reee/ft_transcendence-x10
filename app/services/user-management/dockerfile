@@ -1,0 +1,10 @@
+FROM node:alpine3.21
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+
+CMD ["sh", "-c", "npx prisma generate && npx prisma db push && npx prisma db seed && npm run start"]

@@ -1,0 +1,12 @@
+---
+- name: Deploy filebeat
+  hosts: master
+  tasks:
+    - name: pv
+      shell: kubectl apply -f /home/kubernetes/shared-logs-pv.yaml
+    - name: pvc
+      shell: kubectl apply -f /home/kubernetes/elk/shared-logs.yaml
+    - name: Create ConfigMap
+      shell: kubectl apply -f /home/kubernetes/elk/filebeat-config.yaml
+    - name: Deploy filebeat
+      shell: kubectl apply -f /home/kubernetes/elk/filebeat.yaml

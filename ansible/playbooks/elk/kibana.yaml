@@ -1,0 +1,8 @@
+---
+- name: Deploy kibana
+  hosts: master
+  tasks:
+    - name: Create ConfigMap
+      shell: kubectl apply -f /home/kubernetes/elk/kibana-config.yaml
+    - name: Deploy kibana
+      shell: kubectl apply -f /home/kubernetes/elk/kibana.yaml

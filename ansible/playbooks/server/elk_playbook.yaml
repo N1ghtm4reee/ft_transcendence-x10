@@ -1,0 +1,235 @@
+---
+# ///////////////////////////////////////////////////
+# === Configure Elasticsearch & Kibana Security ===
+# ///////////////////////////////////////////////////
+
+- name: Configure Elasticsearch, Kibana, and Nginx for ELK
+  hosts: server
+  become: true
+  tasks:
+
+    - name: Enable security in Elasticsearch config
+      lineinfile:
+        path: "{{ application_dest_dir }}/app/elk/elasticsearch/config/elasticsearch.yml"
+        regexp: '^xpack.security.enabled:'
+        line: 'xpack.security.enabled: true'
+
+    - name: Restart Elasticsearch with security enabled
+      shell: docker compose -f ./docker-compose.elk.yml restart elasticsearch
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      register: es_restart
+      changed_when: "'Restarting' in es_restart.stdout"
+
+    - name: Wait for Elasticsearch to be ready
+      pause:
+        seconds: 30
+
+    - name: Check if elastic password file exists
+      stat:
+        path: "{{ application_dest_dir }}/app/elk/.elastic_password"
+      register: elastic_password_file
+
+    - name: Reset elastic user password
+      shell: |
+        docker exec elasticsearch /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -b
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+      register: elastic_password_output
+      when: not elastic_password_file.stat.exists
+
+    - name: Extract elastic password from output
+      set_fact:
+        elastic_password: "{{ elastic_password_output.stdout | regex_search('New value: (.+)', '\\1') | first }}"
+      when: not elastic_password_file.stat.exists
+
+    - name: Save elastic password to file for future use
+      copy:
+        content: "{{ elastic_password }}"
+        dest: "{{ application_dest_dir }}/app/elk/.elastic_password"
+        mode: '0600'
+      when: not elastic_password_file.stat.exists
+
+    - name: Read existing elastic password from file
+      slurp:
+        src: "{{ application_dest_dir }}/app/elk/.elastic_password"
+      register: elastic_password_content
+      when: elastic_password_file.stat.exists
+
+    - name: Set elastic password from file
+      set_fact:
+        elastic_password: "{{ elastic_password_content.content | b64decode | trim }}"
+      when: elastic_password_file.stat.exists
+
+# ///////////////////////////////////////////////////
+# === Create Nginx Configuration ===
+# ///////////////////////////////////////////////////
+
+    - name: Create nginx config directory
+      file:
+        path: "{{ application_dest_dir }}/app/elk/nginx/conf.d"
+        state: directory
+        mode: '0755'
+
+    - name: Deploy Nginx reverse proxy config for Kibana (HTTP only)
+      copy:
+        dest: "{{ application_dest_dir }}/app/elk/nginx/conf.d/kibana.conf"
+        content: |
+          upstream kibana_backend {
+            server kibana:5601;
+          }
+
+          server {
+            listen 80;
+            server_name {{ ansible_host }} localhost;
+
+            location / {
+              proxy_pass http://kibana_backend;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection "upgrade";
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+              proxy_cache_bypass $http_upgrade;
+              proxy_buffering off;
+              proxy_request_buffering off;
+            }
+          }
+
+# ///////////////////////////////////////////////////
+# === Configure Logstash ===
+# ///////////////////////////////////////////////////
+
+    - name: Deploy Logstash pipeline config with ES password
+      copy:
+        dest: "{{ application_dest_dir }}/app/elk/logstash/pipeline/logstash.conf"
+        content: |
+          input {
+            beats {
+              port => 5044
+            }
+          }
+          filter {
+            if [level] == 10 {
+              mutate { add_field => { "level_name" => "trace" } }
+            } else if [level] == 20 {
+              mutate { add_field => { "level_name" => "debug" } }
+            } else if [level] == 30 {
+              mutate { add_field => { "level_name" => "info" } }
+            } else if [level] == 40 {
+              mutate { add_field => { "level_name" => "warn" } }
+            } else if [level] == 50 {
+              mutate { add_field => { "level_name" => "error" } }
+            } else if [level] == 60 {
+              mutate { add_field => { "level_name" => "fatal" } }
+            }
+            if [time] {
+              date {
+                match => ["time", "UNIX_MS"]
+                target => "@timestamp"
+                remove_field => ["time"]
+              }
+            }
+            mutate {
+              remove_field => ["pid", "hostname", "ecs", "agent", "log", "host"]
+            }
+            if [msg] {
+              mutate {
+                rename => { "msg" => "message" }
+              }
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["http://elasticsearch:9200"]
+              user => "elastic"
+              password => "{{ elastic_password }}"
+              index => "logs-%{+YYYY.MM.dd}"
+            }
+            stdout { codec => rubydebug }
+          }
+
+    - name: Restart Logstash container using Docker Compose
+      shell: docker compose -f ./docker-compose.elk.yml restart logstash
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+
+# ///////////////////////////////////////////////////
+# === Configure Kibana ===
+# ///////////////////////////////////////////////////
+
+    - name: Create Kibana service token
+      shell: docker exec elasticsearch /usr/share/elasticsearch/bin/elasticsearch-service-tokens create elastic/kibana kibana
+      register: kibana_token_output
+      failed_when: kibana_token_output.rc != 0 and "'already exists'" not in kibana_token_output.stderr
+
+    - name: Extract Kibana service token
+      set_fact:
+        kibana_token: "{{ kibana_token_output.stdout.split('=')[-1] | trim }}"
+
+    - name: Verify token was extracted
+      assert:
+        that:
+          - kibana_token is defined
+          - kibana_token | length > 20
+          - "'AAE' in kibana_token"
+        fail_msg: "❌ Failed to extract token. Raw output: {{ kibana_token_output.stdout }}"
+        success_msg: "✅ Token extracted successfully"
+
+    - name: Configure Kibana for HTTP only (backend)
+      copy:
+        dest: "{{ application_dest_dir }}/app/elk/kibana/config/kibana.yml"
+        content: |
+          server.host: "0.0.0.0"
+          server.name: "kibana"
+          server.port: 5601
+          elasticsearch.hosts: ["http://elasticsearch:9200"]
+          elasticsearch.serviceAccountToken: "{{ kibana_token }}"
+          server.ssl.enabled: false
+        backup: yes
+
+    - name: Restart Elasticsearch
+      shell: docker compose -f ./docker-compose.elk.yml restart elasticsearch
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+
+    - name: Wait for Elasticsearch to be ready
+      pause:
+        seconds: 30
+
+    - name: Restart Kibana
+      shell: docker compose -f ./docker-compose.elk.yml restart kibana
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+
+    - name: Wait for Kibana to start
+      pause:
+        seconds: 20
+
+# ///////////////////////////////////////////////////
+# === Deploy Nginx Container (HTTP only) ===
+# ///////////////////////////////////////////////////
+
+    - name: Deploy Nginx container with HTTP
+      shell: docker compose -f ./docker-compose.elk.yml up -d nginx
+      args:
+        chdir: "{{ application_dest_dir }}/app/elk"
+
+    - name: Wait for Nginx to start
+      pause:
+        seconds: 10
+
+    - name: Show Kibana access information
+      debug:
+        msg:
+          - "========================================="
+          - "Kibana via Nginx (HTTP Only)"
+          - "========================================="
+          - "URL: http://{{ ansible_host }}"
+          - "Username: elastic"
+          - "Password: {{ elastic_password }}"
+          - "========================================="
+          - "Kibana is accessible through Nginx reverse proxy"
+          - "Navigate to: Analytics > Dashboard"

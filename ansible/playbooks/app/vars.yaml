@@ -1,0 +1,8 @@
+---
+# Variables for the master node playbook
+token_file_remote: "/home/token.txt"
+token_file_local: "./token.txt"
+kubernetes_source_dir: "/home/aakhrif/infra-transcendence/Prod/kubernetes/"
+kubernetes_dest_dir: "/home/kubernetes"
+scripts_dir: "./scripts"
+master_script: "master.sh"

@@ -1,0 +1,111 @@
+filebeat.inputs:
+  # ==========================
+  # API Gateway Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/api-gateway/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: api-gateway
+    fields_under_root: true
+
+  # ==========================
+  # Auth Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/auth/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: auth
+    fields_under_root: true
+
+  # ==========================
+  # Chat Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/chat/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: chat
+    fields_under_root: true
+
+  # ==========================
+  # Game Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/game/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: game
+    fields_under_root: true
+
+  # ==========================
+  # Notification Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/notification/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: notification-service
+    fields_under_root: true
+
+  # ==========================
+  # Tournament Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/tournament-service/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: tournament
+    fields_under_root: true
+
+  # ==========================
+  # User Management Service
+  # ==========================
+  - type: filestream
+    enabled: true
+    paths:
+      - /var/log/user-service/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    ignore_older: 72h
+    scan_frequency: 10s
+    fields:
+      service: user-management
+    fields_under_root: true
+
+# ==========================
+# Send to Logstash
+# ==========================
+output.logstash:
+  hosts: ["logstash:5044"]

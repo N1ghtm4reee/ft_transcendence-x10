@@ -1,0 +1,11 @@
+---
+- name: Deploy prometheus
+  hosts: master
+  become: true
+  tasks:
+    - name: grafana pv
+      shell: kubectl apply -f /home/kubernetes/monitoring/grafana/grafana-pv.yaml
+    - name: grafana pvc
+      shell: kubectl apply -f /home/kubernetes/monitoring/grafana/grafana-pvc.yaml
+    - name: grafana deployment
+      shell: kubectl apply -f /home/kubernetes/monitoring/grafana/grafana.yaml
